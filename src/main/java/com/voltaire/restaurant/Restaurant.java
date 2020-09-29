@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,7 +27,7 @@ public class Restaurant {
     private LocalTime closingTime;
 
     @OneToMany(mappedBy = "restaurant")
-    private List<MenuItem> menuItems;
+    private List<MenuItem> menuItems = new ArrayList<>();
 
     //TODO owner, items
 
