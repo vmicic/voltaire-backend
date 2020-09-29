@@ -43,4 +43,5 @@ public class RestaurantServiceImpl implements RestaurantService {
     public void deleteRestaurant(Long id) {
         restaurantRepository.deleteById(id);
     }
+
 }
