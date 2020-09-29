@@ -11,4 +11,10 @@ public interface OrderService {
     Order findById(Long id);
 
     boolean notExists(Long id);
+
+    boolean notWaitingConfirmOrReject(Long id);
+
+    void confirmOrder(Long id);
+
+    void rejectOrder(Long id);
 }

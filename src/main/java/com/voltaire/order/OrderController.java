@@ -50,6 +50,37 @@ public class OrderController {
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
+    @PutMapping("/{id}/confirm")
+    public ResponseEntity<?> confirmOrder(@PathVariable Long id) {
+        //TODO check who is confirming order
+        if(orderService.notExists(id)) {
+            return new ResponseEntity<>("Requested order not found.", HttpStatus.NOT_FOUND);
+        }
+
+        if(orderService.notWaitingConfirmOrReject(id)) {
+            return new ResponseEntity<>("Requested order is not waiting for confirmation.", HttpStatus.BAD_REQUEST);
+        }
+
+        orderService.confirmOrder(id);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/{id}/reject")
+    public ResponseEntity<?> rejectOrder(@PathVariable Long id) {
+        //TODO check who is rejecting order
+        if(orderService.notExists(id)) {
+            return new ResponseEntity<>("Requested order not found.", HttpStatus.NOT_FOUND);
+        }
+
+        if(orderService.notWaitingConfirmOrReject(id)) {
+            return new ResponseEntity<>("Requested order is not waiting for rejection.", HttpStatus.BAD_REQUEST);
+        }
+
+        orderService.rejectOrder(id);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
     //TODO get orders from user
 }

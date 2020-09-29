@@ -53,5 +53,26 @@ public class OrderServiceImpl implements OrderService {
         return !orderRepository.existsById(id);
     }
 
+    @Override
+    public boolean notWaitingConfirmOrReject(Long id) {
+        Order order = this.findById(id);
 
+        return !order.getOrderStatus().equals(OrderStatus.CREATED);
+    }
+
+    @Override
+    public void confirmOrder(Long id) {
+        Order order = this.findById(id);
+
+        order.setOrderStatus(OrderStatus.CONFIRMED);
+        orderRepository.save(order);
+    }
+
+    @Override
+    public void rejectOrder(Long id) {
+        Order order = this.findById(id);
+
+        order.setOrderStatus(OrderStatus.REJECTED);
+        orderRepository.save(order);
+    }
 }
