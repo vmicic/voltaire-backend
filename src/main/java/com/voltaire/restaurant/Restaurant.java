@@ -26,7 +26,7 @@ public class Restaurant {
 
     private LocalTime closingTime;
 
-    @OneToMany(mappedBy = "restaurant")
+    @OneToMany(mappedBy = "restaurant", orphanRemoval = true)
     private List<MenuItem> menuItems = new ArrayList<>();
 
     //TODO owner, items

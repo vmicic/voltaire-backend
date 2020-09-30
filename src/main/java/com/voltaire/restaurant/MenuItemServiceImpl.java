@@ -53,5 +53,4 @@ public class MenuItemServiceImpl implements MenuItemService {
         menuItemRepository.deleteById(id);
     }
 
-
 }

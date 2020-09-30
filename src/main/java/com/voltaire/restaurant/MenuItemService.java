@@ -15,4 +15,5 @@ public interface MenuItemService {
     void updateMenuItem(Long id, MenuItem menuItem);
 
     void deleteMenuItem(Long id);
+
 }

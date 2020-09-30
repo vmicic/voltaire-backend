@@ -11,9 +11,11 @@ import java.util.List;
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
+    private final MenuItemService menuItemService;
 
-    public RestaurantController(RestaurantService restaurantService) {
+    public RestaurantController(RestaurantService restaurantService, MenuItemService menuItemService) {
         this.restaurantService = restaurantService;
+        this.menuItemService = menuItemService;
     }
 
     @PostMapping
@@ -59,6 +61,8 @@ public class RestaurantController {
         if(restaurantService.notExists(id)) {
             return new ResponseEntity<>("Requested restaurant not found", HttpStatus.NOT_FOUND);
         }
+        
+
 
         restaurantService.deleteRestaurant(id);
 
