@@ -1,5 +1,6 @@
 package com.voltaire.order;
 
+import com.voltaire.restaurant.MenuItem;
 import com.voltaire.restaurant.MenuItemService;
 import com.voltaire.restaurant.Restaurant;
 import com.voltaire.restaurant.RestaurantService;
@@ -13,12 +14,12 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final RestaurantService restaurantService;
-    private final OrderItemService orderItemService;
+    private final MenuItemService menuItemService;
 
-    public OrderServiceImpl(OrderRepository orderRepository, RestaurantService restaurantService, MenuItemService menuItemService, OrderItemService orderItemService) {
+    public OrderServiceImpl(OrderRepository orderRepository, RestaurantService restaurantService, MenuItemService menuItemService) {
         this.orderRepository = orderRepository;
         this.restaurantService = restaurantService;
-        this.orderItemService = orderItemService;
+        this.menuItemService = menuItemService;
     }
 
     @Override
@@ -30,12 +31,18 @@ public class OrderServiceImpl implements OrderService {
         order.setLocalDateTime(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.CREATED);
 
-        Order newOrder = orderRepository.save(order);
+        for(OrderItemDTO orderItemDTO : orderDTO.getOrderItems()) {
+            OrderItem orderItem = new OrderItem();
 
-        List<OrderItem> orderItems = orderItemService.saveAll(newOrder, orderDTO.getOrderItems());
-        newOrder.setOrderItems(orderItems);
+            MenuItem menuItem = menuItemService.findById(orderItemDTO.getMenuItemId());
+            orderItem.setMenuItem(menuItem);
+            orderItem.setQuantity(orderItemDTO.getQuantity());
+            orderItem.setAdditionalInfo(orderItemDTO.getAdditionalInfo());
+            orderItem.setOrder(order);
+            order.addOrderItem(orderItem);
+        }
 
-        return newOrder;
+        return orderRepository.save(order);
     }
 
     @Override
