@@ -28,10 +28,10 @@ public class OrderServiceImpl implements OrderService {
 
         Restaurant restaurant = restaurantService.findById(orderDTO.getRestaurantId());
         order.setRestaurant(restaurant);
-        order.setLocalDateTime(LocalDateTime.now());
+        order.setOrderTime(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.CREATED);
 
-        for(OrderItemDTO orderItemDTO : orderDTO.getOrderItems()) {
+        orderDTO.getOrderItems().stream().forEach(orderItemDTO -> {
             OrderItem orderItem = new OrderItem();
 
             MenuItem menuItem = menuItemService.findById(orderItemDTO.getMenuItemId());
@@ -40,7 +40,8 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setAdditionalInfo(orderItemDTO.getAdditionalInfo());
             orderItem.setOrder(order);
             order.addOrderItem(orderItem);
-        }
+        });
+
 
         return orderRepository.save(order);
     }
