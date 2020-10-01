@@ -1,11 +1,8 @@
 package com.voltaire.order;
 
-import com.voltaire.restaurant.MenuItem;
 import com.voltaire.restaurant.Restaurant;
 
 import javax.persistence.*;
-import java.awt.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,18 +15,24 @@ public class Order {
     @GeneratedValue
     private Long id;
 
-    private LocalDateTime localDateTime;
+    private LocalDateTime orderTime;
 
     private OrderStatus orderStatus;
 
     @ManyToOne
     private Restaurant restaurant;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
 
     public Order() {
+    }
+
+    public Order(LocalDateTime orderTime, OrderStatus orderStatus, Restaurant restaurant) {
+        this.orderTime = orderTime;
+        this.orderStatus = orderStatus;
+        this.restaurant = restaurant;
     }
 
     public Long getId() {
@@ -40,12 +43,12 @@ public class Order {
         this.id = id;
     }
 
-    public LocalDateTime getLocalDateTime() {
-        return localDateTime;
+    public LocalDateTime getOrderTime() {
+        return orderTime;
     }
 
-    public void setLocalDateTime(LocalDateTime localDateTime) {
-        this.localDateTime = localDateTime;
+    public void setOrderTime(LocalDateTime localDateTime) {
+        this.orderTime = localDateTime;
     }
 
     public OrderStatus getOrderStatus() {

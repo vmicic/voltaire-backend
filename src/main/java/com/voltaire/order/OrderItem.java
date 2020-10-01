@@ -29,6 +29,13 @@ public class OrderItem {
     public OrderItem() {
     }
 
+    public OrderItem(MenuItem menuItem, Order order, Integer quantity, String additionalInfo) {
+        this.menuItem = menuItem;
+        this.order = order;
+        this.quantity = quantity;
+        this.additionalInfo = additionalInfo;
+    }
+
     public Long getId() {
         return id;
     }
