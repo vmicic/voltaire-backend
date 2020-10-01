@@ -22,11 +22,17 @@ public class Order {
     @ManyToOne
     private Restaurant restaurant;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
 
     public Order() {
+    }
+
+    public Order(LocalDateTime orderTime, OrderStatus orderStatus, Restaurant restaurant) {
+        this.orderTime = orderTime;
+        this.orderStatus = orderStatus;
+        this.restaurant = restaurant;
     }
 
     public Long getId() {

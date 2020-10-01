@@ -1,8 +1,6 @@
 package com.voltaire.order;
 
-import com.voltaire.restaurant.MenuItem;
 import com.voltaire.restaurant.MenuItemService;
-import com.voltaire.restaurant.Restaurant;
 import com.voltaire.restaurant.RestaurantService;
 import org.springframework.stereotype.Service;
 
@@ -24,26 +22,27 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order createOrder(OrderDTO orderDTO) {
-        Order order = new Order();
-
-        Restaurant restaurant = restaurantService.findById(orderDTO.getRestaurantId());
-        order.setRestaurant(restaurant);
-        order.setOrderTime(LocalDateTime.now());
-        order.setOrderStatus(OrderStatus.CREATED);
-
-        orderDTO.getOrderItems().stream().forEach(orderItemDTO -> {
-            OrderItem orderItem = new OrderItem();
-
-            MenuItem menuItem = menuItemService.findById(orderItemDTO.getMenuItemId());
-            orderItem.setMenuItem(menuItem);
-            orderItem.setQuantity(orderItemDTO.getQuantity());
-            orderItem.setAdditionalInfo(orderItemDTO.getAdditionalInfo());
-            orderItem.setOrder(order);
-            order.addOrderItem(orderItem);
-        });
-
+        Order order = new OrderBuilder()
+                .setOrderTime(LocalDateTime.now())
+                .setOrderStatus(OrderStatus.CREATED)
+                .setRestaurant(restaurantService.findById(orderDTO.getRestaurantId()))
+                .build();
+        createOrderItems(orderDTO.getOrderItems(), order);
 
         return orderRepository.save(order);
+    }
+
+    public void createOrderItems(List<OrderItemDTO> orderItemDTOs, Order order) {
+        orderItemDTOs.stream().forEach(orderItemDTO -> {
+            OrderItem orderItem = new OrderItemBuilder()
+                    .setMenuItem(menuItemService.findById(orderItemDTO.getMenuItemId()))
+                    .setOrder(order)
+                    .setQuantity(orderItemDTO.getQuantity())
+                    .setAdditionalInfo(orderItemDTO.getAdditionalInfo())
+                    .build();
+
+            order.addOrderItem(orderItem);
+        });
     }
 
     @Override
