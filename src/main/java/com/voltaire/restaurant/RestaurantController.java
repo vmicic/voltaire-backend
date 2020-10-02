@@ -45,7 +45,6 @@ public class RestaurantController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateRestaurant(@PathVariable Long id, @RequestBody Restaurant restaurant) {
-        //TODO check if owner is logged user
         if(restaurantService.notExists(id)) {
             return new ResponseEntity<>("Requested restaurant not found", HttpStatus.NOT_FOUND);
         }
@@ -57,7 +56,6 @@ public class RestaurantController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRestaurant(@PathVariable Long id) {
-        //TODO check if owner is logged user
         if(restaurantService.notExists(id)) {
             return new ResponseEntity<>("Requested restaurant not found", HttpStatus.NOT_FOUND);
         }

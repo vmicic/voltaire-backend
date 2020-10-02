@@ -1,6 +1,5 @@
 package com.voltaire.order;
 
-import com.voltaire.restaurant.Restaurant;
 import com.voltaire.restaurant.RestaurantService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,6 @@ public class OrderController {
 
     private final OrderService orderService;
     private final RestaurantService restaurantService;
-
 
     public OrderController(OrderService orderService, RestaurantService restaurantService) {
         this.orderService = orderService;
@@ -52,7 +50,6 @@ public class OrderController {
 
     @PutMapping("/{id}/confirm")
     public ResponseEntity<?> confirmOrder(@PathVariable Long id) {
-        //TODO check who is confirming order
         if(orderService.notExists(id)) {
             return new ResponseEntity<>("Requested order not found.", HttpStatus.NOT_FOUND);
         }
@@ -68,7 +65,6 @@ public class OrderController {
 
     @PutMapping("/{id}/reject")
     public ResponseEntity<?> rejectOrder(@PathVariable Long id) {
-        //TODO check who is rejecting order
         if(orderService.notExists(id)) {
             return new ResponseEntity<>("Requested order not found.", HttpStatus.NOT_FOUND);
         }
@@ -81,6 +77,4 @@ public class OrderController {
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-    //TODO get orders from user
 }

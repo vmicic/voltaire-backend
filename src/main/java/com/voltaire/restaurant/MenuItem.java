@@ -21,8 +21,6 @@ public class MenuItem {
     @ManyToOne(fetch = FetchType.LAZY)
     private Restaurant restaurant;
 
-    //TODO image
-
     public MenuItem() {
     }
 

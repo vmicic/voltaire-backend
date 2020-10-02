@@ -29,8 +29,6 @@ public class Restaurant {
     @OneToMany(mappedBy = "restaurant", orphanRemoval = true)
     private List<MenuItem> menuItems = new ArrayList<>();
 
-    //TODO owner, items
-
     public Restaurant() {
     }
 

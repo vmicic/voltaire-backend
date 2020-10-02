@@ -18,7 +18,6 @@ public class MenuItemController {
 
     @PostMapping
     public ResponseEntity<?> createMenuItem(@RequestBody MenuItemDTO menuItemDTO) {
-        //TODO check owner
         if(restaurantService.notExists(menuItemDTO.getRestaurantId())) {
             return new ResponseEntity<>("Restaurant doesn't exist", HttpStatus.NOT_FOUND);
         }
@@ -41,7 +40,6 @@ public class MenuItemController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateMenuItem(@PathVariable Long id, @RequestBody MenuItem menuItem) {
-        //TODO check if owner is logged user
         if(menuItemService.notExists(id)) {
             return new ResponseEntity<>("Requested menu item not found", HttpStatus.NOT_FOUND);
         }
@@ -53,7 +51,6 @@ public class MenuItemController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteMenuItem(@PathVariable Long id) {
-        //TODO check if owner is logged user
         if(menuItemService.notExists(id)) {
             return new ResponseEntity<>("Requested menu item not found", HttpStatus.NOT_FOUND);
         }
