@@ -1,5 +1,7 @@
 package com.voltaire.order;
 
+import com.voltaire.order.model.Order;
+import com.voltaire.order.model.OrderDto;
 import com.voltaire.restaurant.RestaurantService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createOrder(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<?> createOrder(@RequestBody OrderDto orderDTO) {
         if(restaurantService.notExists(orderDTO.getRestaurantId())) {
             return new ResponseEntity<>("Restaurant doesn't exist", HttpStatus.NOT_FOUND);
         }

@@ -1,4 +1,4 @@
-package com.voltaire.order;
+package com.voltaire.order.model;
 
 import com.voltaire.restaurant.Restaurant;
 
@@ -29,10 +29,10 @@ public class Order {
     public Order() {
     }
 
-    public Order(LocalDateTime orderTime, OrderStatus orderStatus, Restaurant restaurant) {
-        this.orderTime = orderTime;
-        this.orderStatus = orderStatus;
-        this.restaurant = restaurant;
+    private Order(OrderBuilder orderBuilder) {
+        this.orderTime = orderBuilder.orderTime;
+        this.orderStatus = orderBuilder.orderStatus;
+        this.restaurant = orderBuilder.restaurant;
     }
 
     public Long getId() {
@@ -77,5 +77,33 @@ public class Order {
 
     public void addOrderItem(OrderItem orderItem) {
         this.orderItems.add(orderItem);
+    }
+
+    public static class OrderBuilder {
+        private LocalDateTime orderTime;
+        private OrderStatus orderStatus;
+        private Restaurant restaurant;
+
+        public OrderBuilder() {
+        }
+
+        public OrderBuilder setOrderTime(LocalDateTime orderTime) {
+            this.orderTime = orderTime;
+            return this;
+        }
+
+        public OrderBuilder setOrderStatus(OrderStatus orderStatus) {
+            this.orderStatus = orderStatus;
+            return this;
+        }
+
+        public OrderBuilder setRestaurant(Restaurant restaurant) {
+            this.restaurant = restaurant;
+            return this;
+        }
+
+        public Order build() {
+            return new Order(this);
+        }
     }
 }

@@ -1,6 +1,6 @@
-package com.voltaire.order;
+package com.voltaire.order.model;
 
-public class OrderItemDTO {
+public class OrderItemDto {
 
     private Long menuItemId;
 
@@ -8,7 +8,7 @@ public class OrderItemDTO {
 
     private String additionalInfo;
 
-    public OrderItemDTO() {
+    public OrderItemDto() {
     }
 
     public Long getMenuItemId() {

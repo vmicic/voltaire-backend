@@ -1,14 +1,14 @@
-package com.voltaire.order;
+package com.voltaire.order.model;
 
 import java.util.List;
 
-public class OrderDTO {
+public class OrderDto {
 
     private Long restaurantId;
 
-    List<OrderItemDTO> orderItems;
+    List<OrderItemDto> orderItems;
 
-    public OrderDTO() {
+    public OrderDto() {
     }
 
     public Long getRestaurantId() {
@@ -19,11 +19,11 @@ public class OrderDTO {
         this.restaurantId = restaurantId;
     }
 
-    public List<OrderItemDTO> getOrderItems() {
+    public List<OrderItemDto> getOrderItems() {
         return orderItems;
     }
 
-    public void setOrderItems(List<OrderItemDTO> orderItemDTOs) {
-        this.orderItems = orderItemDTOs;
+    public void setOrderItems(List<OrderItemDto> orderItemDtos) {
+        this.orderItems = orderItemDtos;
     }
 }

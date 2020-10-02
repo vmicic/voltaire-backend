@@ -1,19 +1,50 @@
 package com.voltaire.restaurant;
 
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
-public interface MenuItemService {
+@Service
+public class MenuItemService {
 
-    MenuItem createMenuItem(MenuItemDTO menuItemDTO);
+    private final MenuItemRepository menuItemRepository;
+    private final RestaurantService restaurantService;
 
-    List<MenuItem> findAll();
+    public MenuItemService(MenuItemRepository menuItemRepository, RestaurantService restaurantService) {
+        this.menuItemRepository = menuItemRepository;
+        this.restaurantService = restaurantService;
+    }
 
-    MenuItem findById(Long id);
+    public MenuItem createMenuItem(MenuItemDTO menuItemDTO) {
+        MenuItem menuItem = new MenuItem();
+        menuItem.setName(menuItemDTO.getName());
+        menuItem.setDescription(menuItemDTO.getDescription());
+        menuItem.setPrice(menuItemDTO.getPrice());
+        Restaurant restaurant = restaurantService.findById(menuItemDTO.getRestaurantId());
+        menuItem.setRestaurant(restaurant);
 
-    boolean notExists(Long id);
+        return menuItemRepository.save(menuItem);
+    }
 
-    void updateMenuItem(Long id, MenuItem menuItem);
+    public List<MenuItem> findAll() {
+        return menuItemRepository.findAll();
+    }
 
-    void deleteMenuItem(Long id);
+    public MenuItem findById(Long id) {
+        return menuItemRepository.findById(id).orElse(null);
+    }
+
+    public boolean notExists(Long id) {
+        return !menuItemRepository.existsById(id);
+    }
+
+    public void updateMenuItem(Long id, MenuItem menuItem) {
+        menuItem.setId(id);
+        menuItemRepository.save(menuItem);
+    }
+
+    public void deleteMenuItem(Long id) {
+        menuItemRepository.deleteById(id);
+    }
 
 }

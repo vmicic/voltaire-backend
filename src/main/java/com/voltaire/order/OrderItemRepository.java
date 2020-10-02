@@ -1,5 +1,6 @@
 package com.voltaire.order;
 
+import com.voltaire.order.model.OrderItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
