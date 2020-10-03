@@ -17,6 +17,7 @@ public class Order {
 
     private LocalDateTime orderTime;
 
+    @Column(nullable = false)
     private OrderStatus orderStatus;
 
     @ManyToOne
