@@ -1,23 +1,18 @@
 package com.voltaire.restaurant;
 
 import com.voltaire.restaurant.model.Restaurant;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+import java.util.List;@RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/restaurants")
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
     private final MenuItemService menuItemService;
-
-    public RestaurantController(RestaurantService restaurantService, MenuItemService menuItemService) {
-        this.restaurantService = restaurantService;
-        this.menuItemService = menuItemService;
-    }
 
     @PostMapping
     public ResponseEntity<?> createRestaurant(@RequestBody Restaurant restaurant) {

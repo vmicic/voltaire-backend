@@ -1,15 +1,16 @@
 package com.voltaire.order;
 
 import com.voltaire.order.model.*;
-import com.voltaire.order.model.Order.OrderBuilder;
-import com.voltaire.order.model.OrderItem.OrderItemBuilder;
+import com.voltaire.order.repository.OrderRepository;
 import com.voltaire.restaurant.MenuItemService;
 import com.voltaire.restaurant.RestaurantService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class OrderService {
 
@@ -17,30 +18,24 @@ public class OrderService {
     private final RestaurantService restaurantService;
     private final MenuItemService menuItemService;
 
-    public OrderService(OrderRepository orderRepository, RestaurantService restaurantService, MenuItemService menuItemService) {
-        this.orderRepository = orderRepository;
-        this.restaurantService = restaurantService;
-        this.menuItemService = menuItemService;
-    }
-
-    public Order createOrder(OrderDto orderDTO) {
-        var order = new OrderBuilder()
-                .setOrderTime(LocalDateTime.now())
-                .setOrderStatus(OrderStatus.CREATED)
-                .setRestaurant(restaurantService.findById(orderDTO.getRestaurantId()))
+    public Order createOrder(OrderDto orderDto) {
+        var order = Order.builder()
+                .orderTime(LocalDateTime.now())
+                .orderStatus(OrderStatus.CREATED)
+                .restaurant(restaurantService.findById(orderDto.getRestaurantId()))
                 .build();
-        createOrderItems(orderDTO.getOrderItems(), order);
+        createOrderItems(orderDto.getOrderItems(), order);
 
         return orderRepository.save(order);
     }
 
     public void createOrderItems(List<OrderItemDto> orderItemDtos, Order order) {
         orderItemDtos.forEach(orderItemDto -> {
-            var orderItem = new OrderItemBuilder()
-                    .setMenuItem(menuItemService.findById(orderItemDto.getMenuItemId()))
-                    .setOrder(order)
-                    .setQuantity(orderItemDto.getQuantity())
-                    .setAdditionalInfo(orderItemDto.getAdditionalInfo())
+            var orderItem =  OrderItem.builder()
+                    .menuItem(menuItemService.findById(orderItemDto.getMenuItemId()))
+                    .order(order)
+                    .quantity(orderItemDto.getQuantity())
+                    .additionalInfo(orderItemDto.getAdditionalInfo())
                     .build();
 
             order.addOrderItem(orderItem);

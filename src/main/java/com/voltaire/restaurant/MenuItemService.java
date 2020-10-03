@@ -2,29 +2,25 @@ package com.voltaire.restaurant;
 
 import com.voltaire.restaurant.model.MenuItem;
 import com.voltaire.restaurant.model.MenuItemDto;
-import com.voltaire.restaurant.model.Restaurant;
-import com.voltaire.restaurant.model.MenuItem.MenuItemBuilder;
+import com.voltaire.restaurant.repository.MenuItemRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class MenuItemService {
 
     private final MenuItemRepository menuItemRepository;
     private final RestaurantService restaurantService;
 
-    public MenuItemService(MenuItemRepository menuItemRepository, RestaurantService restaurantService) {
-        this.menuItemRepository = menuItemRepository;
-        this.restaurantService = restaurantService;
-    }
-
     public MenuItem createMenuItem(MenuItemDto menuItemDto) {
-        var menuItem = new MenuItemBuilder()
-                .setName(menuItemDto.getName())
-                .setPrice(menuItemDto.getPrice())
-                .setDescription(menuItemDto.getDescription())
-                .setRestaurant(restaurantService.findById(menuItemDto.getRestaurantId()))
+        var menuItem = MenuItem.builder()
+                .name(menuItemDto.getName())
+                .price(menuItemDto.getPrice())
+                .description(menuItemDto.getDescription())
+                .restaurant(restaurantService.findById(menuItemDto.getRestaurantId()))
                 .build();
 
         return menuItemRepository.save(menuItem);

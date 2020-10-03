@@ -1,4 +1,4 @@
-package com.voltaire.order;
+package com.voltaire.order.repository;
 
 import com.voltaire.order.model.OrderItem;
 import org.springframework.data.jpa.repository.JpaRepository;

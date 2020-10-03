@@ -1,6 +1,7 @@
 package com.voltaire.restaurant.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -26,45 +27,12 @@ public class MenuItem {
     @ManyToOne(fetch = FetchType.LAZY)
     private Restaurant restaurant;
 
-    private MenuItem(MenuItemBuilder menuItemBuilder) {
-        this.name = menuItemBuilder.name;
-        this.price = menuItemBuilder.price;
-        this.description = menuItemBuilder.description;
-        this.restaurant = menuItemBuilder.restaurant;
+    @Builder
+    private MenuItem(String name, BigDecimal price, String description, Restaurant restaurant) {
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.restaurant = restaurant;
     }
 
-    public static class MenuItemBuilder {
-        private String name;
-        private BigDecimal price;
-        private String description;
-        private Restaurant restaurant;
-
-        public MenuItemBuilder() {
-
-        }
-
-        public MenuItemBuilder setName(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public MenuItemBuilder setPrice(BigDecimal price) {
-            this.price = price;
-            return this;
-        }
-
-        public MenuItemBuilder setDescription(String description) {
-            this.description = description;
-            return this;
-        }
-
-        public MenuItemBuilder setRestaurant(Restaurant restaurant) {
-            this.restaurant = restaurant;
-            return this;
-        }
-
-        public MenuItem build() {
-            return new MenuItem(this);
-        }
-    }
 }

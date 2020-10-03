@@ -1,6 +1,7 @@
 package com.voltaire.order.model;
 
 import com.voltaire.restaurant.model.Restaurant;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -28,43 +29,20 @@ public class Order {
     private Restaurant restaurant;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItem> orderItems = new ArrayList<>();
-
-    private Order(OrderBuilder orderBuilder) {
-        this.orderTime = orderBuilder.orderTime;
-        this.orderStatus = orderBuilder.orderStatus;
-        this.restaurant = orderBuilder.restaurant;
-    }
+    private List<OrderItem> orderItems;
 
     public void addOrderItem(OrderItem orderItem) {
+        if(orderItems == null) {
+            orderItems = new ArrayList<>();
+        }
         this.orderItems.add(orderItem);
     }
 
-    public static class OrderBuilder {
-        private LocalDateTime orderTime;
-        private OrderStatus orderStatus;
-        private Restaurant restaurant;
-
-        public OrderBuilder() {
-        }
-
-        public OrderBuilder setOrderTime(LocalDateTime orderTime) {
-            this.orderTime = orderTime;
-            return this;
-        }
-
-        public OrderBuilder setOrderStatus(OrderStatus orderStatus) {
-            this.orderStatus = orderStatus;
-            return this;
-        }
-
-        public OrderBuilder setRestaurant(Restaurant restaurant) {
-            this.restaurant = restaurant;
-            return this;
-        }
-
-        public Order build() {
-            return new Order(this);
-        }
+    @Builder
+    public Order(LocalDateTime orderTime, OrderStatus orderStatus, Restaurant restaurant, List<OrderItem> orderItems) {
+        this.orderTime = orderTime;
+        this.orderStatus = orderStatus;
+        this.restaurant = restaurant;
+        this.orderItems = orderItems;
     }
 }

@@ -1,18 +1,17 @@
 package com.voltaire.restaurant;
 
 import com.voltaire.restaurant.model.Restaurant;
+import com.voltaire.restaurant.repository.RestaurantRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
-
-    public RestaurantService(RestaurantRepository restaurantRepository) {
-        this.restaurantRepository = restaurantRepository;
-    }
 
     public Restaurant createRestaurant(Restaurant restaurant) {
         return restaurantRepository.save(restaurant);

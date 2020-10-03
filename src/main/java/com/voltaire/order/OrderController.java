@@ -3,12 +3,14 @@ package com.voltaire.order;
 import com.voltaire.order.model.Order;
 import com.voltaire.order.model.OrderDto;
 import com.voltaire.restaurant.RestaurantService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/orders")
 public class OrderController {
@@ -16,18 +18,13 @@ public class OrderController {
     private final OrderService orderService;
     private final RestaurantService restaurantService;
 
-    public OrderController(OrderService orderService, RestaurantService restaurantService) {
-        this.orderService = orderService;
-        this.restaurantService = restaurantService;
-    }
-
     @PostMapping
-    public ResponseEntity<?> createOrder(@RequestBody OrderDto orderDTO) {
-        if(restaurantService.notExists(orderDTO.getRestaurantId())) {
+    public ResponseEntity<?> createOrder(@RequestBody OrderDto orderDto) {
+        if(restaurantService.notExists(orderDto.getRestaurantId())) {
             return new ResponseEntity<>("Restaurant doesn't exist", HttpStatus.NOT_FOUND);
         }
 
-        Order order = orderService.createOrder(orderDTO);
+        Order order = orderService.createOrder(orderDto);
 
         return new ResponseEntity<>(order, HttpStatus.CREATED);
     }

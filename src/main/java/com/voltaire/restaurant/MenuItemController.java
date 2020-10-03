@@ -2,10 +2,12 @@ package com.voltaire.restaurant;
 
 import com.voltaire.restaurant.model.MenuItem;
 import com.voltaire.restaurant.model.MenuItemDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/menu-items")
 public class MenuItemController {
@@ -13,18 +15,13 @@ public class MenuItemController {
     private final MenuItemService menuItemService;
     private final RestaurantService restaurantService;
 
-    public MenuItemController(MenuItemService menuItemService, RestaurantService restaurantService) {
-        this.menuItemService = menuItemService;
-        this.restaurantService = restaurantService;
-    }
-
     @PostMapping
-    public ResponseEntity<?> createMenuItem(@RequestBody MenuItemDto menuItemDTO) {
-        if(restaurantService.notExists(menuItemDTO.getRestaurantId())) {
+    public ResponseEntity<?> createMenuItem(@RequestBody MenuItemDto menuItemDto) {
+        if(restaurantService.notExists(menuItemDto.getRestaurantId())) {
             return new ResponseEntity<>("Restaurant doesn't exist", HttpStatus.NOT_FOUND);
         }
 
-        MenuItem menuItem = menuItemService.createMenuItem(menuItemDTO);
+        MenuItem menuItem = menuItemService.createMenuItem(menuItemDto);
 
         return new ResponseEntity<>(menuItem, HttpStatus.CREATED);
     }
