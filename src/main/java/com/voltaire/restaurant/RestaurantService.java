@@ -1,5 +1,6 @@
 package com.voltaire.restaurant;
 
+import com.voltaire.restaurant.model.Restaurant;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

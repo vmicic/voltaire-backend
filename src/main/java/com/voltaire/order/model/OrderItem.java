@@ -1,14 +1,17 @@
 package com.voltaire.order.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.voltaire.order.model.Order;
-import com.voltaire.restaurant.MenuItem;
+import com.voltaire.restaurant.model.MenuItem;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+@Data
+@NoArgsConstructor
 @Entity
 public class OrderItem {
 
@@ -27,9 +30,6 @@ public class OrderItem {
 
     private String additionalInfo;
 
-    public OrderItem() {
-    }
-
     private OrderItem(OrderItemBuilder orderItemBuilder) {
         this.menuItem = orderItemBuilder.menuItem;
         this.order = orderItemBuilder.order;
@@ -41,46 +41,6 @@ public class OrderItem {
         this.menuItem = menuItem;
         this.order = order;
         this.quantity = quantity;
-        this.additionalInfo = additionalInfo;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public MenuItem getMenuItem() {
-        return menuItem;
-    }
-
-    public void setMenuItem(MenuItem menuItem) {
-        this.menuItem = menuItem;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public String getAdditionalInfo() {
-        return additionalInfo;
-    }
-
-    public void setAdditionalInfo(String additionalInfo) {
         this.additionalInfo = additionalInfo;
     }
 

@@ -24,7 +24,7 @@ public class OrderService {
     }
 
     public Order createOrder(OrderDto orderDTO) {
-        Order order = new OrderBuilder()
+        var order = new OrderBuilder()
                 .setOrderTime(LocalDateTime.now())
                 .setOrderStatus(OrderStatus.CREATED)
                 .setRestaurant(restaurantService.findById(orderDTO.getRestaurantId()))
@@ -36,7 +36,7 @@ public class OrderService {
 
     public void createOrderItems(List<OrderItemDto> orderItemDtos, Order order) {
         orderItemDtos.forEach(orderItemDto -> {
-            OrderItem orderItem = new OrderItemBuilder()
+            var orderItem = new OrderItemBuilder()
                     .setMenuItem(menuItemService.findById(orderItemDto.getMenuItemId()))
                     .setOrder(order)
                     .setQuantity(orderItemDto.getQuantity())

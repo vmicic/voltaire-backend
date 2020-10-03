@@ -1,5 +1,6 @@
 package com.voltaire.restaurant;
 
+import com.voltaire.restaurant.model.Restaurant;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -7,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/restaurants")
+@RequestMapping("/v1/restaurants")
 public class RestaurantController {
 
     private final RestaurantService restaurantService;

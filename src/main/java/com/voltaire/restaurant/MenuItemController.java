@@ -1,11 +1,13 @@
 package com.voltaire.restaurant;
 
+import com.voltaire.restaurant.model.MenuItem;
+import com.voltaire.restaurant.model.MenuItemDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/menu-items")
+@RequestMapping("/v1/menu-items")
 public class MenuItemController {
 
     private final MenuItemService menuItemService;
@@ -17,7 +19,7 @@ public class MenuItemController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createMenuItem(@RequestBody MenuItemDTO menuItemDTO) {
+    public ResponseEntity<?> createMenuItem(@RequestBody MenuItemDto menuItemDTO) {
         if(restaurantService.notExists(menuItemDTO.getRestaurantId())) {
             return new ResponseEntity<>("Restaurant doesn't exist", HttpStatus.NOT_FOUND);
         }
