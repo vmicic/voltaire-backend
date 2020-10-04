@@ -1,18 +1,41 @@
 package com.voltaire.restaurant;
 
+import com.voltaire.restaurant.model.Restaurant;
+import com.voltaire.restaurant.repository.RestaurantRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
-public interface RestaurantService {
+@RequiredArgsConstructor
+@Service
+public class RestaurantService {
 
-    Restaurant createRestaurant(Restaurant restaurant);
+    private final RestaurantRepository restaurantRepository;
 
-    List<Restaurant> findAll();
+    public Restaurant createRestaurant(Restaurant restaurant) {
+        return restaurantRepository.save(restaurant);
+    }
 
-    Restaurant findById(Long id);
+    public List<Restaurant> findAll() {
+        return restaurantRepository.findAll();
+    }
 
-    boolean notExists(Long id);
+    public Restaurant findById(Long id) {
+        return restaurantRepository.findById(id).orElse(null);
+    }
 
-    void updateRestaurant(Long id, Restaurant restaurant);
+    public boolean notExists(Long id) {
+        return !restaurantRepository.existsById(id);
+    }
 
-    void deleteRestaurant(Long id);
+    public void updateRestaurant(Long id, Restaurant restaurant) {
+        restaurant.setId(id);
+        restaurantRepository.save(restaurant);
+    }
+
+    public void deleteRestaurant(Long id) {
+        restaurantRepository.deleteById(id);
+    }
+
 }

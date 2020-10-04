@@ -1,22 +1,18 @@
 package com.voltaire.restaurant;
 
+import com.voltaire.restaurant.model.Restaurant;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+import java.util.List;@RequiredArgsConstructor
 @RestController
-@RequestMapping("/restaurants")
+@RequestMapping("/v1/restaurants")
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
     private final MenuItemService menuItemService;
-
-    public RestaurantController(RestaurantService restaurantService, MenuItemService menuItemService) {
-        this.restaurantService = restaurantService;
-        this.menuItemService = menuItemService;
-    }
 
     @PostMapping
     public ResponseEntity<?> createRestaurant(@RequestBody Restaurant restaurant) {
@@ -45,7 +41,6 @@ public class RestaurantController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateRestaurant(@PathVariable Long id, @RequestBody Restaurant restaurant) {
-        //TODO check if owner is logged user
         if(restaurantService.notExists(id)) {
             return new ResponseEntity<>("Requested restaurant not found", HttpStatus.NOT_FOUND);
         }
@@ -57,7 +52,6 @@ public class RestaurantController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRestaurant(@PathVariable Long id) {
-        //TODO check if owner is logged user
         if(restaurantService.notExists(id)) {
             return new ResponseEntity<>("Requested restaurant not found", HttpStatus.NOT_FOUND);
         }
