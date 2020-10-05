@@ -19,59 +19,35 @@ public class OrderController {
     private final RestaurantService restaurantService;
 
     @PostMapping
-    public ResponseEntity<?> createOrder(@RequestBody OrderDto orderDto) {
-        if(restaurantService.notExists(orderDto.getRestaurantId())) {
-            return new ResponseEntity<>("Restaurant doesn't exist", HttpStatus.NOT_FOUND);
-        }
-
+    public ResponseEntity<Order> createOrder(@RequestBody OrderDto orderDto) {
         Order order = orderService.createOrder(orderDto);
 
         return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllOrders() {
+    public ResponseEntity<List<Order>> getAllOrders() {
         List<Order> orders = orderService.findAll();
 
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getOrderById(@PathVariable Long id) {
-        if(orderService.notExists(id)) {
-            return new ResponseEntity<>("Requested order not found.", HttpStatus.NOT_FOUND);
-        }
-
+    public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
         Order order = orderService.findById(id);
 
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
     @PutMapping("/{id}/confirm")
-    public ResponseEntity<?> confirmOrder(@PathVariable Long id) {
-        if(orderService.notExists(id)) {
-            return new ResponseEntity<>("Requested order not found.", HttpStatus.NOT_FOUND);
-        }
-
-        if(orderService.notWaitingConfirmOrReject(id)) {
-            return new ResponseEntity<>("Requested order is not waiting for confirmation.", HttpStatus.BAD_REQUEST);
-        }
-
+    public ResponseEntity<Void> confirmOrder(@PathVariable Long id) {
         orderService.confirmOrder(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/{id}/reject")
-    public ResponseEntity<?> rejectOrder(@PathVariable Long id) {
-        if(orderService.notExists(id)) {
-            return new ResponseEntity<>("Requested order not found.", HttpStatus.NOT_FOUND);
-        }
-
-        if(orderService.notWaitingConfirmOrReject(id)) {
-            return new ResponseEntity<>("Requested order is not waiting for rejection.", HttpStatus.BAD_REQUEST);
-        }
-
+    public ResponseEntity<Void> rejectOrder(@PathVariable Long id) {
         orderService.rejectOrder(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
