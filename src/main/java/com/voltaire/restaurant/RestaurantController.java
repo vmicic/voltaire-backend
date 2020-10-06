@@ -38,18 +38,14 @@ public class RestaurantController {
 
     @PutMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<IdResponse> updateRestaurant(@PathVariable Long id, @RequestBody Restaurant restaurant) {
-        var restaurantId = restaurantService.updateRestaurant(id, restaurant);
-
-        var idResponse = new IdResponse(restaurantId);
+        var idResponse = restaurantService.updateRestaurant(id, restaurant);
 
         return new ResponseEntity<>(idResponse, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<IdResponse> deleteRestaurant(@PathVariable Long id) {
-        var restaurantId = restaurantService.deleteRestaurant(id);
-
-        var idResponse = new IdResponse(restaurantId);
+        var idResponse = restaurantService.deleteRestaurant(id);
 
         return new ResponseEntity<>(idResponse, HttpStatus.OK);
     }

@@ -4,6 +4,7 @@ import com.voltaire.exceptions.customexceptions.BadRequestException;
 import com.voltaire.exceptions.customexceptions.EntityNotFoundException;
 import com.voltaire.order.model.*;
 import com.voltaire.order.repository.OrderRepository;
+import com.voltaire.restaurant.IdResponse;
 import com.voltaire.restaurant.MenuItemService;
 import com.voltaire.restaurant.RestaurantService;
 import lombok.RequiredArgsConstructor;
@@ -52,23 +53,23 @@ public class OrderService {
                 new EntityNotFoundException(Order.class, "id", id.toString()));
     }
 
-    public Long confirmOrder(Long id) {
+    public IdResponse confirmOrder(Long id) {
         Order order = findById(id);
         if (order.notWaitingForResponse()) {
             throw new BadRequestException("Requested order is not waiting response.");
         }
 
         order.setOrderStatus(OrderStatus.CONFIRMED);
-        return orderRepository.save(order).getId();
+        return new IdResponse(orderRepository.save(order).getId());
     }
 
-    public Long rejectOrder(Long id) {
+    public IdResponse rejectOrder(Long id) {
         Order order = findById(id);
         if (order.notWaitingForResponse()) {
             throw new BadRequestException("Requested order is not waiting response.");
         }
 
         order.setOrderStatus(OrderStatus.REJECTED);
-        return orderRepository.save(order).getId();
+        return new IdResponse(orderRepository.save(order).getId());
     }
 }

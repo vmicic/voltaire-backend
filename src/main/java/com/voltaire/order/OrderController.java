@@ -41,18 +41,14 @@ public class OrderController {
 
     @PutMapping("/{id}/confirm")
     public ResponseEntity<IdResponse> confirmOrder(@PathVariable Long id) {
-        var orderId = orderService.confirmOrder(id);
-
-        var idResponse = new IdResponse(orderId);
+        var idResponse = orderService.confirmOrder(id);
 
         return new ResponseEntity<>(idResponse, HttpStatus.OK);
     }
 
     @PutMapping("/{id}/reject")
     public ResponseEntity<IdResponse> rejectOrder(@PathVariable Long id) {
-        Long orderId = orderService.rejectOrder(id);
-
-        var idResponse = new IdResponse(orderId);
+        var idResponse = orderService.rejectOrder(id);
 
         return new ResponseEntity<>(idResponse, HttpStatus.OK);
     }

@@ -31,21 +31,21 @@ public class RestaurantService {
         return !restaurantRepository.existsById(id);
     }
 
-    public Long updateRestaurant(Long id, Restaurant restaurant) {
+    public IdResponse updateRestaurant(Long id, Restaurant restaurant) {
         if (notExists(id)) {
             throw new EntityNotFoundException(Restaurant.class, "id", id.toString());
         }
 
         restaurant.setId(id);
-        return restaurantRepository.save(restaurant).getId();
+        return new IdResponse(restaurantRepository.save(restaurant).getId());
     }
 
-    public Long deleteRestaurant(Long id) {
+    public IdResponse deleteRestaurant(Long id) {
         if (notExists(id)) {
             throw new EntityNotFoundException(Restaurant.class, "id", id.toString());
         }
         restaurantRepository.deleteById(id);
-        return id;
+        return new IdResponse(id);
     }
 
 }
