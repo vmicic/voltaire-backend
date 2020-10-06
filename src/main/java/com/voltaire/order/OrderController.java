@@ -2,6 +2,7 @@ package com.voltaire.order;
 
 import com.voltaire.order.model.Order;
 import com.voltaire.order.model.OrderDto;
+import com.voltaire.restaurant.IdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,16 +40,20 @@ public class OrderController {
     }
 
     @PutMapping("/{id}/confirm")
-    public ResponseEntity<Long> confirmOrder(@PathVariable Long id) {
-        Long orderId = orderService.confirmOrder(id);
+    public ResponseEntity<IdResponse> confirmOrder(@PathVariable Long id) {
+        var orderId = orderService.confirmOrder(id);
 
-        return new ResponseEntity<>(orderId, HttpStatus.OK);
+        var idResponse = new IdResponse(orderId);
+
+        return new ResponseEntity<>(idResponse, HttpStatus.OK);
     }
 
     @PutMapping("/{id}/reject")
-    public ResponseEntity<Long> rejectOrder(@PathVariable Long id) {
+    public ResponseEntity<IdResponse> rejectOrder(@PathVariable Long id) {
         Long orderId = orderService.rejectOrder(id);
 
-        return new ResponseEntity<>(orderId, HttpStatus.NO_CONTENT);
+        var idResponse = new IdResponse(orderId);
+
+        return new ResponseEntity<>(idResponse, HttpStatus.OK);
     }
 }

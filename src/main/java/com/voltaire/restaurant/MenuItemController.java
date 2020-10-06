@@ -29,16 +29,20 @@ public class MenuItemController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateMenuItem(@PathVariable Long id, @RequestBody MenuItem menuItem) {
-        menuItemService.updateMenuItem(id, menuItem);
+    public ResponseEntity<IdResponse> updateMenuItem(@PathVariable Long id, @RequestBody MenuItem menuItem) {
+        var menuItemId = menuItemService.updateMenuItem(id, menuItem);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        var idResponse = new IdResponse(menuItemId);
+
+        return new ResponseEntity<>(idResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMenuItem(@PathVariable Long id) {
-        menuItemService.deleteMenuItem(id);
+    public ResponseEntity<IdResponse> deleteMenuItem(@PathVariable Long id) {
+        var menuItemId = menuItemService.deleteMenuItem(id);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        var idResponse = new IdResponse(menuItemId);
+
+        return new ResponseEntity<>(idResponse, HttpStatus.OK);
     }
 }

@@ -40,21 +40,22 @@ public class MenuItemService {
         return !menuItemRepository.existsById(id);
     }
 
-    public void updateMenuItem(Long id, MenuItem menuItem) {
+    public Long updateMenuItem(Long id, MenuItem menuItem) {
         if (notExists(id)) {
             throw new EntityNotFoundException(MenuItem.class, "id", id.toString());
         }
 
         menuItem.setId(id);
-        menuItemRepository.save(menuItem);
+        return menuItemRepository.save(menuItem).getId();
     }
 
-    public void deleteMenuItem(Long id) {
+    public Long deleteMenuItem(Long id) {
         if (notExists(id)) {
             throw new EntityNotFoundException(MenuItem.class, "id", id.toString());
         }
 
         menuItemRepository.deleteById(id);
+        return id;
     }
 
 }

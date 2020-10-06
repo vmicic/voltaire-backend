@@ -44,7 +44,6 @@ public class RestaurantService {
         if (notExists(id)) {
             throw new EntityNotFoundException(Restaurant.class, "id", id.toString());
         }
-
         restaurantRepository.deleteById(id);
         return id;
     }

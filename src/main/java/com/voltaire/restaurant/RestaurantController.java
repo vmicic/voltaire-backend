@@ -1,6 +1,5 @@
 package com.voltaire.restaurant;
 
-import com.google.gson.JsonObject;
 import com.voltaire.restaurant.model.Restaurant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,23 +37,21 @@ public class RestaurantController {
     }
 
     @PutMapping(value = "/{id}", produces = "application/json")
-    public ResponseEntity<Void> updateRestaurant(@PathVariable Long id, @RequestBody Restaurant restaurant) {
-        var updatedId = restaurantService.updateRestaurant(id, restaurant);
+    public ResponseEntity<IdResponse> updateRestaurant(@PathVariable Long id, @RequestBody Restaurant restaurant) {
+        var restaurantId = restaurantService.updateRestaurant(id, restaurant);
 
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("id", updatedId);
+        var idResponse = new IdResponse(restaurantId);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(idResponse, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{id}", produces = "application/json")
-    public ResponseEntity<String> deleteRestaurant(@PathVariable Long id) {
-        var deletedId = restaurantService.deleteRestaurant(id);
+    public ResponseEntity<IdResponse> deleteRestaurant(@PathVariable Long id) {
+        var restaurantId = restaurantService.deleteRestaurant(id);
 
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("id", deletedId);
+        var idResponse = new IdResponse(restaurantId);
 
-        return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(idResponse, HttpStatus.OK);
     }
 
 }
