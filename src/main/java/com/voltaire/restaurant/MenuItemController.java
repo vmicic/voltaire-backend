@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 public class MenuItemController {
 
     private final MenuItemService menuItemService;
-    private final RestaurantService restaurantService;
 
     @PostMapping
     public ResponseEntity<MenuItem> createMenuItem(@RequestBody MenuItemDto menuItemDto) {

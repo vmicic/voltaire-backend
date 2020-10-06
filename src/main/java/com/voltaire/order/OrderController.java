@@ -2,7 +2,6 @@ package com.voltaire.order;
 
 import com.voltaire.order.model.Order;
 import com.voltaire.order.model.OrderDto;
-import com.voltaire.restaurant.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +15,14 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
-    private final RestaurantService restaurantService;
 
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody OrderDto orderDto) {
         Order order = orderService.createOrder(orderDto);
 
-        return new ResponseEntity<>(order, HttpStatus.CREATED);
+        return new ResponseEntity<>(order, HttpStatus.OK);
     }
+
 
     @GetMapping
     public ResponseEntity<List<Order>> getAllOrders() {
@@ -40,16 +39,16 @@ public class OrderController {
     }
 
     @PutMapping("/{id}/confirm")
-    public ResponseEntity<Void> confirmOrder(@PathVariable Long id) {
-        orderService.confirmOrder(id);
+    public ResponseEntity<Long> confirmOrder(@PathVariable Long id) {
+        Long orderId = orderService.confirmOrder(id);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(orderId, HttpStatus.OK);
     }
 
     @PutMapping("/{id}/reject")
-    public ResponseEntity<Void> rejectOrder(@PathVariable Long id) {
-        orderService.rejectOrder(id);
+    public ResponseEntity<Long> rejectOrder(@PathVariable Long id) {
+        Long orderId = orderService.rejectOrder(id);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(orderId, HttpStatus.NO_CONTENT);
     }
 }

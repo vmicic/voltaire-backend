@@ -1,13 +1,12 @@
 package com.voltaire.restaurant;
 
-import com.voltaire.error.customerrors.EntityNotFoundException;
+import com.voltaire.exceptions.customexceptions.EntityNotFoundException;
 import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.restaurant.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -24,33 +23,30 @@ public class RestaurantService {
     }
 
     public Restaurant findById(Long id) {
-        Optional<Restaurant> restaurant = restaurantRepository.findById(id);
-        if(restaurant.isEmpty()) {
-            throw new EntityNotFoundException(Restaurant.class, "id", id.toString());
-        }
-
-        return restaurant.get();
+        return restaurantRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException(Restaurant.class, "id", id.toString()));
     }
 
     public boolean notExists(Long id) {
         return !restaurantRepository.existsById(id);
     }
 
-    public void updateRestaurant(Long id, Restaurant restaurant) {
-        if(notExists(id)) {
+    public Long updateRestaurant(Long id, Restaurant restaurant) {
+        if (notExists(id)) {
             throw new EntityNotFoundException(Restaurant.class, "id", id.toString());
         }
 
         restaurant.setId(id);
-        restaurantRepository.save(restaurant);
+        return restaurantRepository.save(restaurant).getId();
     }
 
-    public void deleteRestaurant(Long id) {
-        if(notExists(id)) {
+    public Long deleteRestaurant(Long id) {
+        if (notExists(id)) {
             throw new EntityNotFoundException(Restaurant.class, "id", id.toString());
         }
 
         restaurantRepository.deleteById(id);
+        return id;
     }
 
 }
