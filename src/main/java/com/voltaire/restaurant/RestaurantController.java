@@ -39,10 +39,10 @@ public class RestaurantController {
 
     @PutMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<Void> updateRestaurant(@PathVariable Long id, @RequestBody Restaurant restaurant) {
-        Long updatedId = restaurantService.updateRestaurant(id, restaurant);
+        var updatedId = restaurantService.updateRestaurant(id, restaurant);
 
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("id", updatedId.toString());
+        jsonObject.addProperty("id", updatedId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -52,7 +52,7 @@ public class RestaurantController {
         var deletedId = restaurantService.deleteRestaurant(id);
 
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("id", deletedId.toString());
+        jsonObject.addProperty("id", deletedId);
 
         return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
     }
