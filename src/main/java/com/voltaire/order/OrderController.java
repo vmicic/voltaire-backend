@@ -5,7 +5,6 @@ import com.voltaire.order.model.OrderDto;
 import com.voltaire.restaurant.IdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
