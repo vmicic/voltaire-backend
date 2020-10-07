@@ -1,8 +1,7 @@
-package com.voltaire.restaurant;
+package com.voltaire.shared;
 
-import java.io.Serializable;
 
-public class IdResponse implements Serializable {
+public class IdResponse {
 
     private Long id;
 

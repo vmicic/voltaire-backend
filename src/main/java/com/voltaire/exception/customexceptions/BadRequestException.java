@@ -1,4 +1,4 @@
-package com.voltaire.exceptions.customexceptions;
+package com.voltaire.exception.customexceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

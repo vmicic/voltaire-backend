@@ -1,9 +1,10 @@
 package com.voltaire.restaurant;
 
-import com.voltaire.exceptions.customexceptions.EntityNotFoundException;
+import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.restaurant.model.MenuItem;
 import com.voltaire.restaurant.model.MenuItemDto;
 import com.voltaire.restaurant.repository.MenuItemRepository;
+import com.voltaire.shared.IdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,15 +28,6 @@ public class MenuItemService {
         return menuItemRepository.save(menuItem);
     }
 
-    public List<MenuItem> findAll() {
-        return menuItemRepository.findAll();
-    }
-
-    public MenuItem findById(Long id) {
-        return menuItemRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException(MenuItem.class, "id", id.toString()));
-    }
-
     public boolean notExists(Long id) {
         return !menuItemRepository.existsById(id);
     }
@@ -56,6 +48,15 @@ public class MenuItemService {
 
         menuItemRepository.deleteById(id);
         return new IdResponse(id);
+    }
+
+    public List<MenuItem> findAll() {
+        return menuItemRepository.findAll();
+    }
+
+    public MenuItem findById(Long id) {
+        return menuItemRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException(MenuItem.class, "id", id.toString()));
     }
 
 }

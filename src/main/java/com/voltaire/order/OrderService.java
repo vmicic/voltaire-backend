@@ -1,12 +1,12 @@
 package com.voltaire.order;
 
-import com.voltaire.exceptions.customexceptions.BadRequestException;
-import com.voltaire.exceptions.customexceptions.EntityNotFoundException;
+import com.voltaire.exception.customexceptions.BadRequestException;
+import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.order.model.*;
 import com.voltaire.order.repository.OrderRepository;
-import com.voltaire.restaurant.IdResponse;
 import com.voltaire.restaurant.MenuItemService;
 import com.voltaire.restaurant.RestaurantService;
+import com.voltaire.shared.IdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -44,15 +44,6 @@ public class OrderService {
         });
     }
 
-    public List<Order> findAll() {
-        return orderRepository.findAll();
-    }
-
-    public Order findById(Long id) {
-        return orderRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException(Order.class, "id", id.toString()));
-    }
-
     public IdResponse confirmOrder(Long id) {
         Order order = findById(id);
         if (order.notWaitingForResponse()) {
@@ -71,5 +62,14 @@ public class OrderService {
 
         order.setOrderStatus(OrderStatus.REJECTED);
         return new IdResponse(orderRepository.save(order).getId());
+    }
+
+    public Order findById(Long id) {
+        return orderRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException(Order.class, "id", id.toString()));
+    }
+
+    public List<Order> findAll() {
+        return orderRepository.findAll();
     }
 }

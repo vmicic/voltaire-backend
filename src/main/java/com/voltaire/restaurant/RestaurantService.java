@@ -1,8 +1,9 @@
 package com.voltaire.restaurant;
 
-import com.voltaire.exceptions.customexceptions.EntityNotFoundException;
+import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.restaurant.repository.RestaurantRepository;
+import com.voltaire.shared.IdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,15 +17,6 @@ public class RestaurantService {
 
     public Restaurant createRestaurant(Restaurant restaurant) {
         return restaurantRepository.save(restaurant);
-    }
-
-    public List<Restaurant> findAll() {
-        return restaurantRepository.findAll();
-    }
-
-    public Restaurant findById(Long id) {
-        return restaurantRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException(Restaurant.class, "id", id.toString()));
     }
 
     public boolean notExists(Long id) {
@@ -46,6 +38,15 @@ public class RestaurantService {
         }
         restaurantRepository.deleteById(id);
         return new IdResponse(id);
+    }
+
+    public List<Restaurant> findAll() {
+        return restaurantRepository.findAll();
+    }
+
+    public Restaurant findById(Long id) {
+        return restaurantRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException(Restaurant.class, "id", id.toString()));
     }
 
 }

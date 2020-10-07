@@ -1,4 +1,4 @@
-package com.voltaire.exceptions;
+package com.voltaire.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;

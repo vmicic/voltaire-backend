@@ -1,6 +1,7 @@
 package com.voltaire.restaurant;
 
 import com.voltaire.restaurant.model.Restaurant;
+import com.voltaire.shared.IdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
