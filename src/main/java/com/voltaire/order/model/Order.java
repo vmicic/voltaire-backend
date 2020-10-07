@@ -32,17 +32,21 @@ public class Order {
     private List<OrderItem> orderItems;
 
     public void addOrderItem(OrderItem orderItem) {
-        if(orderItems == null) {
+        if (orderItems == null) {
             orderItems = new ArrayList<>();
         }
         this.orderItems.add(orderItem);
     }
 
     @Builder
-    public Order(LocalDateTime orderTime, OrderStatus orderStatus, Restaurant restaurant, List<OrderItem> orderItems) {
-        this.orderTime = orderTime;
+    public Order(OrderStatus orderStatus, Restaurant restaurant, List<OrderItem> orderItems) {
+        this.orderTime = LocalDateTime.now();
         this.orderStatus = orderStatus;
         this.restaurant = restaurant;
         this.orderItems = orderItems;
+    }
+
+    public boolean notWaitingForResponse() {
+        return !this.orderStatus.equals(OrderStatus.CREATED);
     }
 }

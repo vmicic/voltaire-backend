@@ -1,13 +1,15 @@
 package com.voltaire.order;
 
+import com.voltaire.exception.customexceptions.BadRequestException;
+import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.order.model.*;
 import com.voltaire.order.repository.OrderRepository;
 import com.voltaire.restaurant.MenuItemService;
 import com.voltaire.restaurant.RestaurantService;
+import com.voltaire.shared.IdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -20,10 +22,10 @@ public class OrderService {
 
     public Order createOrder(OrderDto orderDto) {
         var order = Order.builder()
-                .orderTime(LocalDateTime.now())
                 .orderStatus(OrderStatus.CREATED)
                 .restaurant(restaurantService.findById(orderDto.getRestaurantId()))
                 .build();
+
         createOrderItems(orderDto.getOrderItems(), order);
 
         return orderRepository.save(order);
@@ -31,7 +33,7 @@ public class OrderService {
 
     public void createOrderItems(List<OrderItemDto> orderItemDtos, Order order) {
         orderItemDtos.forEach(orderItemDto -> {
-            var orderItem =  OrderItem.builder()
+            var orderItem = OrderItem.builder()
                     .menuItem(menuItemService.findById(orderItemDto.getMenuItemId()))
                     .order(order)
                     .quantity(orderItemDto.getQuantity())
@@ -42,35 +44,32 @@ public class OrderService {
         });
     }
 
-    public List<Order> findAll() {
-        return orderRepository.findAll();
+    public IdResponse confirmOrder(Long id) {
+        Order order = findById(id);
+        if (order.notWaitingForResponse()) {
+            throw new BadRequestException("Requested order is not waiting response.");
+        }
+
+        order.setOrderStatus(OrderStatus.CONFIRMED);
+        return new IdResponse(orderRepository.save(order).getId());
+    }
+
+    public IdResponse rejectOrder(Long id) {
+        Order order = findById(id);
+        if (order.notWaitingForResponse()) {
+            throw new BadRequestException("Requested order is not waiting response.");
+        }
+
+        order.setOrderStatus(OrderStatus.REJECTED);
+        return new IdResponse(orderRepository.save(order).getId());
     }
 
     public Order findById(Long id) {
-        return orderRepository.findById(id).orElse(null);
+        return orderRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException(Order.class, "id", id.toString()));
     }
 
-    public boolean notExists(Long id) {
-        return !orderRepository.existsById(id);
-    }
-
-    public boolean notWaitingConfirmOrReject(Long id) {
-        Order order = this.findById(id);
-
-        return !order.getOrderStatus().equals(OrderStatus.CREATED);
-    }
-
-    public void confirmOrder(Long id) {
-        Order order = this.findById(id);
-
-        order.setOrderStatus(OrderStatus.CONFIRMED);
-        orderRepository.save(order);
-    }
-
-    public void rejectOrder(Long id) {
-        Order order = this.findById(id);
-
-        order.setOrderStatus(OrderStatus.REJECTED);
-        orderRepository.save(order);
+    public List<Order> findAll() {
+        return orderRepository.findAll();
     }
 }
