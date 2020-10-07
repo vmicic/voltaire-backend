@@ -15,30 +15,23 @@ public class MenuItemController {
     private final MenuItemService menuItemService;
 
     @PostMapping
-    public ResponseEntity<MenuItem> createMenuItem(@RequestBody MenuItemDto menuItemDto) {
-        MenuItem menuItem = menuItemService.createMenuItem(menuItemDto);
-
-        return new ResponseEntity<>(menuItem, HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public MenuItem createMenuItem(@RequestBody MenuItemDto menuItemDto) {
+        return menuItemService.createMenuItem(menuItemDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MenuItem> getMenuItemById(@PathVariable Long id) {
-        MenuItem menuItem = menuItemService.findById(id);
-
-        return new ResponseEntity<>(menuItem, HttpStatus.OK);
+    public MenuItem getMenuItemById(@PathVariable Long id) {
+        return menuItemService.findById(id);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<IdResponse> updateMenuItem(@PathVariable Long id, @RequestBody MenuItem menuItem) {
-        var idResponse = menuItemService.updateMenuItem(id, menuItem);
-
-        return new ResponseEntity<>(idResponse, HttpStatus.OK);
+    public IdResponse updateMenuItem(@PathVariable Long id, @RequestBody MenuItem menuItem) {
+        return menuItemService.updateMenuItem(id, menuItem);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<IdResponse> deleteMenuItem(@PathVariable Long id) {
-        var idResponse = menuItemService.deleteMenuItem(id);
-
-        return new ResponseEntity<>(idResponse, HttpStatus.OK);
+    public IdResponse deleteMenuItem(@PathVariable Long id) {
+        return menuItemService.deleteMenuItem(id);
     }
 }

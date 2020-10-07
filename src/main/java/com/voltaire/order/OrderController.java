@@ -18,38 +18,29 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody OrderDto orderDto) {
-        Order order = orderService.createOrder(orderDto);
-
-        return new ResponseEntity<>(order, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.CREATED)
+    public Order createOrder(@RequestBody OrderDto orderDto) {
+        return orderService.createOrder(orderDto);
     }
 
 
     @GetMapping
-    public ResponseEntity<List<Order>> getAllOrders() {
-        List<Order> orders = orderService.findAll();
-
-        return new ResponseEntity<>(orders, HttpStatus.OK);
+    public List<Order> getAllOrders() {
+        return orderService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
-        Order order = orderService.findById(id);
-
-        return new ResponseEntity<>(order, HttpStatus.OK);
+    public Order getOrderById(@PathVariable Long id) {
+        return orderService.findById(id);
     }
 
     @PutMapping("/{id}/confirm")
-    public ResponseEntity<IdResponse> confirmOrder(@PathVariable Long id) {
-        var idResponse = orderService.confirmOrder(id);
-
-        return new ResponseEntity<>(idResponse, HttpStatus.OK);
+    public IdResponse confirmOrder(@PathVariable Long id) {
+        return orderService.confirmOrder(id);
     }
 
     @PutMapping("/{id}/reject")
-    public ResponseEntity<IdResponse> rejectOrder(@PathVariable Long id) {
-        var idResponse = orderService.rejectOrder(id);
-
-        return new ResponseEntity<>(idResponse, HttpStatus.OK);
+    public IdResponse rejectOrder(@PathVariable Long id) {
+        return orderService.rejectOrder(id);
     }
 }

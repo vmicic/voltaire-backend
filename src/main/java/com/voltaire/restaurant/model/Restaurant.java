@@ -16,7 +16,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Entity
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Restaurant {
 
     @Id
@@ -27,7 +26,6 @@ public class Restaurant {
 
     private String address;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm")
     private LocalTime openingTime;
 
     private LocalTime closingTime;
