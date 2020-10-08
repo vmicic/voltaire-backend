@@ -4,11 +4,15 @@ package com.voltaire.restaurant;
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.restaurant.repository.RestaurantRepository;
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.event.annotation.BeforeTestClass;
 
 import java.time.LocalTime;
 import java.util.Arrays;
@@ -27,15 +31,21 @@ class RestaurantServiceTest {
     @InjectMocks
     RestaurantService restaurantService;
 
-    @Test
-    void createRestaurant_returnCreatedRestaurant_returnCreatedRestaurant() {
-        var restaurant = Restaurant.builder()
+    private Restaurant restaurant;
+
+    @BeforeEach
+    public void setUp() {
+         this.restaurant = Restaurant.builder()
                 .name("My restaurant")
                 .address("Brace Ribnikar 10")
                 .openingTime(LocalTime.of(10, 10))
                 .closingTime(LocalTime.of(20, 20))
                 .build();
+         restaurant.setId(1L);
+    }
 
+    @Test
+    void createRestaurant_returnCreatedRestaurant_returnCreatedRestaurant() {
         when(restaurantRepository.save(restaurant)).thenReturn(restaurant);
 
         var newRestaurant = restaurantService.createRestaurant(restaurant);
@@ -46,13 +56,6 @@ class RestaurantServiceTest {
 
     @Test
     void updateRestaurant_RestaurantDoesntExist_ExceptionThrown() {
-        var restaurant = Restaurant.builder()
-                .name("My restaurant")
-                .address("Brace Ribnikar 10")
-                .openingTime(LocalTime.of(10, 10))
-                .closingTime(LocalTime.of(20, 20))
-                .build();
-
         when(restaurantRepository.findById(1L)).thenThrow(new EntityNotFoundException(Restaurant.class, "id",
                 Long.valueOf(1).toString()));
 
@@ -62,15 +65,6 @@ class RestaurantServiceTest {
 
     @Test
     void updateRestaurant_returnValue_returnIdResponse() {
-        var restaurant = Restaurant.builder()
-                .name("My restaurant")
-                .address("Brace Ribnikar 10")
-                .openingTime(LocalTime.of(10, 10))
-                .closingTime(LocalTime.of(20, 20))
-                .build();
-
-        restaurant.setId(1L);
-
         when(restaurantRepository.findById(1L)).thenReturn(java.util.Optional.of(restaurant));
         when(restaurantRepository.save(restaurant)).thenReturn(restaurant);
 
@@ -118,15 +112,6 @@ class RestaurantServiceTest {
 
     @Test
     void findAll_returnAllRestaurants_returnAllRestaurants() {
-        var restaurant1 = Restaurant.builder()
-                .name("My restaurant")
-                .address("Brace Ribnikar 10")
-                .openingTime(LocalTime.of(10, 10))
-                .closingTime(LocalTime.of(20, 20))
-                .build();
-
-        restaurant1.setId(1L);
-
         var restaurant2 = Restaurant.builder()
                 .name("My restaurant")
                 .address("Brace Ribnikar 10")
@@ -136,7 +121,7 @@ class RestaurantServiceTest {
 
         restaurant2.setId(2L);
 
-        when(restaurantRepository.findAll()).thenReturn(Arrays.asList(restaurant1, restaurant2));
+        when(restaurantRepository.findAll()).thenReturn(Arrays.asList(restaurant, restaurant2));
 
         var restaurants = restaurantService.findAll();
 
