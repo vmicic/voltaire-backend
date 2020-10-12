@@ -4,8 +4,10 @@ import com.voltaire.exception.customexceptions.BadRequestException;
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.order.model.*;
 import com.voltaire.order.repository.OrderRepository;
-import com.voltaire.restaurant.MenuItemService;
-import com.voltaire.restaurant.RestaurantService;
+import com.voltaire.restaurant.model.MenuItem;
+import com.voltaire.restaurant.model.Restaurant;
+import com.voltaire.restaurant.repository.MenuItemRepository;
+import com.voltaire.restaurant.repository.RestaurantRepository;
 import com.voltaire.shared.IdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,13 +19,13 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final RestaurantService restaurantService;
-    private final MenuItemService menuItemService;
+    private final RestaurantRepository restaurantRepository;
+    private final MenuItemRepository menuItemRepository;
 
     public Order createOrder(OrderDto orderDto) {
         var order = Order.builder()
                 .orderStatus(OrderStatus.CREATED)
-                .restaurant(restaurantService.findById(orderDto.getRestaurantId()))
+                .restaurant(findRestaurantById(orderDto.getRestaurantId()))
                 .build();
 
         createOrderItems(orderDto.getOrderItems(), order);
@@ -31,10 +33,15 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    private Restaurant findRestaurantById(Long id) {
+        return restaurantRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("Restaurant", "id", id.toString()));
+    }
+
     public void createOrderItems(List<OrderItemDto> orderItemDtos, Order order) {
         orderItemDtos.forEach(orderItemDto -> {
             var orderItem = OrderItem.builder()
-                    .menuItem(menuItemService.findById(orderItemDto.getMenuItemId()))
+                    .menuItem(findMenuItemById(orderItemDto.getMenuItemId()))
                     .order(order)
                     .quantity(orderItemDto.getQuantity())
                     .additionalInfo(orderItemDto.getAdditionalInfo())
@@ -43,6 +50,12 @@ public class OrderService {
             order.addOrderItem(orderItem);
         });
     }
+
+    private MenuItem findMenuItemById(Long id) {
+        return menuItemRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("Menu item", "id", id.toString()));
+    }
+
 
     public IdResponse confirmOrder(Long id) {
         Order order = findById(id);
@@ -66,10 +79,12 @@ public class OrderService {
 
     public Order findById(Long id) {
         return orderRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException(Order.class, "id", id.toString()));
+                new EntityNotFoundException("Order", "id", id.toString()));
     }
 
     public List<Order> findAll() {
         return orderRepository.findAll();
     }
+
+
 }

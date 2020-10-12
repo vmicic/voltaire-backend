@@ -1,6 +1,7 @@
 package com.voltaire.restaurant.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,8 @@ import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 public class MenuItem {
 
@@ -26,13 +29,5 @@ public class MenuItem {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private Restaurant restaurant;
-
-    @Builder
-    private MenuItem(String name, BigDecimal price, String description, Restaurant restaurant) {
-        this.name = name;
-        this.price = price;
-        this.description = description;
-        this.restaurant = restaurant;
-    }
 
 }
