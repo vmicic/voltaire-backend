@@ -3,6 +3,7 @@ spring:
     url: jdbc:h2:mem:db
     driver-class-name: org.h2.Driver
     username: sa
+    initialization-mode: always
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     show-sql: true
@@ -13,3 +14,4 @@ spring:
 server:
   error:
     include-message: always
+
