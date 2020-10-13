@@ -25,7 +25,7 @@ public class RestaurantService {
 
     public IdResponse updateRestaurant(Long id, Restaurant restaurant) {
         if (notExists(id)) {
-            throw new EntityNotFoundException("Restaurant", "id", id.toString());
+            throw new EntityNotFoundException("id", id.toString());
         }
 
         restaurant.setId(id);
@@ -34,7 +34,7 @@ public class RestaurantService {
 
     public IdResponse deleteRestaurant(Long id) {
         if (notExists(id)) {
-            throw new EntityNotFoundException("Restaurant", "id", id.toString());
+            throw new EntityNotFoundException("id", id.toString());
         }
         restaurantRepository.deleteById(id);
         return new IdResponse(id);
@@ -46,7 +46,7 @@ public class RestaurantService {
 
     public Restaurant findById(Long id) {
         return restaurantRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Restaurant", "id", id.toString()));
+                new EntityNotFoundException("id", id.toString()));
     }
 
 }

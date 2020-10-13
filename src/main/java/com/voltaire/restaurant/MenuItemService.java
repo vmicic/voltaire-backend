@@ -32,7 +32,7 @@ public class MenuItemService {
 
     private Restaurant findRestaurantById(Long id) {
         return restaurantRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Restaurant", "id", id.toString()));
+                new EntityNotFoundException("id", id.toString()));
     }
 
     public boolean notExists(Long id) {
@@ -41,7 +41,7 @@ public class MenuItemService {
 
     public IdResponse updateMenuItem(Long id, MenuItem menuItem) {
         if (notExists(id)) {
-            throw new EntityNotFoundException("Menu item", "id", id.toString());
+            throw new EntityNotFoundException("id", id.toString());
         }
 
         menuItem.setId(id);
@@ -50,7 +50,7 @@ public class MenuItemService {
 
     public IdResponse deleteMenuItem(Long id) {
         if (notExists(id)) {
-            throw new EntityNotFoundException("Menu item", "id", id.toString());
+            throw new EntityNotFoundException("id", id.toString());
         }
 
         menuItemRepository.deleteById(id);
@@ -63,7 +63,7 @@ public class MenuItemService {
 
     public MenuItem findById(Long id) {
         return menuItemRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Menu item", "id", id.toString()));
+                new EntityNotFoundException("id", id.toString()));
     }
 
 }

@@ -35,7 +35,7 @@ public class OrderService {
 
     private Restaurant findRestaurantById(Long id) {
         return restaurantRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Restaurant", "id", id.toString()));
+                new EntityNotFoundException("id", id.toString()));
     }
 
     public void createOrderItems(List<OrderItemDto> orderItemDtos, Order order) {
@@ -53,7 +53,7 @@ public class OrderService {
 
     private MenuItem findMenuItemById(Long id) {
         return menuItemRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Menu item", "id", id.toString()));
+                new EntityNotFoundException("id", id.toString()));
     }
 
 
@@ -79,7 +79,7 @@ public class OrderService {
 
     public Order findById(Long id) {
         return orderRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Order", "id", id.toString()));
+                new EntityNotFoundException("id", id.toString()));
     }
 
     public List<Order> findAll() {
