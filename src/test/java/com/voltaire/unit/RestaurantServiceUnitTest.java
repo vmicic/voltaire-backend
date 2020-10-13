@@ -1,7 +1,8 @@
-package com.voltaire.restaurant;
+package com.voltaire.unit;
 
 
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
+import com.voltaire.restaurant.RestaurantService;
 import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.restaurant.repository.RestaurantRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class RestaurantServiceUnitTest {
 
-    private static final Long ID_NOT_EXIST = 500L;
+    private final Long ID_NOT_EXISTING = 500L;
 
     @Mock
     RestaurantRepository restaurantRepository;
@@ -44,7 +45,7 @@ class RestaurantServiceUnitTest {
     }
 
     @Test
-    void createRestaurantReturnCreatedRestaurant() {
+    void createRestaurantTest() {
         when(restaurantRepository.save(restaurant)).thenReturn(restaurant);
 
         var newRestaurant = restaurantService.createRestaurant(restaurant);
@@ -55,58 +56,64 @@ class RestaurantServiceUnitTest {
 
     @Test
     void updateRestaurantThrowNotFoundException() {
-        when(restaurantRepository.findById(ID_NOT_EXIST)).thenThrow(new EntityNotFoundException(Restaurant.class, "id",
-                ID_NOT_EXIST.toString()));
+        when(restaurantRepository.findById(ID_NOT_EXISTING)).thenThrow(new EntityNotFoundException(Restaurant.class, "id",
+                ID_NOT_EXISTING.toString()));
 
-        assertThrows(EntityNotFoundException.class, () -> restaurantService.updateRestaurant(ID_NOT_EXIST, restaurant));
-        verify(restaurantRepository).findById(ID_NOT_EXIST);
+        assertThrows(EntityNotFoundException.class, () -> restaurantService.updateRestaurant(ID_NOT_EXISTING, restaurant));
+        verify(restaurantRepository).findById(ID_NOT_EXISTING);
     }
 
     @Test
     void updateRestaurantTest() {
-        when(restaurantRepository.findById(1L)).thenReturn(Optional.of(restaurant));
+        var updateId = restaurant.getId();
+
+        when(restaurantRepository.findById(updateId)).thenReturn(Optional.of(restaurant));
         when(restaurantRepository.save(restaurant)).thenReturn(restaurant);
 
-        var idResponse = restaurantService.updateRestaurant(1L, restaurant);
+        var idResponse = restaurantService.updateRestaurant(updateId, restaurant);
 
-        assertEquals(1L, idResponse.getId());
+        assertEquals(updateId, idResponse.getId());
         verify(restaurantRepository).save(restaurant);
-        verify(restaurantRepository).findById(1L);
+        verify(restaurantRepository).findById(updateId);
     }
 
     @Test
     void deleteRestaurantThrowNotFoundException() {
-        when(restaurantRepository.existsById(ID_NOT_EXIST)).thenReturn(false);
+        when(restaurantRepository.existsById(ID_NOT_EXISTING)).thenReturn(false);
 
-        assertThrows(EntityNotFoundException.class, () -> restaurantService.deleteRestaurant(ID_NOT_EXIST));
+        assertThrows(EntityNotFoundException.class, () -> restaurantService.deleteRestaurant(ID_NOT_EXISTING));
     }
 
     @Test
     void deleteRestaurantTest() {
-        when(restaurantRepository.existsById(1L)).thenReturn(true);
+        var deleteId = restaurant.getId();
 
-        var idResponse = restaurantService.deleteRestaurant(1L);
+        when(restaurantRepository.existsById(deleteId)).thenReturn(true);
 
-        assertEquals(1L, idResponse.getId());
-        verify(restaurantRepository).deleteById(1L);
+        var idResponse = restaurantService.deleteRestaurant(deleteId);
+
+        assertEquals(deleteId, idResponse.getId());
+        verify(restaurantRepository).deleteById(deleteId);
     }
 
     @Test
     void notExistsTrueTest() {
-        when(restaurantRepository.existsById(1L)).thenReturn(false);
+        when(restaurantRepository.existsById(ID_NOT_EXISTING)).thenReturn(false);
 
-        var notExists = restaurantService.notExists(1L);
+        var notExists = restaurantService.notExists(ID_NOT_EXISTING);
         assertTrue(notExists);
-        verify(restaurantRepository).existsById(1L);
+        verify(restaurantRepository).existsById(ID_NOT_EXISTING);
     }
 
     @Test
     void notExistsFalseTest() {
-        when(restaurantRepository.existsById(1L)).thenReturn(true);
+        var existId = restaurant.getId();
 
-        var notExists = restaurantService.notExists(1L);
+        when(restaurantRepository.existsById(existId)).thenReturn(true);
+
+        var notExists = restaurantService.notExists(existId);
         assertFalse(notExists);
-        verify(restaurantRepository).existsById(1L);
+        verify(restaurantRepository).existsById(existId);
     }
 
     @Test

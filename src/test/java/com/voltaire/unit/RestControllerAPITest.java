@@ -1,7 +1,9 @@
-package com.voltaire.restaurant;
+package com.voltaire.unit;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.voltaire.restaurant.RestaurantController;
+import com.voltaire.restaurant.RestaurantService;
 import com.voltaire.restaurant.model.Restaurant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

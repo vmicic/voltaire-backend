@@ -1,6 +1,7 @@
-package com.voltaire.restaurant;
+package com.voltaire.integration;
 
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
+import com.voltaire.restaurant.RestaurantService;
 import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.restaurant.repository.RestaurantRepository;
 import org.junit.jupiter.api.BeforeEach;
