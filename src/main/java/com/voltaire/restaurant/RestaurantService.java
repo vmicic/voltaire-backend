@@ -24,12 +24,14 @@ public class RestaurantService {
     }
 
     public IdResponse updateRestaurant(Long id, Restaurant restaurant) {
-        if (notExists(id)) {
-            throw new EntityNotFoundException(Restaurant.class, "id", id.toString());
-        }
+        Restaurant oldRestaurant = findById(id);
 
-        restaurant.setId(id);
-        return new IdResponse(restaurantRepository.save(restaurant).getId());
+        oldRestaurant.setName(restaurant.getName());
+        oldRestaurant.setAddress(restaurant.getAddress());
+        oldRestaurant.setClosingTime(restaurant.getClosingTime());
+        oldRestaurant.setOpeningTime(restaurant.getOpeningTime());
+
+        return new IdResponse(restaurantRepository.save(oldRestaurant).getId());
     }
 
     public IdResponse deleteRestaurant(Long id) {

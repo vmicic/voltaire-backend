@@ -1,5 +1,6 @@
 package com.voltaire.restaurant.model;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -30,5 +31,13 @@ public class Restaurant {
 
     @OneToMany(mappedBy = "restaurant", orphanRemoval = true)
     private List<MenuItem> menuItems = new ArrayList<>();
+
+    @Builder
+    private Restaurant(String name, String address, LocalTime openingTime, LocalTime closingTime) {
+        this.name = name;
+        this.address = address;
+        this.openingTime = openingTime;
+        this.closingTime = closingTime;
+    }
 
 }
