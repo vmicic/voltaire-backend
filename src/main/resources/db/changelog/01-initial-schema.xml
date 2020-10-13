@@ -69,7 +69,6 @@
             <column name="quantity" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="additional_info" type="varchar(1024)"/>
             <column name="menu_item_id" type="long"/>
             <column name="order_id" type="long"/>
         </createTable>

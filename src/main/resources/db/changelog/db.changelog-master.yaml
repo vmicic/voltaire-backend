@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/01-initial-schema.xml
   - include:
       file: db/changelog/02-insert-data.xml
+  - include:
+      file: db/changelog/03-add-new-column-to-order-item.xml
