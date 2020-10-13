@@ -2,7 +2,6 @@ package com.voltaire.restaurant;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.voltaire.restaurant.model.MenuItem;
 import com.voltaire.restaurant.model.Restaurant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,10 +14,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalTime;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = RestaurantController.class)
@@ -56,7 +55,7 @@ class RestControllerAPITest {
     }
 
     @Test
-    void createRestaurant_returnValue_returnCreatedRestaurant() throws Exception {
+    void createRestaurantReturnCreatedRestaurant() throws Exception {
         when(restaurantService.createRestaurant(restaurant)).thenReturn(restaurant);
 
         var result = mockMvc.perform(post("/v1/restaurants")
@@ -68,7 +67,6 @@ class RestControllerAPITest {
         var response = objectMapper.readValue(result, Restaurant.class);
         assertEquals(restaurant, response);
     }
-
 
 
 }

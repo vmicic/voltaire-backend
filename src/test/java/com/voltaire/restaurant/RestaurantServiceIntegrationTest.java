@@ -10,11 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.transaction.Transactional;
+import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.net.IDN;
-import java.time.LocalTime;
 
 @SpringBootTest
 @ActiveProfiles(profiles = "test")

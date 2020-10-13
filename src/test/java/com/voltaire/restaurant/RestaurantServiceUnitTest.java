@@ -4,19 +4,16 @@ package com.voltaire.restaurant;
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.restaurant.repository.RestaurantRepository;
-import org.aspectj.lang.annotation.Before;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.event.annotation.BeforeTestClass;
 
 import java.time.LocalTime;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -24,6 +21,8 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RestaurantServiceUnitTest {
+
+    private static final Long ID_NOT_EXIST = 500L;
 
     @Mock
     RestaurantRepository restaurantRepository;
@@ -35,17 +34,17 @@ class RestaurantServiceUnitTest {
 
     @BeforeEach
     public void setUp() {
-         this.restaurant = Restaurant.builder()
+        this.restaurant = Restaurant.builder()
                 .name("My restaurant")
                 .address("Brace Ribnikar 10")
                 .openingTime(LocalTime.of(10, 10))
                 .closingTime(LocalTime.of(20, 20))
                 .build();
-         restaurant.setId(1L);
+        restaurant.setId(1L);
     }
 
     @Test
-    void createRestaurant_returnCreatedRestaurant_returnCreatedRestaurant() {
+    void createRestaurantReturnCreatedRestaurant() {
         when(restaurantRepository.save(restaurant)).thenReturn(restaurant);
 
         var newRestaurant = restaurantService.createRestaurant(restaurant);
@@ -55,17 +54,17 @@ class RestaurantServiceUnitTest {
     }
 
     @Test
-    void updateRestaurant_RestaurantDoesntExist_ExceptionThrown() {
-        when(restaurantRepository.findById(1L)).thenThrow(new EntityNotFoundException(Restaurant.class, "id",
-                Long.valueOf(1).toString()));
+    void updateRestaurantThrowNotFoundException() {
+        when(restaurantRepository.findById(ID_NOT_EXIST)).thenThrow(new EntityNotFoundException(Restaurant.class, "id",
+                ID_NOT_EXIST.toString()));
 
-        assertThrows(EntityNotFoundException.class, () -> restaurantService.updateRestaurant(1L, restaurant));
-        verify(restaurantRepository).findById(1L);
+        assertThrows(EntityNotFoundException.class, () -> restaurantService.updateRestaurant(ID_NOT_EXIST, restaurant));
+        verify(restaurantRepository).findById(ID_NOT_EXIST);
     }
 
     @Test
-    void updateRestaurant_returnValue_returnIdResponse() {
-        when(restaurantRepository.findById(1L)).thenReturn(java.util.Optional.of(restaurant));
+    void updateRestaurantTest() {
+        when(restaurantRepository.findById(1L)).thenReturn(Optional.of(restaurant));
         when(restaurantRepository.save(restaurant)).thenReturn(restaurant);
 
         var idResponse = restaurantService.updateRestaurant(1L, restaurant);
@@ -76,14 +75,14 @@ class RestaurantServiceUnitTest {
     }
 
     @Test
-    void deleteRestaurant_RestaurantDoesntExist_ExceptionThrown() {
-        when(restaurantRepository.existsById(1L)).thenReturn(false);
+    void deleteRestaurantThrowNotFoundException() {
+        when(restaurantRepository.existsById(ID_NOT_EXIST)).thenReturn(false);
 
-        assertThrows(EntityNotFoundException.class, () -> restaurantService.deleteRestaurant(1L));
+        assertThrows(EntityNotFoundException.class, () -> restaurantService.deleteRestaurant(ID_NOT_EXIST));
     }
 
     @Test
-    void deleteRestaurant_returnValue_returnIdResponse() {
+    void deleteRestaurantTest() {
         when(restaurantRepository.existsById(1L)).thenReturn(true);
 
         var idResponse = restaurantService.deleteRestaurant(1L);
@@ -93,7 +92,7 @@ class RestaurantServiceUnitTest {
     }
 
     @Test
-    void notExists_RestaurantDoesntExist_ReturnTrue() {
+    void notExistsTrueTest() {
         when(restaurantRepository.existsById(1L)).thenReturn(false);
 
         var notExists = restaurantService.notExists(1L);
@@ -102,7 +101,7 @@ class RestaurantServiceUnitTest {
     }
 
     @Test
-    void notExists_RestaurantExists_ReturnFalse() {
+    void notExistsFalseTest() {
         when(restaurantRepository.existsById(1L)).thenReturn(true);
 
         var notExists = restaurantService.notExists(1L);
@@ -111,7 +110,7 @@ class RestaurantServiceUnitTest {
     }
 
     @Test
-    void findAll_returnAllRestaurants_returnAllRestaurants() {
+    void findAllReturnAllRestaurants() {
         var restaurant2 = Restaurant.builder()
                 .name("My restaurant")
                 .address("Brace Ribnikar 10")
