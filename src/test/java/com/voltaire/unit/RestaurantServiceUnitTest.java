@@ -56,7 +56,7 @@ class RestaurantServiceUnitTest {
 
     @Test
     void updateRestaurantThrowNotFoundException() {
-        when(restaurantRepository.findById(ID_NOT_EXISTING)).thenThrow(new EntityNotFoundException(Restaurant.class, "id",
+        when(restaurantRepository.findById(ID_NOT_EXISTING)).thenThrow(new EntityNotFoundException("id",
                 ID_NOT_EXISTING.toString()));
 
         assertThrows(EntityNotFoundException.class, () -> restaurantService.updateRestaurant(ID_NOT_EXISTING, restaurant));
