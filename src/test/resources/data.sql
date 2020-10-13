@@ -1,5 +1,5 @@
 INSERT INTO restaurant(id, name, address, opening_time, closing_time) VALUES
-    ('1000', 'La Fresh', 'Brace Ribnikar 10', '10:00:00', '23:00:00'),
+    ('1000', 'La resh', 'Brace Ribnikar 10', '10:00:00', '23:00:00'),
     ('1001', 'Sef', 'Brace Ribnikar 17', '09:00:00', '23:00:00');
 
 
