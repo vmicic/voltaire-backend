@@ -5,3 +5,10 @@ databaseChangeLog:
       file: db/changelog/02-insert-data.xml
   - include:
       file: db/changelog/03-add-new-column-to-order-item.xml
+  - include:
+      file: db/changelog/04-delete-data.xml
+  - include:
+      file: db/changelog/05-update-id-type-to-uuid.xml
+  - include:
+      file: db/changelog/06-insert-data.xml
+

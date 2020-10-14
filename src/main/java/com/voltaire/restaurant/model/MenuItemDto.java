@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -15,6 +16,6 @@ public class MenuItemDto {
 
     private String description;
 
-    private Long restaurantId;
+    private UUID restaurantId;
 
 }

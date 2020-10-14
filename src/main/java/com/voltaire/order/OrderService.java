@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -44,7 +45,7 @@ public class OrderService {
         });
     }
 
-    public IdResponse confirmOrder(Long id) {
+    public IdResponse confirmOrder(UUID id) {
         Order order = findById(id);
         if (order.notWaitingForResponse()) {
             throw new BadRequestException("Requested order is not waiting response.");
@@ -54,7 +55,7 @@ public class OrderService {
         return new IdResponse(orderRepository.save(order).getId());
     }
 
-    public IdResponse rejectOrder(Long id) {
+    public IdResponse rejectOrder(UUID id) {
         Order order = findById(id);
         if (order.notWaitingForResponse()) {
             throw new BadRequestException("Requested order is not waiting response.");
@@ -64,7 +65,7 @@ public class OrderService {
         return new IdResponse(orderRepository.save(order).getId());
     }
 
-    public Order findById(Long id) {
+    public Order findById(UUID id) {
         return orderRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException(Order.class, "id", id.toString()));
     }

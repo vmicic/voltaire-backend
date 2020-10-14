@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -28,11 +29,11 @@ public class MenuItemService {
         return menuItemRepository.save(menuItem);
     }
 
-    public boolean notExists(Long id) {
+    public boolean notExists(UUID id) {
         return !menuItemRepository.existsById(id);
     }
 
-    public IdResponse updateMenuItem(Long id, MenuItem menuItem) {
+    public IdResponse updateMenuItem(UUID id, MenuItem menuItem) {
         if (notExists(id)) {
             throw new EntityNotFoundException(MenuItem.class, "id", id.toString());
         }
@@ -41,7 +42,7 @@ public class MenuItemService {
         return new IdResponse(menuItemRepository.save(menuItem).getId());
     }
 
-    public IdResponse deleteMenuItem(Long id) {
+    public IdResponse deleteMenuItem(UUID id) {
         if (notExists(id)) {
             throw new EntityNotFoundException(MenuItem.class, "id", id.toString());
         }
@@ -54,7 +55,7 @@ public class MenuItemService {
         return menuItemRepository.findAll();
     }
 
-    public MenuItem findById(Long id) {
+    public MenuItem findById(UUID id) {
         return menuItemRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException(MenuItem.class, "id", id.toString()));
     }
