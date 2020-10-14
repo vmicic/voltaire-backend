@@ -31,8 +31,13 @@ public class MenuItemService {
         return menuItemRepository.save(menuItem);
     }
 
+    private Restaurant findRestaurantById(UUID id) {
+        return restaurantRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("id", id.toString()));
+    }
 
-    public boolean notExists(Long id) {
+
+    public boolean notExists(UUID id) {
         return !menuItemRepository.existsById(id);
     }
 
