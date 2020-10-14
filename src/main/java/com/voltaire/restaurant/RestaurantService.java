@@ -25,17 +25,20 @@ public class RestaurantService {
     }
 
     public IdResponse updateRestaurant(UUID id, Restaurant restaurant) {
-        if (notExists(id)) {
-            throw new EntityNotFoundException(Restaurant.class, "id", id.toString());
-        }
 
-        restaurant.setId(id);
-        return new IdResponse(restaurantRepository.save(restaurant).getId());
+        Restaurant oldRestaurant = findById(id);
+
+        oldRestaurant.setName(restaurant.getName());
+        oldRestaurant.setAddress(restaurant.getAddress());
+        oldRestaurant.setClosingTime(restaurant.getClosingTime());
+        oldRestaurant.setOpeningTime(restaurant.getOpeningTime());
+
+        return new IdResponse(restaurantRepository.save(oldRestaurant).getId());
     }
 
     public IdResponse deleteRestaurant(UUID id) {
         if (notExists(id)) {
-            throw new EntityNotFoundException(Restaurant.class, "id", id.toString());
+            throw new EntityNotFoundException("id", id.toString());
         }
         restaurantRepository.deleteById(id);
         return new IdResponse(id);
@@ -47,7 +50,7 @@ public class RestaurantService {
 
     public Restaurant findById(UUID id) {
         return restaurantRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException(Restaurant.class, "id", id.toString()));
+                new EntityNotFoundException("id", id.toString()));
     }
 
 }

@@ -1,6 +1,7 @@
 package com.voltaire.order.model;
 
 import com.voltaire.restaurant.model.Restaurant;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,8 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -37,14 +40,6 @@ public class Order {
             orderItems = new ArrayList<>();
         }
         this.orderItems.add(orderItem);
-    }
-
-    @Builder
-    public Order(OrderStatus orderStatus, Restaurant restaurant, List<OrderItem> orderItems) {
-        this.orderTime = LocalDateTime.now();
-        this.orderStatus = orderStatus;
-        this.restaurant = restaurant;
-        this.orderItems = orderItems;
     }
 
     public boolean notWaitingForResponse() {

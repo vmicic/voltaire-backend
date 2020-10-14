@@ -3,7 +3,9 @@ package com.voltaire.restaurant;
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.restaurant.model.MenuItem;
 import com.voltaire.restaurant.model.MenuItemDto;
+import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.restaurant.repository.MenuItemRepository;
+import com.voltaire.restaurant.repository.RestaurantRepository;
 import com.voltaire.shared.IdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,26 +18,27 @@ import java.util.UUID;
 public class MenuItemService {
 
     private final MenuItemRepository menuItemRepository;
-    private final RestaurantService restaurantService;
+    private final RestaurantRepository restaurantRepository;
 
     public MenuItem createMenuItem(MenuItemDto menuItemDto) {
         var menuItem = MenuItem.builder()
                 .name(menuItemDto.getName())
                 .price(menuItemDto.getPrice())
                 .description(menuItemDto.getDescription())
-                .restaurant(restaurantService.findById(menuItemDto.getRestaurantId()))
+                .restaurant(findRestaurantById(menuItemDto.getRestaurantId()))
                 .build();
 
         return menuItemRepository.save(menuItem);
     }
 
-    public boolean notExists(UUID id) {
+
+    public boolean notExists(Long id) {
         return !menuItemRepository.existsById(id);
     }
 
     public IdResponse updateMenuItem(UUID id, MenuItem menuItem) {
         if (notExists(id)) {
-            throw new EntityNotFoundException(MenuItem.class, "id", id.toString());
+            throw new EntityNotFoundException("id", id.toString());
         }
 
         menuItem.setId(id);
@@ -44,7 +47,7 @@ public class MenuItemService {
 
     public IdResponse deleteMenuItem(UUID id) {
         if (notExists(id)) {
-            throw new EntityNotFoundException(MenuItem.class, "id", id.toString());
+            throw new EntityNotFoundException("id", id.toString());
         }
 
         menuItemRepository.deleteById(id);
@@ -57,7 +60,7 @@ public class MenuItemService {
 
     public MenuItem findById(UUID id) {
         return menuItemRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException(MenuItem.class, "id", id.toString()));
+                new EntityNotFoundException("id", id.toString()));
     }
 
 }

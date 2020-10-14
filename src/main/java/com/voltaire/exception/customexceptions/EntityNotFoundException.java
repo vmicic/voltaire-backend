@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class EntityNotFoundException extends RuntimeException {
 
-    public EntityNotFoundException(Class<?> clazz, String property, String value) {
-        super(clazz.getSimpleName() + " was not found for " + property + "=" + value);
+    public EntityNotFoundException(String property, String value) {
+        super("Resource was not found for " + property + "=" + value);
     }
 }
