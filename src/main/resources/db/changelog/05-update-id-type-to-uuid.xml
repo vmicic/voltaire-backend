@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="09" author="vmicic">
+        <modifyDataType tableName="restaurant" columnName="id" newDataType="uuid"/>
+        <modifyDataType tableName="menu_item" columnName="restaurant_id" newDataType="uuid"/>
+        <modifyDataType tableName="orders" columnName="restaurant_id" newDataType="uuid"/>
+    </changeSet>
+
+    <changeSet id="10" author="vmicic">
+        <modifyDataType tableName="menu_item" columnName="id" newDataType="uuid"/>
+        <modifyDataType tableName="order_item" columnName="menu_item_id" newDataType="uuid"/>
+    </changeSet>
+
+    <changeSet id="11" author="vmicic">
+        <modifyDataType tableName="orders" columnName="id" newDataType="uuid"/>
+        <modifyDataType tableName="order_item" columnName="order_id" newDataType="uuid"/>
+    </changeSet>
+
+    <changeSet id="12" author="vmicic">
+        <modifyDataType tableName="order_item" columnName="id" newDataType="uuid"/>
+    </changeSet>
+
+</databaseChangeLog>

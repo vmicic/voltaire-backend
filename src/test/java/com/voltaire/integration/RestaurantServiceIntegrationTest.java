@@ -12,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import javax.transaction.Transactional;
 import java.time.LocalTime;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles(profiles = "test")
 class RestaurantServiceIntegrationTest {
 
-    private final Long ID_NOT_EXIST = 500L;
+    private final UUID ID_NOT_EXISTING = UUID.fromString("0fc3d32a-38c0-457c-b34f-8478fb92f3f4");
 
     @Autowired
     private RestaurantService restaurantService;
@@ -60,7 +61,7 @@ class RestaurantServiceIntegrationTest {
 
     @Test
     void findByIdThrowNotFoundException() {
-        assertThrows(EntityNotFoundException.class, () -> restaurantService.findById(ID_NOT_EXIST));
+        assertThrows(EntityNotFoundException.class, () -> restaurantService.findById(ID_NOT_EXISTING));
     }
 
     @Test
@@ -85,7 +86,7 @@ class RestaurantServiceIntegrationTest {
 
     @Test
     void updateRestaurantThrowNotFoundException() {
-        assertThrows(EntityNotFoundException.class, () -> restaurantService.updateRestaurant(ID_NOT_EXIST, restaurant2));
+        assertThrows(EntityNotFoundException.class, () -> restaurantService.updateRestaurant(ID_NOT_EXISTING, restaurant2));
     }
 
     @Test
@@ -99,12 +100,12 @@ class RestaurantServiceIntegrationTest {
 
     @Test
     void deleteRestaurantThrowNotFoundException() {
-        assertThrows(EntityNotFoundException.class, () -> restaurantService.deleteRestaurant(ID_NOT_EXIST));
+        assertThrows(EntityNotFoundException.class, () -> restaurantService.deleteRestaurant(ID_NOT_EXISTING));
     }
 
     @Test
     void notExistsTrueTest() {
-        var notExists = restaurantService.notExists(ID_NOT_EXIST);
+        var notExists = restaurantService.notExists(ID_NOT_EXISTING);
 
         assertTrue(notExists);
     }

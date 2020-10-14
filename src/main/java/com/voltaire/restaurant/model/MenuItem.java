@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -18,7 +19,7 @@ public class MenuItem {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private UUID id;
 
     private String name;
 

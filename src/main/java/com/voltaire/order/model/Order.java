@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -21,7 +22,7 @@ public class Order {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private UUID id;
 
     private LocalDateTime orderTime;
 

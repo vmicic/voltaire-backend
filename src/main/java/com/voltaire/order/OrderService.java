@@ -12,7 +12,9 @@ import com.voltaire.shared.IdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -24,6 +26,7 @@ public class OrderService {
 
     public Order createOrder(OrderDto orderDto) {
         var order = Order.builder()
+                .orderTime(LocalDateTime.now())
                 .orderStatus(OrderStatus.CREATED)
                 .restaurant(findRestaurantById(orderDto.getRestaurantId()))
                 .build();
@@ -33,7 +36,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    private Restaurant findRestaurantById(Long id) {
+    private Restaurant findRestaurantById(UUID id) {
         return restaurantRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("id", id.toString()));
     }
@@ -51,13 +54,12 @@ public class OrderService {
         });
     }
 
-    private MenuItem findMenuItemById(Long id) {
+    private MenuItem findMenuItemById(UUID id) {
         return menuItemRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("id", id.toString()));
     }
 
-
-    public IdResponse confirmOrder(Long id) {
+    public IdResponse confirmOrder(UUID id) {
         Order order = findById(id);
         if (order.notWaitingForResponse()) {
             throw new BadRequestException("Requested order is not waiting response.");
@@ -67,7 +69,7 @@ public class OrderService {
         return new IdResponse(orderRepository.save(order).getId());
     }
 
-    public IdResponse rejectOrder(Long id) {
+    public IdResponse rejectOrder(UUID id) {
         Order order = findById(id);
         if (order.notWaitingForResponse()) {
             throw new BadRequestException("Requested order is not waiting response.");
@@ -77,7 +79,7 @@ public class OrderService {
         return new IdResponse(orderRepository.save(order).getId());
     }
 
-    public Order findById(Long id) {
+    public Order findById(UUID id) {
         return orderRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("id", id.toString()));
     }
@@ -85,6 +87,4 @@ public class OrderService {
     public List<Order> findAll() {
         return orderRepository.findAll();
     }
-
-
 }

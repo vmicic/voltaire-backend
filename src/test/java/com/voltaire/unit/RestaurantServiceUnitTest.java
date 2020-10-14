@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -23,7 +24,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class RestaurantServiceUnitTest {
 
-    private final Long ID_NOT_EXISTING = 500L;
+    private final UUID ID_NOT_EXISTING = UUID.fromString("0fc3d32a-38c0-457c-b34f-8478fb92f3f4");
 
     @Mock
     RestaurantRepository restaurantRepository;
@@ -41,7 +42,7 @@ class RestaurantServiceUnitTest {
                 .openingTime(LocalTime.of(10, 10))
                 .closingTime(LocalTime.of(20, 20))
                 .build();
-        restaurant.setId(1L);
+        restaurant.setId(UUID.fromString("f9822d37-7357-4bd7-9ad7-e16b68da2e7c"));
     }
 
     @Test
@@ -124,8 +125,6 @@ class RestaurantServiceUnitTest {
                 .openingTime(LocalTime.of(10, 10))
                 .closingTime(LocalTime.of(20, 20))
                 .build();
-
-        restaurant2.setId(2L);
 
         when(restaurantRepository.findAll()).thenReturn(Arrays.asList(restaurant, restaurant2));
 

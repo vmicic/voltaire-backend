@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -27,17 +28,17 @@ public class RestaurantController {
     }
 
     @GetMapping(value = "/{id}")
-    public Restaurant getRestaurantById(@PathVariable Long id) {
+    public Restaurant getRestaurantById(@PathVariable UUID id) {
         return restaurantService.findById(id);
     }
 
     @PutMapping(value = "/{id}")
-    public IdResponse updateRestaurant(@PathVariable Long id, @RequestBody Restaurant restaurant) {
+    public IdResponse updateRestaurant(@PathVariable UUID id, @RequestBody Restaurant restaurant) {
         return restaurantService.updateRestaurant(id, restaurant);
     }
 
     @DeleteMapping(value = "/{id}")
-    public IdResponse deleteRestaurant(@PathVariable Long id) {
+    public IdResponse deleteRestaurant(@PathVariable UUID id) {
         return restaurantService.deleteRestaurant(id);
     }
 

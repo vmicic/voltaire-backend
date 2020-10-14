@@ -15,6 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalTime;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -45,15 +46,7 @@ class RestaurantControllerUnitTest {
                 .openingTime(LocalTime.of(10, 10))
                 .closingTime(LocalTime.of(20, 20))
                 .build();
-        restaurant.setId(1L);
-
-        this.restaurant2 = Restaurant.builder()
-                .name("My second restaurant")
-                .address("Danila 2")
-                .openingTime(LocalTime.of(9, 10))
-                .closingTime(LocalTime.of(20, 20))
-                .build();
-        restaurant2.setId(2L);
+        restaurant.setId(UUID.fromString("f9822d37-7357-4bd7-9ad7-e16b68da2e7c"));
     }
 
     @Test

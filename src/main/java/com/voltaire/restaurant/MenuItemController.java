@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/menu-items")
@@ -21,17 +23,17 @@ public class MenuItemController {
     }
 
     @GetMapping("/{id}")
-    public MenuItem getMenuItemById(@PathVariable Long id) {
+    public MenuItem getMenuItemById(@PathVariable UUID id) {
         return menuItemService.findById(id);
     }
 
     @PutMapping("/{id}")
-    public IdResponse updateMenuItem(@PathVariable Long id, @RequestBody MenuItem menuItem) {
+    public IdResponse updateMenuItem(@PathVariable UUID id, @RequestBody MenuItem menuItem) {
         return menuItemService.updateMenuItem(id, menuItem);
     }
 
     @DeleteMapping("/{id}")
-    public IdResponse deleteMenuItem(@PathVariable Long id) {
+    public IdResponse deleteMenuItem(@PathVariable UUID id) {
         return menuItemService.deleteMenuItem(id);
     }
 }

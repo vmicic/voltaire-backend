@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -19,11 +20,11 @@ public class RestaurantService {
         return restaurantRepository.save(restaurant);
     }
 
-    public boolean notExists(Long id) {
+    public boolean notExists(UUID id) {
         return !restaurantRepository.existsById(id);
     }
 
-    public IdResponse updateRestaurant(Long id, Restaurant restaurant) {
+    public IdResponse updateRestaurant(UUID id, Restaurant restaurant) {
 
         Restaurant oldRestaurant = findById(id);
 
@@ -35,7 +36,7 @@ public class RestaurantService {
         return new IdResponse(restaurantRepository.save(oldRestaurant).getId());
     }
 
-    public IdResponse deleteRestaurant(Long id) {
+    public IdResponse deleteRestaurant(UUID id) {
         if (notExists(id)) {
             throw new EntityNotFoundException("id", id.toString());
         }
@@ -47,7 +48,7 @@ public class RestaurantService {
         return restaurantRepository.findAll();
     }
 
-    public Restaurant findById(Long id) {
+    public Restaurant findById(UUID id) {
         return restaurantRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("id", id.toString()));
     }
