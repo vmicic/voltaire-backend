@@ -17,8 +17,8 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ActiveProfiles(profiles = "test")
-class RestaurantServiceIntegrationTest {
+@ActiveProfiles(profiles = "inmemorydb-test")
+class RestaurantServiceIntegrationInMemoryDbTest {
 
     private final UUID ID_NOT_EXISTING = UUID.fromString("0fc3d32a-38c0-457c-b34f-8478fb92f3f4");
 
