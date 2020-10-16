@@ -1,68 +1,45 @@
 package com.voltaire.restaurant;
 
+import com.voltaire.restaurant.model.Restaurant;
+import com.voltaire.shared.IdResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
+@RequiredArgsConstructor
 @RestController
-@RequestMapping("/restaurants")
+@RequestMapping("/v1/restaurants")
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
 
-    public RestaurantController(RestaurantService restaurantService) {
-        this.restaurantService = restaurantService;
-    }
-
     @PostMapping
-    public ResponseEntity<?> createRestaurant(@RequestBody Restaurant restaurant) {
-        Restaurant newRestaurant = restaurantService.createRestaurant(restaurant);
-
-        return new ResponseEntity<>(newRestaurant, HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public Restaurant createRestaurant(@RequestBody Restaurant restaurant) {
+        return restaurantService.createRestaurant(restaurant);
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllRestaurants() {
-        List<Restaurant> restaurants = restaurantService.findAll();
-
-        return new ResponseEntity<>(restaurants, HttpStatus.OK);
+    public List<Restaurant> getAllRestaurants() {
+        return restaurantService.findAll();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getRestaurantById(@PathVariable Long id) {
-        if(restaurantService.notExists(id)) {
-            return new ResponseEntity<>("Requested restaurant not found", HttpStatus.NOT_FOUND);
-        }
-
-        Restaurant restaurant = restaurantService.findById(id);
-
-        return new ResponseEntity<>(restaurant, HttpStatus.OK);
+    @GetMapping(value = "/{id}")
+    public Restaurant getRestaurantById(@PathVariable UUID id) {
+        return restaurantService.findById(id);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateRestaurant(@PathVariable Long id, @RequestBody Restaurant restaurant) {
-        //TODO check if owner is logged user
-        if(restaurantService.notExists(id)) {
-            return new ResponseEntity<>("Requested restaurant not found", HttpStatus.NOT_FOUND);
-        }
-
-        restaurantService.updateRestaurant(id, restaurant);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @PutMapping(value = "/{id}")
+    public IdResponse updateRestaurant(@PathVariable UUID id, @RequestBody Restaurant restaurant) {
+        return restaurantService.updateRestaurant(id, restaurant);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteRestaurant(@PathVariable Long id) {
-        //TODO check if owner is logged user
-        if(restaurantService.notExists(id)) {
-            return new ResponseEntity<>("Requested restaurant not found", HttpStatus.NOT_FOUND);
-        }
-
-        restaurantService.deleteRestaurant(id);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping(value = "/{id}")
+    public IdResponse deleteRestaurant(@PathVariable UUID id) {
+        return restaurantService.deleteRestaurant(id);
     }
 
 }
