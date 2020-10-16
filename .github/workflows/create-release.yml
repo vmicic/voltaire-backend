@@ -15,5 +15,5 @@ jobs:
         uses: mathieudutour/github-tag-action@v4.6
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          default_bump: feature
+          default_bump: major
           create_annotated_tag: true
