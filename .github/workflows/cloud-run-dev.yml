@@ -6,12 +6,6 @@ on:
             - dev
 
 jobs:
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    
-    steps:
-
   
   build:
     name: Cloud Run Deployment
