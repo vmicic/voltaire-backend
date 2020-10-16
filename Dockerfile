@@ -3,7 +3,7 @@ WORKDIR /app
 COPY src ./src
 COPY pom.xml .
 
-RUN mvn -f pom.xml clean package
+RUN mvn -f pom.xml clean -Dmaven.test.skip=true package
 
 FROM openjdk:11-jdk-slim
 COPY --from=builder app/target/*.jar /app.jar
