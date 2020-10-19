@@ -1,7 +1,7 @@
 package com.voltaire.order;
 
-import com.voltaire.order.model.Order;
 import com.voltaire.order.model.CreateOrderRequest;
+import com.voltaire.order.model.Order;
 import com.voltaire.order.model.OrderForDelivery;
 import com.voltaire.shared.IdResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +36,8 @@ public class OrderController {
     }
 
     @PutMapping("/{id}/confirm")
-    public IdResponse confirmOrder(@PathVariable UUID id) {
-        return orderService.confirmOrder(id);
+    public IdResponse confirmOrder(@PathVariable UUID id, @RequestBody Integer preparationMinutes) {
+        return orderService.confirmOrder(id, preparationMinutes);
     }
 
     @PutMapping("/{id}/reject")
@@ -50,12 +50,17 @@ public class OrderController {
         return orderService.getOrdersForDelivery();
     }
 
-    @PutMapping("for-delivery/{id}")
+    @PutMapping("{id}/deliver")
     public IdResponse takeOrderToDeliver(@PathVariable UUID id) {
         return orderService.takeOrderToDeliver(id);
     }
 
-    @PutMapping("delivered/{id}")
+    @PutMapping("{id}/start-delivery")
+    public IdResponse startDelivery(@PathVariable UUID id) {
+        return orderService.startDelivery(id);
+    }
+
+    @PutMapping("{id}/delivered")
     public IdResponse orderDelivered(@PathVariable UUID id) {
         return orderService.orderDelivered(id);
     }

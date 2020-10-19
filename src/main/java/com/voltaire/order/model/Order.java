@@ -35,6 +35,8 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
 
+    private Integer preparationMinutes;
+
     public void addOrderItem(OrderItem orderItem) {
         if (orderItems == null) {
             orderItems = new ArrayList<>();
@@ -52,5 +54,9 @@ public class Order {
 
     public boolean notWaitingDeliveryConfirmation() {
         return !this.orderStatus.equals(OrderStatus.DELIVERING);
+    }
+
+    public boolean notWaitingDeliveryStart() {
+        return !this.orderStatus.equals(OrderStatus.PREPARING);
     }
 }

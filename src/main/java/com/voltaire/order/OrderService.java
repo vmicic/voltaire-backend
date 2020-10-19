@@ -64,12 +64,13 @@ public class OrderService {
                 new EntityNotFoundException("id", id.toString()));
     }
 
-    public IdResponse confirmOrder(UUID id) {
+    public IdResponse confirmOrder(UUID id, Integer preparationMinutes) {
         Order order = findById(id);
         if (order.notWaitingForResponse()) {
             throw new BadRequestException("Requested order is not waiting response.");
         }
 
+        order.setPreparationMinutes(preparationMinutes);
         order.setOrderStatus(OrderStatus.CONFIRMED);
         return new IdResponse(orderRepository.save(order).getId());
     }
@@ -121,6 +122,17 @@ public class OrderService {
         }
 
         order.setOrderStatus(OrderStatus.PREPARING);
+        return new IdResponse(orderRepository.save(order).getId());
+    }
+
+    public IdResponse startDelivery(UUID id) {
+        var order = findById(id);
+
+        if(order.notWaitingDeliveryStart()) {
+            throw new BadRequestException("Requested order is not waiting delivery start.");
+        }
+
+        order.setOrderStatus(OrderStatus.DELIVERING);
         return new IdResponse(orderRepository.save(order).getId());
     }
 

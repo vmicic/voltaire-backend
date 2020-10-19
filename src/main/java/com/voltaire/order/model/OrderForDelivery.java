@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalTime;
 import java.util.UUID;
 
 @Data
@@ -20,5 +19,5 @@ public class OrderForDelivery {
 
     private String address;
 
-
+    private Integer minutes;
 }
