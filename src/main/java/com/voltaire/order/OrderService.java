@@ -9,7 +9,6 @@ import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.restaurant.repository.MenuItemRepository;
 import com.voltaire.restaurant.repository.RestaurantRepository;
 import com.voltaire.shared.IdResponse;
-import liquibase.pro.packaged.O;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -114,10 +113,25 @@ public class OrderService {
         return ordersForDelivery;
     }
 
-    public IdResponse deliverOrder(UUID id) {
+    public IdResponse takeOrderToDeliver(UUID id) {
         var order = findById(id);
 
-        order.setOrderStatus(OrderStatus.WAITING_PAYMENT);
+        if(order.notWaitingDeliveryService()) {
+            throw new BadRequestException("Requested order is not waiting delivery service response.");
+        }
+
+        order.setOrderStatus(OrderStatus.PREPARING);
+        return new IdResponse(orderRepository.save(order).getId());
+    }
+
+    public IdResponse orderDelivered(UUID id) {
+        var order = findById(id);
+
+        if(order.notWaitingDeliveryConfirmation()) {
+            throw new BadRequestException("Requested order is not waiting delivery confirmation.");
+        }
+
+        order.setOrderStatus(OrderStatus.DELIVERED);
         return new IdResponse(orderRepository.save(order).getId());
     }
 }

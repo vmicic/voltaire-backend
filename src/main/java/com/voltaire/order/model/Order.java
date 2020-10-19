@@ -45,4 +45,12 @@ public class Order {
     public boolean notWaitingForResponse() {
         return !this.orderStatus.equals(OrderStatus.CREATED);
     }
+
+    public boolean notWaitingDeliveryService() {
+        return !this.orderStatus.equals(OrderStatus.CONFIRMED);
+    }
+
+    public boolean notWaitingDeliveryConfirmation() {
+        return !this.orderStatus.equals(OrderStatus.DELIVERING);
+    }
 }

@@ -50,8 +50,13 @@ public class OrderController {
         return orderService.getOrdersForDelivery();
     }
 
-    @PutMapping("/for-delivery/{id}")
-    public IdResponse deliverOrder(@PathVariable UUID id) {
-        return orderService.deliverOrder(id);
+    @PutMapping("for-delivery/{id}")
+    public IdResponse takeOrderToDeliver(@PathVariable UUID id) {
+        return orderService.takeOrderToDeliver(id);
+    }
+
+    @PutMapping("delivered/{id}")
+    public IdResponse orderDelivered(@PathVariable UUID id) {
+        return orderService.orderDelivered(id);
     }
 }
