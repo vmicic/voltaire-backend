@@ -49,4 +49,9 @@ public class OrderController {
     public List<OrderForDelivery> getOrdersForDelivery() {
         return orderService.getOrdersForDelivery();
     }
+
+    @PutMapping("/for-delivery/{id}")
+    public IdResponse deliverOrder(@PathVariable UUID id) {
+        return orderService.deliverOrder(id);
+    }
 }

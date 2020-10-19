@@ -95,13 +95,13 @@ public class OrderService {
     }
 
     public List<OrderForDelivery> getOrdersForDelivery() {
-        LocalDateTime timeCutoff = LocalDateTime.now().minusMinutes(maxMinutesAgo);
-        List<Order> orders = orderRepository.findAllByOrderTimeAfter(timeCutoff);
+        var timeCutoff = LocalDateTime.now().minusMinutes(maxMinutesAgo);
+        var orders = orderRepository.findAllByOrderTimeAfter(timeCutoff);
 
         List<OrderForDelivery> ordersForDelivery = new ArrayList<>();
         orders.forEach(
                 order -> {
-                    OrderForDelivery orderForDelivery = OrderForDelivery.builder()
+                    var orderForDelivery = OrderForDelivery.builder()
                             .orderId(order.getId())
                             .restaurantName(order.getRestaurant().getName())
                             .address(order.getRestaurant().getAddress())
@@ -112,5 +112,12 @@ public class OrderService {
         );
 
         return ordersForDelivery;
+    }
+
+    public IdResponse deliverOrder(UUID id) {
+        var order = findById(id);
+
+        order.setOrderStatus(OrderStatus.WAITING_PAYMENT);
+        return new IdResponse(orderRepository.save(order).getId());
     }
 }
