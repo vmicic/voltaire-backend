@@ -17,3 +17,7 @@ server:
   error:
     include-message: always
 
+voltaire:
+  orders:
+    for-delivery-max-minutes-ago: 10
+

@@ -3,16 +3,14 @@ package com.voltaire.order.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
 @NoArgsConstructor
-public class OrderItemDto {
+public class CreateOrderRequest {
 
-    private UUID menuItemId;
+    private UUID restaurantId;
 
-    private Integer quantity;
-
-    private String additionalInfo;
-
+    List<CreateOrderItemRequest> orderItems;
 }
