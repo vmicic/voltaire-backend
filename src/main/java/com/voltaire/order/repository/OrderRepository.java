@@ -1,6 +1,7 @@
 package com.voltaire.order.repository;
 
 import com.voltaire.order.model.Order;
+import com.voltaire.order.model.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,5 +12,5 @@ import java.util.UUID;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, UUID> {
 
-    List<Order> findAllByOrderTimeAfter(LocalDateTime time);
+    List<Order> findAllByOrderTimeAfterAndOrderStatusEquals(LocalDateTime time, OrderStatus orderStatus);
 }

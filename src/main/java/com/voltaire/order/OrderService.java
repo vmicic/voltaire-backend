@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +24,16 @@ import java.util.UUID;
 public class OrderService {
 
     @Value("${voltaire.orders.for-delivery-max-minutes-ago}")
-    private Long maxMinutesAgo;
+    private Integer maxMinutesAgo;
 
     private final OrderRepository orderRepository;
     private final RestaurantRepository restaurantRepository;
     private final MenuItemRepository menuItemRepository;
+    private final Clock clock;
 
     public Order createOrder(CreateOrderRequest createOrderRequest) {
         var order = Order.builder()
-                .orderTime(LocalDateTime.now())
+                .orderTime(LocalDateTime.now(clock))
                 .orderStatus(OrderStatus.CREATED)
                 .restaurant(findRestaurantById(createOrderRequest.getRestaurantId()))
                 .build();
@@ -46,7 +48,7 @@ public class OrderService {
                 new EntityNotFoundException("id", id.toString()));
     }
 
-    public void createOrderItems(List<CreateOrderItemRequest> createOrderItemRequests, Order order) {
+    private void createOrderItems(List<CreateOrderItemRequest> createOrderItemRequests, Order order) {
         createOrderItemRequests.forEach(createOrderItemRequest -> {
             var orderItem = OrderItem.builder()
                     .menuItem(findMenuItemById(createOrderItemRequest.getMenuItemId()))
@@ -95,8 +97,8 @@ public class OrderService {
     }
 
     public List<OrderForDelivery> getOrdersForDelivery() {
-        var timeCutoff = LocalDateTime.now().minusMinutes(maxMinutesAgo);
-        var orders = orderRepository.findAllByOrderTimeAfter(timeCutoff);
+        var timeCutoff = LocalDateTime.now(clock).minusMinutes(maxMinutesAgo);
+        var orders = orderRepository.findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
 
         List<OrderForDelivery> ordersForDelivery = new ArrayList<>();
         orders.forEach(
