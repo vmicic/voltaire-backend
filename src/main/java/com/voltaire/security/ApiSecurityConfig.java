@@ -31,7 +31,8 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setAuthenticationManager(new ApiKeyAuthManager(apiKeyValue));
 
         httpSecurity
-                .csrf().disable()
+                .headers().frameOptions().disable()
+                .and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().addFilter(filter).
                 authorizeRequests().antMatchers(DELIVERY_SERVICE_URLS).authenticated();
