@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import java.time.Clock;
 
 @Configuration
-public class Config {
+public class ClockBeanConfig {
 
     @Bean
     public Clock clock() {

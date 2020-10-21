@@ -18,6 +18,9 @@ server:
     include-message: always
 
 voltaire:
+  http:
+    api-key-header-name: API_KEY
+    api-key: b4161420-52cf-47fe-bf0b-677d79b47bcc
   orders:
     for-delivery-max-minutes-ago: 10
 
