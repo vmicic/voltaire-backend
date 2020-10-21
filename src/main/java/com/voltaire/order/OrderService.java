@@ -119,7 +119,7 @@ public class OrderService {
     public IdResponse takeOrderToDeliver(UUID id) {
         var order = findById(id);
 
-        if(order.notWaitingDeliveryService()) {
+        if (order.notWaitingDeliveryService()) {
             throw new BadRequestException("Requested order is not waiting delivery service response.");
         }
 
@@ -130,7 +130,7 @@ public class OrderService {
     public IdResponse startDelivery(UUID id) {
         var order = findById(id);
 
-        if(order.notWaitingDeliveryStart()) {
+        if (order.notWaitingDeliveryStart()) {
             throw new BadRequestException("Requested order is not waiting delivery start.");
         }
 
@@ -141,7 +141,7 @@ public class OrderService {
     public IdResponse orderDelivered(UUID id) {
         var order = findById(id);
 
-        if(order.notWaitingDeliveryConfirmation()) {
+        if (order.notWaitingDeliveryConfirmation()) {
             throw new BadRequestException("Requested order is not waiting delivery confirmation.");
         }
 
