@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles(profiles = "unit-test")
 class OrderServiceUnitTest {
 
-    private Integer maxMinutesAgo;
+    private Integer confirmedOrderDeliveryTimeout;
 
     private final UUID ID_NOT_EXISTING = UUID.fromString("0fc3d32a-38c0-457c-b34f-8478fb92f3f4");
     private final UUID ORDER_ID = UUID.fromString("af49a717-0395-4ffd-8b11-fc3f9c02b565");
@@ -65,7 +65,7 @@ class OrderServiceUnitTest {
     public void setUp() {
         fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
 
-        maxMinutesAgo = 10;
+        confirmedOrderDeliveryTimeout = 10;
 
         this.restaurant = Restaurant.builder()
                 .id(UUID.fromString("f9822d37-7357-4bd7-9ad7-e16b68da2e7c"))
@@ -253,8 +253,8 @@ class OrderServiceUnitTest {
     @Test
     void getOrdersForDeliveryTest() {
         order.setId(ORDER_ID);
-        ReflectionTestUtils.setField(orderService, "maxMinutesAgo", maxMinutesAgo);
-        var timeCutoff = LocalDateTime.now(fixedClock).minusMinutes(maxMinutesAgo);
+        ReflectionTestUtils.setField(orderService, "confirmedOrderDeliveryTimeout", confirmedOrderDeliveryTimeout);
+        var timeCutoff = LocalDateTime.now(fixedClock).minusMinutes(confirmedOrderDeliveryTimeout);
 
         doReturn(fixedClock.instant()).when(clock).instant();
         doReturn(fixedClock.getZone()).when(clock).getZone();

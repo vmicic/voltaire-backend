@@ -23,8 +23,8 @@ import java.util.UUID;
 @Service
 public class OrderService {
 
-    @Value("${voltaire.orders.for-delivery-max-minutes-ago}")
-    private Integer maxMinutesAgo;
+    @Value("${voltaire.orders.delivery-timeout}")
+    private Integer confirmedOrderDeliveryTimeout;
 
     private final OrderRepository orderRepository;
     private final RestaurantRepository restaurantRepository;
@@ -97,7 +97,7 @@ public class OrderService {
     }
 
     public List<OrderForDelivery> getOrdersForDelivery() {
-        var timeCutoff = LocalDateTime.now(clock).minusMinutes(maxMinutesAgo);
+        var timeCutoff = LocalDateTime.now(clock).minusMinutes(confirmedOrderDeliveryTimeout);
         var orders = orderRepository.findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
 
         List<OrderForDelivery> ordersForDelivery = new ArrayList<>();
