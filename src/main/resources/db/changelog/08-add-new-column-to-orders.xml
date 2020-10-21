@@ -8,7 +8,7 @@
 
     <changeSet id="06" author="vmicic">
         <addColumn tableName="orders">
-            <column name="preparation_minutes" type="int"/>
+            <column name="minutes_for_preparation" type="int"/>
         </addColumn>
     </changeSet>
 </databaseChangeLog>

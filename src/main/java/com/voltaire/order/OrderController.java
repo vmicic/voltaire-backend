@@ -36,8 +36,8 @@ public class OrderController {
     }
 
     @PutMapping("/{id}/confirm")
-    public IdResponse confirmOrder(@PathVariable UUID id, @RequestBody Integer preparationMinutes) {
-        return orderService.confirmOrder(id, preparationMinutes);
+    public IdResponse confirmOrder(@PathVariable UUID id, @RequestBody Integer minutesForPreparation) {
+        return orderService.confirmOrder(id, minutesForPreparation);
     }
 
     @PutMapping("/{id}/reject")

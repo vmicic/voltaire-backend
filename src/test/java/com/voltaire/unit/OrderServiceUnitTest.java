@@ -156,7 +156,7 @@ class OrderServiceUnitTest {
         var preparationMinutes = 15;
 
         expectedOrderToSave.setOrderStatus(OrderStatus.CONFIRMED);
-        expectedOrderToSave.setPreparationMinutes(preparationMinutes);
+        expectedOrderToSave.setMinutesForPreparation(preparationMinutes);
 
         doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
         doReturn(expectedOrderToSave).when(orderRepository).save(expectedOrderToSave);

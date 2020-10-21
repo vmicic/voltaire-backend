@@ -145,7 +145,7 @@ class OrderServiceIntegrationInMemoryDbTest {
         var orderDb = orderService.findById(orderId);
 
         assertEquals(OrderStatus.CONFIRMED, orderDb.getOrderStatus());
-        assertEquals(preparationMinutes, orderDb.getPreparationMinutes());
+        assertEquals(preparationMinutes, orderDb.getMinutesForPreparation());
     }
 
     @Test

@@ -35,7 +35,7 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
 
-    private Integer preparationMinutes;
+    private Integer minutesForPreparation;
 
     public void addOrderItem(OrderItem orderItem) {
         if (orderItems == null) {

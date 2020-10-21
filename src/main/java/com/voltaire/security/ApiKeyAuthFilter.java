@@ -14,7 +14,6 @@ public class ApiKeyAuthFilter extends AbstractPreAuthenticatedProcessingFilter {
 
     @Override
     protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
-        System.out.println("checking filter");
         return request.getHeader(apiKeyHeaderName);
     }
 

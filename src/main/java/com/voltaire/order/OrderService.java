@@ -66,13 +66,13 @@ public class OrderService {
                 new EntityNotFoundException("id", id.toString()));
     }
 
-    public IdResponse confirmOrder(UUID id, Integer preparationMinutes) {
+    public IdResponse confirmOrder(UUID id, Integer minutesForPreparation) {
         Order order = findById(id);
         if (order.notWaitingForResponse()) {
             throw new BadRequestException("Requested order is not waiting response.");
         }
 
-        order.setPreparationMinutes(preparationMinutes);
+        order.setMinutesForPreparation(minutesForPreparation);
         order.setOrderStatus(OrderStatus.CONFIRMED);
         return new IdResponse(orderRepository.save(order).getId());
     }
