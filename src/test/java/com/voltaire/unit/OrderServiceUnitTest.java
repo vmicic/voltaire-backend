@@ -62,10 +62,8 @@ class OrderServiceUnitTest {
 
     private Restaurant restaurant;
     private MenuItem menuItem;
-    private OrderItem orderItem;
     private Order order;
     private CreateOrderRequest createOrderRequest;
-    private CreateOrderItemRequest createOrderItemRequest;
 
     @BeforeEach
     public void setUp() {
@@ -94,7 +92,7 @@ class OrderServiceUnitTest {
                 .restaurant(restaurant)
                 .build();
 
-        this.orderItem = OrderItem.builder()
+        var orderItem = OrderItem.builder()
                 .menuItem(menuItem)
                 .quantity(2)
                 .additionalInfo("no ketchup")
@@ -105,7 +103,7 @@ class OrderServiceUnitTest {
         orderItems.add(orderItem);
         this.order.setOrderItems(orderItems);
 
-        this.createOrderItemRequest = CreateOrderItemRequest.builder()
+        var createOrderItemRequest = CreateOrderItemRequest.builder()
                 .menuItemId(menuItem.getId())
                 .quantity(orderItem.getQuantity())
                 .additionalInfo(orderItem.getAdditionalInfo())

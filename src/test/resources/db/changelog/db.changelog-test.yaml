@@ -3,4 +3,8 @@ databaseChangeLog:
       file: db/changelog/01-initial-schema.xml
   - include:
       file: db/changelog/03-add-new-column-to-order-item.xml
+  - include:
+      file: db/changelog/07-update-ordertime-column-type.xml
+  - include:
+      file: db/changelog/08-add-new-column-to-orders.xml
 
