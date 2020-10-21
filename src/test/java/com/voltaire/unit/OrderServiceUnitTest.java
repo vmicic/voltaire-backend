@@ -37,9 +37,6 @@ class OrderServiceUnitTest {
 
     private Integer maxMinutesAgo;
 
-    @Value("${hehe}")
-    private String hehe;
-
     private final UUID ID_NOT_EXISTING = UUID.fromString("0fc3d32a-38c0-457c-b34f-8478fb92f3f4");
     private final UUID ORDER_ID = UUID.fromString("af49a717-0395-4ffd-8b11-fc3f9c02b565");
 
@@ -71,7 +68,7 @@ class OrderServiceUnitTest {
 
         maxMinutesAgo = 10;
 
-         this.restaurant = Restaurant.builder()
+        this.restaurant = Restaurant.builder()
                 .id(UUID.fromString("f9822d37-7357-4bd7-9ad7-e16b68da2e7c"))
                 .name("My restaurant")
                 .address("Brace Ribnikar 10")
@@ -99,7 +96,7 @@ class OrderServiceUnitTest {
                 .order(order)
                 .build();
 
-        List<OrderItem> orderItems = new ArrayList<>();
+        var orderItems = new ArrayList<OrderItem>();
         orderItems.add(orderItem);
         this.order.setOrderItems(orderItems);
 
@@ -109,7 +106,7 @@ class OrderServiceUnitTest {
                 .additionalInfo(orderItem.getAdditionalInfo())
                 .build();
 
-        List<CreateOrderItemRequest> createOrderItemRequests = List.of(createOrderItemRequest);
+        var createOrderItemRequests = List.of(createOrderItemRequest);
 
         this.createOrderRequest = CreateOrderRequest.builder()
                 .restaurantId(restaurant.getId())
@@ -119,15 +116,15 @@ class OrderServiceUnitTest {
 
     @Test
     void createOrderTest() {
-        when(restaurantRepository.findById(restaurant.getId())).thenReturn(Optional.of(restaurant));
-        when(menuItemRepository.findById(menuItem.getId())).thenReturn(Optional.of(menuItem));
-        when(orderRepository.save(order)).thenReturn(order);
-        when(clock.instant()).thenReturn(fixedClock.instant());
-        when(clock.getZone()).thenReturn(fixedClock.getZone());
+        doReturn(Optional.of(restaurant)).when(restaurantRepository).findById(restaurant.getId());
+        doReturn(Optional.of(menuItem)).when(menuItemRepository).findById(menuItem.getId());
+        doReturn(order).when(orderRepository).save(order);
+        doReturn(fixedClock.instant()).when(clock).instant();
+        doReturn(fixedClock.getZone()).when(clock).getZone();
 
-        var newOrder = orderService.createOrder(createOrderRequest);
+        var createdOrder = orderService.createOrder(createOrderRequest);
 
-        assertEquals(order, newOrder);
+        assertEquals(order, createdOrder);
         verify(orderRepository).save(order);
         verify(restaurantRepository).findById(restaurant.getId());
         verify(menuItemRepository).findById(menuItem.getId());
@@ -135,19 +132,19 @@ class OrderServiceUnitTest {
 
     @Test
     void createOrderThrowNotFoundExceptionForRestaurant() {
-        when(restaurantRepository.findById(restaurant.getId())).thenThrow(new EntityNotFoundException("id", restaurant.getId().toString()));
-        when(clock.instant()).thenReturn(fixedClock.instant());
-        when(clock.getZone()).thenReturn(fixedClock.getZone());
+        doThrow(new EntityNotFoundException("id", restaurant.getId().toString())).when(restaurantRepository).findById(restaurant.getId());
+        doReturn(fixedClock.instant()).when(clock).instant();
+        doReturn(fixedClock.getZone()).when(clock).getZone();
 
         assertThrows(EntityNotFoundException.class, () -> orderService.createOrder(createOrderRequest));
     }
 
     @Test
     void createOrderThrowNotFoundExceptionForMenuItem() {
-        when(restaurantRepository.findById(restaurant.getId())).thenReturn(Optional.of(restaurant));
-        when(menuItemRepository.findById(menuItem.getId())).thenThrow(new EntityNotFoundException("id", menuItem.getId().toString()));
-        when(clock.instant()).thenReturn(fixedClock.instant());
-        when(clock.getZone()).thenReturn(fixedClock.getZone());
+        doReturn(Optional.of(restaurant)).when(restaurantRepository).findById(restaurant.getId());
+        doThrow(new EntityNotFoundException("id", menuItem.getId().toString())).when(menuItemRepository).findById(menuItem.getId());
+        doReturn(fixedClock.instant()).when(clock).instant();
+        doReturn(fixedClock.getZone()).when(clock).getZone();
 
         assertThrows(EntityNotFoundException.class, () -> orderService.createOrder(createOrderRequest));
     }
@@ -162,8 +159,8 @@ class OrderServiceUnitTest {
         expectedOrderToSave.setOrderStatus(OrderStatus.CONFIRMED);
         expectedOrderToSave.setPreparationMinutes(preparationMinutes);
 
-        lenient().when(orderRepository.findById(ORDER_ID)).thenReturn(Optional.of(order));
-        lenient().when(orderRepository.save(expectedOrderToSave)).thenReturn(expectedOrderToSave);
+        doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
+        doReturn(expectedOrderToSave).when(orderRepository).save(expectedOrderToSave);
 
         var idResponse = orderService.confirmOrder(ORDER_ID, preparationMinutes);
 
@@ -177,7 +174,7 @@ class OrderServiceUnitTest {
         order.setId(ORDER_ID);
         order.setOrderStatus(OrderStatus.CONFIRMED);
 
-        when(orderRepository.findById(ORDER_ID)).thenReturn(Optional.of(order));
+        doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
 
         assertThrows(BadRequestException.class, () -> orderService.confirmOrder(ORDER_ID, 15));
         verify(orderRepository).findById(ORDER_ID);
@@ -187,10 +184,10 @@ class OrderServiceUnitTest {
     void confirmOrderThrowNotFoundExceptionForOrder() {
         order.setId(ORDER_ID);
 
-        when(orderRepository.findById(ORDER_ID)).thenThrow(new EntityNotFoundException("id", ORDER_ID.toString()));
+        doThrow(new EntityNotFoundException("id", ID_NOT_EXISTING.toString())).when(orderRepository).findById(ID_NOT_EXISTING);
 
-        assertThrows(EntityNotFoundException.class, () -> orderService.confirmOrder(ORDER_ID, 15));
-        verify(orderRepository).findById(ORDER_ID);
+        assertThrows(EntityNotFoundException.class, () -> orderService.confirmOrder(ID_NOT_EXISTING, 15));
+        verify(orderRepository).findById(ID_NOT_EXISTING);
     }
 
     @Test
@@ -201,8 +198,8 @@ class OrderServiceUnitTest {
 
         orderExpectedToSave.setOrderStatus(OrderStatus.REJECTED);
 
-        lenient().when(orderRepository.findById(ORDER_ID)).thenReturn(Optional.of(order));
-        lenient().when(orderRepository.save(orderExpectedToSave)).thenReturn(orderExpectedToSave);
+        doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
+        doReturn(orderExpectedToSave).when(orderRepository).save(orderExpectedToSave);
 
         var idResponse = orderService.rejectOrder(ORDER_ID);
 
@@ -216,7 +213,7 @@ class OrderServiceUnitTest {
         order.setId(ORDER_ID);
         order.setOrderStatus(OrderStatus.DELIVERING);
 
-        when(orderRepository.findById(ORDER_ID)).thenReturn(Optional.of(order));
+        doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
 
         assertThrows(BadRequestException.class, () -> orderService.rejectOrder(ORDER_ID));
         verify(orderRepository).findById(ORDER_ID);
@@ -226,17 +223,17 @@ class OrderServiceUnitTest {
     void rejectOrderThrowNotFoundExceptionForOrder() {
         order.setId(ORDER_ID);
 
-        when(orderRepository.findById(ORDER_ID)).thenThrow(new EntityNotFoundException("id", ORDER_ID.toString()));
+        doThrow(new EntityNotFoundException("id", ID_NOT_EXISTING.toString())).when(orderRepository).findById(ID_NOT_EXISTING);
 
-        assertThrows(EntityNotFoundException.class, () -> orderService.rejectOrder(ORDER_ID));
-        verify(orderRepository).findById(ORDER_ID);
+        assertThrows(EntityNotFoundException.class, () -> orderService.rejectOrder(ID_NOT_EXISTING));
+        verify(orderRepository).findById(ID_NOT_EXISTING);
     }
 
     @Test
     void findByIdTest() {
         order.setId(ORDER_ID);
 
-        when(orderRepository.findById(ORDER_ID)).thenReturn(Optional.of(order));
+        doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
 
         var foundOrder = orderService.findById(ORDER_ID);
 
@@ -248,10 +245,10 @@ class OrderServiceUnitTest {
     void findByIdThrowNotFoundException() {
         order.setId(ORDER_ID);
 
-        when(orderRepository.findById(ORDER_ID)).thenThrow(new EntityNotFoundException("id", ORDER_ID.toString()));
+        doThrow(new EntityNotFoundException("id", ID_NOT_EXISTING.toString())).when(orderRepository).findById(ID_NOT_EXISTING);
 
-        assertThrows(EntityNotFoundException.class, () -> orderService.findById(ORDER_ID));
-        verify(orderRepository).findById(ORDER_ID);
+        assertThrows(EntityNotFoundException.class, () -> orderService.findById(ID_NOT_EXISTING));
+        verify(orderRepository).findById(ID_NOT_EXISTING);
     }
 
     @Test
@@ -260,9 +257,9 @@ class OrderServiceUnitTest {
         ReflectionTestUtils.setField(orderService, "maxMinutesAgo", maxMinutesAgo);
         var timeCutoff = LocalDateTime.now(fixedClock).minusMinutes(maxMinutesAgo);
 
-        when(clock.instant()).thenReturn(fixedClock.instant());
-        when(clock.getZone()).thenReturn(fixedClock.getZone());
-        when(orderRepository.findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED)).thenReturn(List.of(order));
+        doReturn(fixedClock.instant()).when(clock).instant();
+        doReturn(fixedClock.getZone()).when(clock).getZone();
+        doReturn(List.of(order)).when(orderRepository).findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
 
         var ordersForDelivery = orderService.getOrdersForDelivery();
 
@@ -292,10 +289,10 @@ class OrderServiceUnitTest {
     void takeOrderToDeliverThrowNotFoundException() {
         order.setId(ORDER_ID);
 
-        doThrow(new EntityNotFoundException("id", ORDER_ID.toString())).when(orderRepository).findById(ORDER_ID);
+        doThrow(new EntityNotFoundException("id", ID_NOT_EXISTING.toString())).when(orderRepository).findById(ID_NOT_EXISTING);
 
-        assertThrows(EntityNotFoundException.class, () -> orderService.takeOrderToDeliver(ORDER_ID));
-        verify(orderRepository).findById(ORDER_ID);
+        assertThrows(EntityNotFoundException.class, () -> orderService.takeOrderToDeliver(ID_NOT_EXISTING));
+        verify(orderRepository).findById(ID_NOT_EXISTING);
     }
 
     @Test
@@ -330,10 +327,10 @@ class OrderServiceUnitTest {
     void startDeliveryThrowNotFoundException() {
         order.setId(ORDER_ID);
 
-        doThrow(new EntityNotFoundException("id", ORDER_ID.toString())).when(orderRepository).findById(ORDER_ID);
+        doThrow(new EntityNotFoundException("id", ID_NOT_EXISTING.toString())).when(orderRepository).findById(ID_NOT_EXISTING);
 
-        assertThrows(EntityNotFoundException.class, () -> orderService.startDelivery(ORDER_ID));
-        verify(orderRepository).findById(ORDER_ID);
+        assertThrows(EntityNotFoundException.class, () -> orderService.startDelivery(ID_NOT_EXISTING));
+        verify(orderRepository).findById(ID_NOT_EXISTING);
     }
 
     @Test
@@ -368,10 +365,10 @@ class OrderServiceUnitTest {
     void orderDeliveredThrowNotFoundException() {
         order.setId(ORDER_ID);
 
-        doThrow(new EntityNotFoundException("id", ORDER_ID.toString())).when(orderRepository).findById(ORDER_ID);
+        doThrow(new EntityNotFoundException("id", ID_NOT_EXISTING.toString())).when(orderRepository).findById(ID_NOT_EXISTING);
 
-        assertThrows(EntityNotFoundException.class, () -> orderService.orderDelivered(ORDER_ID));
-        verify(orderRepository).findById(ORDER_ID);
+        assertThrows(EntityNotFoundException.class, () -> orderService.orderDelivered(ID_NOT_EXISTING));
+        verify(orderRepository).findById(ID_NOT_EXISTING);
     }
 
     @Test

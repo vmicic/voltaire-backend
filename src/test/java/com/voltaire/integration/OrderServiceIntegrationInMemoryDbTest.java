@@ -33,9 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class OrderServiceIntegrationInMemoryDbTest {
 
-    private UUID ID_NOT_EXISTING = UUID.fromString("91326b2b-d6ff-4d7d-abf4-49d1117b395d");
-
-    private Integer maxMinutesAgo;
+    private final UUID ID_NOT_EXISTING = UUID.fromString("91326b2b-d6ff-4d7d-abf4-49d1117b395d");
 
     @Autowired
     private OrderRepository orderRepository;
@@ -55,12 +53,10 @@ class OrderServiceIntegrationInMemoryDbTest {
 
     private Order order;
     private CreateOrderRequest createOrderRequest;
+    private UUID orderId;
 
     @BeforeEach
     public void setUp() {
-
-        maxMinutesAgo = 10;
-
         var restaurant = Restaurant.builder()
                 .name("My restaurant")
                 .address("Brace Ribnikar 10")
@@ -94,8 +90,9 @@ class OrderServiceIntegrationInMemoryDbTest {
         this.order.addOrderItem(orderItem);
 
         this.order = orderRepository.save(order);
+        this.orderId = this.order.getId();
 
-        CreateOrderItemRequest createOrderItemRequest = CreateOrderItemRequest.builder()
+        var createOrderItemRequest = CreateOrderItemRequest.builder()
                 .menuItemId(menuItem.getId())
                 .quantity(orderItem.getQuantity())
                 .additionalInfo(orderItem.getAdditionalInfo())
@@ -141,11 +138,11 @@ class OrderServiceIntegrationInMemoryDbTest {
     @Test
     void confirmOrderTest() {
         var preparationMinutes = 15;
-        var idResponse = orderService.confirmOrder(order.getId(), preparationMinutes);
+        var idResponse = orderService.confirmOrder(orderId, preparationMinutes);
 
-        assertEquals(order.getId(), idResponse.getId());
+        assertEquals(orderId, idResponse.getId());
 
-        var orderDb = orderService.findById(order.getId());
+        var orderDb = orderService.findById(orderId);
 
         assertEquals(OrderStatus.CONFIRMED, orderDb.getOrderStatus());
         assertEquals(preparationMinutes, orderDb.getPreparationMinutes());
@@ -156,7 +153,7 @@ class OrderServiceIntegrationInMemoryDbTest {
         order.setOrderStatus(OrderStatus.REJECTED);
         orderRepository.save(order);
 
-        assertThrows(BadRequestException.class, () -> orderService.confirmOrder(order.getId(), 15));
+        assertThrows(BadRequestException.class, () -> orderService.confirmOrder(orderId, 15));
     }
 
     @Test
@@ -184,7 +181,7 @@ class OrderServiceIntegrationInMemoryDbTest {
         order.setOrderStatus(OrderStatus.DELIVERED);
         orderRepository.save(order);
 
-        assertThrows(BadRequestException.class, () -> orderService.rejectOrder(order.getId()));
+        assertThrows(BadRequestException.class, () -> orderService.rejectOrder(orderId));
     }
 
     @Test
@@ -211,7 +208,7 @@ class OrderServiceIntegrationInMemoryDbTest {
         order.setOrderStatus(OrderStatus.CONFIRMED);
         orderRepository.save(order);
 
-        List<OrderForDelivery> ordersForDelivery = orderService.getOrdersForDelivery();
+        var ordersForDelivery = orderService.getOrdersForDelivery();
 
         assertEquals(1, ordersForDelivery.size());
     }
@@ -253,7 +250,7 @@ class OrderServiceIntegrationInMemoryDbTest {
         order.setOrderStatus(OrderStatus.DELIVERED);
         orderRepository.save(order);
 
-        assertThrows(BadRequestException.class, () -> orderService.takeOrderToDeliver(order.getId()));
+        assertThrows(BadRequestException.class, () -> orderService.takeOrderToDeliver(orderId));
     }
 
     @Test
@@ -282,7 +279,7 @@ class OrderServiceIntegrationInMemoryDbTest {
         order.setOrderStatus(OrderStatus.DELIVERED);
         orderRepository.save(order);
 
-        assertThrows(BadRequestException.class, () -> orderService.startDelivery(order.getId()));
+        assertThrows(BadRequestException.class, () -> orderService.startDelivery(orderId));
     }
 
     @Test
@@ -311,7 +308,7 @@ class OrderServiceIntegrationInMemoryDbTest {
         order.setOrderStatus(OrderStatus.DELIVERED);
         orderRepository.save(order);
 
-        assertThrows(BadRequestException.class, () -> orderService.orderDelivered(order.getId()));
+        assertThrows(BadRequestException.class, () -> orderService.orderDelivered(orderId));
     }
 
 
