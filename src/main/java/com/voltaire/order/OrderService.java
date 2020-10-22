@@ -35,6 +35,7 @@ public class OrderService {
                 .orderTime(LocalDateTime.now(clock))
                 .orderStatus(OrderStatus.CREATED)
                 .restaurant(findRestaurantById(createOrderRequest.getRestaurantId()))
+                .deliveryAddress(createOrderRequest.getDeliveryAddress())
                 .build();
 
         createOrderItems(createOrderRequest.getOrderItems(), order);

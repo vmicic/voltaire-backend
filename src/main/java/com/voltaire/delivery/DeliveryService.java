@@ -39,7 +39,8 @@ public class DeliveryService {
                     var orderForDelivery = OrderForDelivery.builder()
                             .orderId(order.getId())
                             .restaurantName(order.getRestaurant().getName())
-                            .address(order.getRestaurant().getAddress())
+                            .restaurantAddress(order.getRestaurant().getAddress())
+                            .deliveryAddress(order.getDeliveryAddress())
                             .build();
 
                     ordersForDelivery.add(orderForDelivery);
