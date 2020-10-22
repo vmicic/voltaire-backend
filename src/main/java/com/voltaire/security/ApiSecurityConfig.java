@@ -1,5 +1,6 @@
 package com.voltaire.security;
 
+import com.voltaire.delivery.ApiKeyService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,8 +15,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${voltaire.http.api-key-header-name}")
     private String apiKeyHeaderName;
 
-    @Value(("${voltaire.http.api-key}"))
-    private String apiKeyValue;
+    private final ApiKeyService apiKeyService;
 
     private static final String[] DELIVERY_SERVICE_URLS = {
             "/v1/orders/for-delivery",
@@ -24,11 +24,15 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
             "/v1/orders/**/delivered"
     };
 
+    public ApiSecurityConfig(ApiKeyService apiKeyService) {
+        this.apiKeyService = apiKeyService;
+    }
+
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         ApiKeyAuthFilter filter = new ApiKeyAuthFilter(apiKeyHeaderName);
-        filter.setAuthenticationManager(new ApiKeyAuthManager(apiKeyValue));
+        filter.setAuthenticationManager(new ApiKeyAuthManager(apiKeyService));
 
         httpSecurity
                 .headers().frameOptions().disable()
