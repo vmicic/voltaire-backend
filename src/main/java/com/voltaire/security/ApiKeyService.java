@@ -1,11 +1,8 @@
-package com.voltaire.delivery;
+package com.voltaire.security;
 
-import com.voltaire.delivery.model.ApiKey;
-import com.voltaire.delivery.repository.ApiKeyRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service

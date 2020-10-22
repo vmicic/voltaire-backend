@@ -2,7 +2,6 @@ package com.voltaire.order;
 
 import com.voltaire.order.model.CreateOrderRequest;
 import com.voltaire.order.model.Order;
-import com.voltaire.order.model.OrderForDelivery;
 import com.voltaire.shared.IdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -45,23 +44,4 @@ public class OrderController {
         return orderService.rejectOrder(id);
     }
 
-    @GetMapping("/for-delivery")
-    public List<OrderForDelivery> getOrdersForDelivery() {
-        return orderService.getOrdersForDelivery();
-    }
-
-    @PutMapping("{id}/deliver")
-    public IdResponse takeOrderToDeliver(@PathVariable UUID id) {
-        return orderService.takeOrderToDeliver(id);
-    }
-
-    @PutMapping("{id}/start-delivery")
-    public IdResponse startDelivery(@PathVariable UUID id) {
-        return orderService.startDelivery(id);
-    }
-
-    @PutMapping("{id}/delivered")
-    public IdResponse orderDelivered(@PathVariable UUID id) {
-        return orderService.orderDelivered(id);
-    }
 }

@@ -1,4 +1,4 @@
-package com.voltaire.delivery.model;
+package com.voltaire.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

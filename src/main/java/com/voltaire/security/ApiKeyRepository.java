@@ -1,6 +1,5 @@
-package com.voltaire.delivery.repository;
+package com.voltaire.security;
 
-import com.voltaire.delivery.model.ApiKey;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

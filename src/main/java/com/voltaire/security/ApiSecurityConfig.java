@@ -1,6 +1,6 @@
 package com.voltaire.security;
 
-import com.voltaire.delivery.ApiKeyService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,6 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${voltaire.http.api-key-header-name}")
@@ -23,11 +24,6 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
             "/v1/orders/**/start-delivery",
             "/v1/orders/**/delivered"
     };
-
-    public ApiSecurityConfig(ApiKeyService apiKeyService) {
-        this.apiKeyService = apiKeyService;
-    }
-
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {

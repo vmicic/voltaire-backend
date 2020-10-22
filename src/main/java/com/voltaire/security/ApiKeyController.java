@@ -1,6 +1,5 @@
-package com.voltaire.delivery;
+package com.voltaire.security;
 
-import com.voltaire.delivery.model.ApiKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
