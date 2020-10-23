@@ -1,5 +1,7 @@
 package com.voltaire.order.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,9 +10,11 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
-public class OrderDto {
+@Builder
+@AllArgsConstructor
+public class CreateOrderRequest {
 
     private UUID restaurantId;
 
-    List<OrderItemDto> orderItems;
+    List<CreateOrderItemRequest> orderItems;
 }

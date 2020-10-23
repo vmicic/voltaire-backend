@@ -2,10 +2,7 @@ package com.voltaire.order.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.voltaire.restaurant.model.MenuItem;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,9 +21,13 @@ public class OrderItem {
     @GeneratedValue
     private UUID id;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToOne
     private MenuItem menuItem;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @JsonIgnore
     @ManyToOne
     private Order order;

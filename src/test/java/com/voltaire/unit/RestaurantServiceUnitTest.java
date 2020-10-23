@@ -37,12 +37,12 @@ class RestaurantServiceUnitTest {
     @BeforeEach
     public void setUp() {
         this.restaurant = Restaurant.builder()
+                .id(UUID.fromString("f9822d37-7357-4bd7-9ad7-e16b68da2e7c"))
                 .name("My restaurant")
                 .address("Brace Ribnikar 10")
                 .openingTime(LocalTime.of(10, 10))
                 .closingTime(LocalTime.of(20, 20))
                 .build();
-        restaurant.setId(UUID.fromString("f9822d37-7357-4bd7-9ad7-e16b68da2e7c"));
     }
 
     @Test

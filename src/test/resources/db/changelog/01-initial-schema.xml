@@ -47,7 +47,7 @@
             <column name="id" type="uuid">
                 <constraints nullable="false" unique="true" primaryKey="true"/>
             </column>
-            <column name="order_time" type="time">
+            <column name="order_time" type="datetime">
                 <constraints nullable="false"/>
             </column>
             <column name="order_status" type="varchar(64)">

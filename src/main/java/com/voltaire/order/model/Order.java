@@ -15,7 +15,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -35,6 +35,8 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
 
+    private Integer minutesForPreparation;
+
     public void addOrderItem(OrderItem orderItem) {
         if (orderItems == null) {
             orderItems = new ArrayList<>();
@@ -44,5 +46,17 @@ public class Order {
 
     public boolean notWaitingForResponse() {
         return !this.orderStatus.equals(OrderStatus.CREATED);
+    }
+
+    public boolean notWaitingDeliveryService() {
+        return !this.orderStatus.equals(OrderStatus.CONFIRMED);
+    }
+
+    public boolean notWaitingDeliveryConfirmation() {
+        return !this.orderStatus.equals(OrderStatus.DELIVERING);
+    }
+
+    public boolean notWaitingDeliveryStart() {
+        return !this.orderStatus.equals(OrderStatus.PREPARING);
     }
 }
