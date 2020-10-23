@@ -26,7 +26,7 @@ public class GeocodeService {
     }
 
     @SneakyThrows
-    public Point readPointFromGeocodeResponseEntity(ResponseEntity<String> responseEntity) {
+    private Point readPointFromGeocodeResponseEntity(ResponseEntity<String> responseEntity) {
         ObjectMapper mapper = new ObjectMapper();
         var responseJson = mapper.readTree(responseEntity.getBody());
         var longitudeNode = responseJson.get("results").get(0).get("geometry").get("location").get("lng");
@@ -41,15 +41,15 @@ public class GeocodeService {
 
         final int R = 6371; // Radius of the earth
 
-        double latDistance = Math.toRadians(point2.getLatitude() - point1.getLatitude());
-        double lonDistance = Math.toRadians(point2.getLongitude() - point1.getLongitude());
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+        var latDistance = Math.toRadians(point2.getLatitude() - point1.getLatitude());
+        var lonDistance = Math.toRadians(point2.getLongitude() - point1.getLongitude());
+        var a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
                 + Math.cos(Math.toRadians(point1.getLatitude())) * Math.cos(Math.toRadians(point2.getLatitude()))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c * 1000; // convert to meters
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        var distance = R * c * 1000; // convert to meters
 
-        double height = 0;
+        var height = 0;
 
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
 

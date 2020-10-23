@@ -11,6 +11,7 @@ import com.voltaire.restaurant.model.MenuItem;
 import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.restaurant.repository.MenuItemRepository;
 import com.voltaire.restaurant.repository.RestaurantRepository;
+import com.voltaire.shared.Point;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles(profiles = "inmemorydb-test")
@@ -60,6 +60,7 @@ class DeliveryServiceIntegrationInMemoryDbTest {
                 .address("Brace Ribnikar 10")
                 .openingTime(LocalTime.of(10, 10))
                 .closingTime(LocalTime.of(20, 20))
+                .point(new Point(19.8371365, 45.2479144))
                 .build();
 
         restaurant = restaurantRepository.save(restaurant);
@@ -196,6 +197,91 @@ class DeliveryServiceIntegrationInMemoryDbTest {
         orderRepository.save(order);
 
         assertThrows(BadRequestException.class, () -> deliveryService.orderDelivered(orderId));
+    }
+
+    @Test
+    void getSortedByPickupDistanceOrdersForDelivery() {
+        var restaurant2 = Restaurant.builder()
+                .name("Project 72")
+                .address("Kosovska 15")
+                .openingTime(LocalTime.of(10, 10))
+                .closingTime(LocalTime.of(20, 20))
+                .point(new Point(19.8493474, 45.2595586))
+                .build();
+
+        restaurant2 = restaurantRepository.save(restaurant2);
+
+        var menuItem2 = MenuItem.builder()
+                .name("Srneci cevapi")
+                .price(BigDecimal.valueOf(500))
+                .description("meat, cheese")
+                .restaurant(restaurant2)
+                .build();
+
+        menuItem2 = menuItemRepository.save(menuItem2);
+
+        var order2 = Order.builder()
+                .orderTime(LocalDateTime.now(clock))
+                .orderStatus(OrderStatus.CONFIRMED)
+                .restaurant(restaurant2)
+                .build();
+
+        var orderItem2 = OrderItem.builder()
+                .menuItem(menuItem2)
+                .quantity(2)
+                .additionalInfo("no ketchup")
+                .order(order2)
+                .build();
+
+        order2.addOrderItem(orderItem2);
+        order2.setOrderStatus(OrderStatus.CONFIRMED);
+        orderRepository.save(order2);
+
+        var restaurant3 = Restaurant.builder()
+                .name("Project 72")
+                .address("Bulevar oslobodjenja 15")
+                .openingTime(LocalTime.of(10, 10))
+                .closingTime(LocalTime.of(20, 20))
+                .point(new Point(19.8312667, 45.2624046))
+                .build();
+
+        restaurant3 = restaurantRepository.save(restaurant3);
+
+        var menuItem3 = MenuItem.builder()
+                .name("Srneci cevapi")
+                .price(BigDecimal.valueOf(500))
+                .description("meat, cheese")
+                .restaurant(restaurant3)
+                .build();
+
+        menuItem3 = menuItemRepository.save(menuItem3);
+
+        var order3 = Order.builder()
+                .orderTime(LocalDateTime.now(clock))
+                .orderStatus(OrderStatus.CONFIRMED)
+                .restaurant(restaurant3)
+                .build();
+
+        var orderItem3 = OrderItem.builder()
+                .menuItem(menuItem3)
+                .quantity(2)
+                .additionalInfo("no ketchup")
+                .order(order3)
+                .build();
+
+        order3.addOrderItem(orderItem3);
+        order3.setOrderStatus(OrderStatus.CONFIRMED);
+        orderRepository.save(order3);
+
+        order.setOrderStatus(OrderStatus.CONFIRMED);
+        order = orderRepository.save(order);
+
+        var address = "Puskinova 6, Novi Sad";
+        var ordersForDeliver = deliveryService.getSortedByPickupDistanceOrdersForDelivery(address);
+
+        assertEquals(3, ordersForDeliver.size());
+        assertTrue(ordersForDeliver.get(0).getRestaurantDistanceInMeters() < ordersForDeliver.get(1).getRestaurantDistanceInMeters());
+        assertTrue(ordersForDeliver.get(1).getRestaurantDistanceInMeters() < ordersForDeliver.get(2).getRestaurantDistanceInMeters());
     }
 
 }

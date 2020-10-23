@@ -16,7 +16,7 @@ import java.util.UUID;
 @Service
 public class RestaurantService {
 
-    private GeocodeService geocodeService;
+    private final GeocodeService geocodeService;
 
     private final RestaurantRepository restaurantRepository;
 

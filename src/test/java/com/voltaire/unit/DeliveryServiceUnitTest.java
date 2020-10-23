@@ -9,6 +9,8 @@ import com.voltaire.order.model.OrderStatus;
 import com.voltaire.order.repository.OrderRepository;
 import com.voltaire.restaurant.model.MenuItem;
 import com.voltaire.restaurant.model.Restaurant;
+import com.voltaire.shared.GeocodeService;
+import com.voltaire.shared.Point;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,8 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,6 +40,9 @@ class DeliveryServiceUnitTest {
 
     @Mock
     private OrderRepository orderRepository;
+
+    @Mock
+    private GeocodeService geocodeService;
 
     @Mock
     private Clock clock;
@@ -62,6 +66,7 @@ class DeliveryServiceUnitTest {
                 .address("Brace Ribnikar 10")
                 .openingTime(LocalTime.of(10, 10))
                 .closingTime(LocalTime.of(20, 20))
+                .point(new Point(19.8371365, 45.2479144))
                 .build();
 
         var menuItem = MenuItem.builder()
@@ -83,6 +88,8 @@ class DeliveryServiceUnitTest {
                 .additionalInfo("no ketchup")
                 .order(order)
                 .build();
+
+        this.order.addOrderItem(orderItem);
     }
 
     @Test
@@ -213,5 +220,62 @@ class DeliveryServiceUnitTest {
 
         assertThrows(BadRequestException.class, () -> deliveryService.orderDelivered(ORDER_ID));
         verify(orderRepository).findById(ORDER_ID);
+    }
+
+    @Test
+    void getSortedByPickupDistanceOrdersForDeliveryTest() {
+        var address = "Brace Ribnikar 43, Novi Sad";
+        var deliverymanPoint = new Point(19.8340029, 45.2483411);
+
+        var restaurant2 = Restaurant.builder()
+                .id(UUID.fromString("f9822c37-7357-4bd7-9ad7-e16b68da2e7c"))
+                .name("Project 72")
+                .address("Kosovska 15")
+                .openingTime(LocalTime.of(10, 10))
+                .closingTime(LocalTime.of(20, 20))
+                .point(new Point(19.8493474, 45.2595586))
+                .build();
+
+        var menuItem2 = MenuItem.builder()
+                .id(UUID.fromString("bcbbf991-903e-4559-b893-62e5740078d0"))
+                .name("Srneci cevapi")
+                .price(BigDecimal.valueOf(500))
+                .description("meat, cheese")
+                .restaurant(restaurant2)
+                .build();
+
+        var order2 = Order.builder()
+                .orderTime(LocalDateTime.now(fixedClock))
+                .orderStatus(OrderStatus.CONFIRMED)
+                .restaurant(restaurant2)
+                .build();
+
+        var orderItem2 = OrderItem.builder()
+                .menuItem(menuItem2)
+                .quantity(2)
+                .additionalInfo("no ketchup")
+                .order(order2)
+                .build();
+
+        order2.addOrderItem(orderItem2);
+
+        this.order.setOrderStatus(OrderStatus.CONFIRMED);
+
+        ReflectionTestUtils.setField(deliveryService, "confirmedOrderDeliveryTimeout", confirmedOrderDeliveryTimeout);
+        var timeCutoff = LocalDateTime.now(fixedClock).minusMinutes(confirmedOrderDeliveryTimeout);
+
+        doReturn(fixedClock.instant()).when(clock).instant();
+        doReturn(fixedClock.getZone()).when(clock).getZone();
+        doReturn(deliverymanPoint).when(geocodeService).getPointForAddressString(address);
+        doReturn(500.0).when(geocodeService).distance(order.getRestaurant().getPoint(), deliverymanPoint);
+        doReturn(100.0).when(geocodeService).distance(order2.getRestaurant().getPoint(), deliverymanPoint);
+        doReturn(List.of(order, order2)).when(orderRepository).findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
+
+        var ordersForDeliver = deliveryService.getSortedByPickupDistanceOrdersForDelivery(address);
+
+        assertEquals(2, ordersForDeliver.size());
+        assertTrue(ordersForDeliver.get(0).getRestaurantDistanceInMeters() < ordersForDeliver.get(1).getRestaurantDistanceInMeters());
+        verify(geocodeService).getPointForAddressString(address);
+        verify(orderRepository).findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
     }
 }

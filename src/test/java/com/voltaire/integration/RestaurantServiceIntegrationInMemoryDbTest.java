@@ -2,8 +2,10 @@ package com.voltaire.integration;
 
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.restaurant.RestaurantService;
+import com.voltaire.restaurant.model.CreateRestaurantRequest;
 import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.restaurant.repository.RestaurantRepository;
+import com.voltaire.shared.Point;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,12 +66,25 @@ class RestaurantServiceIntegrationInMemoryDbTest {
         assertThrows(EntityNotFoundException.class, () -> restaurantService.findById(ID_NOT_EXISTING));
     }
 
- /*   @Test
-    void createRestaurantReturnCreatedRestaurant() {
-        var createdRestaurant = restaurantService.createRestaurant(restaurant2);
+    @Test
+    void createRestaurantTest() {
+        var createRestaurantRequest = CreateRestaurantRequest.builder()
+                .address("Brace Ribnikar 10, Novi Sad")
+                .name("My restaurant")
+                .openingTime(LocalTime.of(10, 10))
+                .closingTime(LocalTime.of(20, 20))
+                .build();
 
-        assertEquals(restaurant2, createdRestaurant);
-    }*/
+        var createdRestaurant = restaurantService.createRestaurant(createRestaurantRequest);
+
+        var point = new Point(19.8371365, 45.2479144);
+        assertEquals(point.getLongitude(), createdRestaurant.getPoint().getLongitude());
+        assertEquals(point.getLatitude(), createdRestaurant.getPoint().getLatitude());
+        assertEquals(createRestaurantRequest.getName(), createdRestaurant.getName());
+        assertEquals(createRestaurantRequest.getAddress(), createdRestaurant.getAddress());
+        assertEquals(createRestaurantRequest.getClosingTime(), createdRestaurant.getClosingTime());
+        assertEquals(createRestaurantRequest.getOpeningTime(), createdRestaurant.getOpeningTime());
+    }
 
     @Test
     @Transactional
