@@ -27,4 +27,5 @@ google:
   maps:
     geocode:
       url: https://maps.googleapis.com/maps/api/geocode/json?address=
+    api-key: AIzaSyDLSYdlak_8Y_ZOpB1JbW9SWebbo3Scyqg
 
