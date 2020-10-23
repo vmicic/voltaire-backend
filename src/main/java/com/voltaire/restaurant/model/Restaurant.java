@@ -1,6 +1,6 @@
 package com.voltaire.restaurant.model;
 
-import com.voltaire.shared.Point;
+import com.voltaire.shared.Geolocation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,6 +35,6 @@ public class Restaurant {
     private List<MenuItem> menuItems = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "point_id")
-    private Point point;
+    @JoinColumn(name = "geolocation_id")
+    private Geolocation geolocation;
 }

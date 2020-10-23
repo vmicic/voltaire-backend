@@ -1,7 +1,7 @@
 package com.voltaire.integration;
 
 import com.voltaire.shared.GeocodeService;
-import com.voltaire.shared.Point;
+import com.voltaire.shared.Geolocation;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,21 +17,21 @@ class GeocodeServiceIntegrationInMemoryDbTest {
     GeocodeService geocodeService;
 
     @Test
-    void getPointForAddressString() {
+    void getGeolocationForAddressString() {
         var address = "Puskinova 5, Novi Sad";
-        var expectedPoint = new Point(19.8317921, 45.2458004);
+        var expectedGeolocation = new Geolocation(19.8317921, 45.2458004);
 
-        var point1 = geocodeService.getPointForAddressString(address);
+        var geolocation1 = geocodeService.getGeolocationForAddressString(address);
 
-        assertEquals(expectedPoint, point1);
+        assertEquals(expectedGeolocation, geolocation1);
     }
 
     @Test
     void distanceTest() {
-        Point point1 = new Point(19.8317921, 45.2458004);
-        Point point2 = new Point(19.8493474, 45.2595586);
+        Geolocation geolocation1 = new Geolocation(19.8317921, 45.2458004);
+        Geolocation geolocation2 = new Geolocation(19.8493474, 45.2595586);
 
-        var distance = geocodeService.distance(point1, point2);
+        var distance = geocodeService.distance(geolocation1, geolocation2);
 
         assertEquals(2056.424499123431, distance);
     }

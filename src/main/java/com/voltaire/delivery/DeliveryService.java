@@ -7,8 +7,8 @@ import com.voltaire.order.model.OrderForDelivery;
 import com.voltaire.order.model.OrderStatus;
 import com.voltaire.order.repository.OrderRepository;
 import com.voltaire.shared.GeocodeService;
+import com.voltaire.shared.Geolocation;
 import com.voltaire.shared.IdResponse;
-import com.voltaire.shared.Point;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -34,10 +34,18 @@ public class DeliveryService {
 
     private final Clock clock;
 
+    public List<OrderForDelivery> getOrdersForDelivery(String address) {
+        if (address == null) {
+            return getOrdersForDelivery();
+        } else {
+            return getSortedByPickupDistanceOrdersForDelivery(address);
+        }
+    }
+
     public List<OrderForDelivery> getOrdersForDelivery() {
         var orders = findAllOrdersForDelivery();
+        var ordersForDelivery = new ArrayList<OrderForDelivery>();
 
-        List<OrderForDelivery> ordersForDelivery = new ArrayList<>();
         orders.forEach(
                 order -> {
                     var orderForDelivery = OrderForDelivery.builder()
@@ -98,7 +106,7 @@ public class DeliveryService {
     }
 
     public List<OrderForDelivery> getSortedByPickupDistanceOrdersForDelivery(String address) {
-        var deliverymanPoint = geocodeService.getPointForAddressString(address);
+        var deliverymanPoint = geocodeService.getGeolocationForAddressString(address);
         var orders = findAllOrdersForDelivery();
 
         var ordersForDelivery = mapOrdersToOrdersForDelivery(orders, deliverymanPoint);
@@ -106,7 +114,7 @@ public class DeliveryService {
                 Comparator.comparing(OrderForDelivery::getRestaurantDistanceInMeters)).collect(Collectors.toList());
     }
 
-    private List<OrderForDelivery> mapOrdersToOrdersForDelivery(List<Order> orders, Point deliverymanPoint) {
+    private List<OrderForDelivery> mapOrdersToOrdersForDelivery(List<Order> orders, Geolocation deliverymanGeolocation) {
         var ordersForDelivery = new ArrayList<OrderForDelivery>();
         orders.forEach(order -> {
             var orderForDelivery = OrderForDelivery.builder()
@@ -115,7 +123,7 @@ public class DeliveryService {
                     .restaurantAddress(order.getRestaurant().getAddress())
                     .deliveryAddress(order.getDeliveryAddress())
                     .minutesForPreparation(order.getMinutesForPreparation())
-                    .restaurantDistanceInMeters((int) Math.round(geocodeService.distance(order.getRestaurant().getPoint(), deliverymanPoint)))
+                    .restaurantDistanceInMeters((int) Math.round(geocodeService.distance(order.getRestaurant().getGeolocation(), deliverymanGeolocation)))
                     .build();
 
             ordersForDelivery.add(orderForDelivery);

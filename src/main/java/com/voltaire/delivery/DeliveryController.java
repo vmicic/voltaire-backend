@@ -11,20 +11,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/orders")
-public class OrderDeliveryController {
+public class DeliveryController {
 
     private final DeliveryService deliveryService;
 
-    @PostMapping("/for-delivery")
-    public List<OrderForDelivery> getOrdersForDelivery(@RequestBody(required = false) String address) {
-        if (address == null) {
-            return deliveryService.getOrdersForDelivery();
-        } else {
-            return deliveryService.getSortedByPickupDistanceOrdersForDelivery(address);
-        }
+    @GetMapping("/for-delivery")
+    public List<OrderForDelivery> getOrdersForDelivery(@RequestParam(required = false) String address) {
+        return deliveryService.getOrdersForDelivery(address);
     }
 
-    @PutMapping("{id}/deliver")
+    @PutMapping("{id}/delivery-request")
     public IdResponse takeOrderToDeliver(@PathVariable UUID id) {
         return deliveryService.takeOrderToDeliver(id);
     }

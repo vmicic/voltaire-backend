@@ -5,7 +5,7 @@ import com.voltaire.restaurant.RestaurantService;
 import com.voltaire.restaurant.model.CreateRestaurantRequest;
 import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.restaurant.repository.RestaurantRepository;
-import com.voltaire.shared.Point;
+import com.voltaire.shared.Geolocation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,9 +96,9 @@ class RestaurantServiceIntegrationContainerDbTest {
 
         var createdRestaurant = restaurantService.createRestaurant(createRestaurantRequest);
 
-        var point = new Point(19.8371365, 45.2479144);
-        assertEquals(point.getLongitude(), createdRestaurant.getPoint().getLongitude());
-        assertEquals(point.getLatitude(), createdRestaurant.getPoint().getLatitude());
+        var point = new Geolocation(19.8371365, 45.2479144);
+        assertEquals(point.getLongitude(), createdRestaurant.getGeolocation().getLongitude());
+        assertEquals(point.getLatitude(), createdRestaurant.getGeolocation().getLatitude());
         assertEquals(createRestaurantRequest.getName(), createdRestaurant.getName());
         assertEquals(createRestaurantRequest.getAddress(), createdRestaurant.getAddress());
         assertEquals(createRestaurantRequest.getClosingTime(), createdRestaurant.getClosingTime());

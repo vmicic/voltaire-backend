@@ -26,7 +26,7 @@ public class RestaurantService {
                 .address(createRestaurantRequest.getAddress())
                 .openingTime(createRestaurantRequest.getOpeningTime())
                 .closingTime(createRestaurantRequest.getClosingTime())
-                .point(geocodeService.getPointForAddressString(createRestaurantRequest.getAddress()))
+                .geolocation(geocodeService.getGeolocationForAddressString(createRestaurantRequest.getAddress()))
                 .build();
 
         return restaurantRepository.save(restaurant);

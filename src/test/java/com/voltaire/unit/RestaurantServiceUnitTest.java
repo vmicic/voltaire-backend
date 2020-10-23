@@ -7,7 +7,7 @@ import com.voltaire.restaurant.model.CreateRestaurantRequest;
 import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.restaurant.repository.RestaurantRepository;
 import com.voltaire.shared.GeocodeService;
-import com.voltaire.shared.Point;
+import com.voltaire.shared.Geolocation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,7 +41,7 @@ class RestaurantServiceUnitTest {
 
     @BeforeEach
     public void setUp() {
-        var point = new Point(19.8371365, 45.2479144);
+        var point = new Geolocation(19.8371365, 45.2479144);
 
         this.restaurant = Restaurant.builder()
                 .id(UUID.fromString("f9822d37-7357-4bd7-9ad7-e16b68da2e7c"))
@@ -49,20 +49,20 @@ class RestaurantServiceUnitTest {
                 .address("Brace Ribnikar 10, Novi Sad")
                 .openingTime(LocalTime.of(10, 10))
                 .closingTime(LocalTime.of(20, 20))
-                .point(point)
+                .geolocation(point)
                 .build();
     }
 
     @Test
     void createRestaurantTest() {
-        var point = new Point(19.8371365, 45.2479144);
+        var point = new Geolocation(19.8371365, 45.2479144);
 
         var expectedRestaurantToSave = Restaurant.builder()
                 .name("My restaurant")
                 .address("Brace Ribnikar 10, Novi Sad")
                 .openingTime(LocalTime.of(10, 10))
                 .closingTime(LocalTime.of(20, 20))
-                .point(point)
+                .geolocation(point)
                 .build();
 
         var createRestaurantRequest = CreateRestaurantRequest.builder()
@@ -73,7 +73,7 @@ class RestaurantServiceUnitTest {
                 .build();
 
         doReturn(restaurant).when(restaurantRepository).save(expectedRestaurantToSave);
-        doReturn(point).when(geocodeService).getPointForAddressString(createRestaurantRequest.getAddress());
+        doReturn(point).when(geocodeService).getGeolocationForAddressString(createRestaurantRequest.getAddress());
 
         var newRestaurant = restaurantService.createRestaurant(createRestaurantRequest);
 

@@ -7,7 +7,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <changeSet id="18" author="vmicic">
-        <createTable tableName="point">
+        <createTable tableName="geolocation">
             <column name="id" type="uuid">
                 <constraints nullable="false" unique="true" primaryKey="true"/>
             </column>
@@ -22,14 +22,14 @@
 
     <changeSet id="19" author="vmicic">
         <addColumn tableName="restaurant">
-            <column name="point_id" type="uuid"/>
+            <column name="geolocation_id" type="uuid"/>
         </addColumn>
     </changeSet>
 
     <changeSet id="20" author="vmicic">
-        <addForeignKeyConstraint baseTableName="restaurant" baseColumnNames="point_id"
-                                 constraintName="restaurant_point_fk"
-                                 referencedTableName="point" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="restaurant" baseColumnNames="geolocation_id"
+                                 constraintName="restaurant_geolocation_fk"
+                                 referencedTableName="geolocation" referencedColumnNames="id"/>
     </changeSet>
 
 </databaseChangeLog>

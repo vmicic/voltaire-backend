@@ -15,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Point {
+public class Geolocation {
 
     @Id
     @GeneratedValue
@@ -25,7 +25,7 @@ public class Point {
 
     private Double latitude;
 
-    public Point(Double longitude, Double latitude) {
+    public Geolocation(Double longitude, Double latitude) {
         this.longitude = longitude;
         this.latitude = latitude;
     }

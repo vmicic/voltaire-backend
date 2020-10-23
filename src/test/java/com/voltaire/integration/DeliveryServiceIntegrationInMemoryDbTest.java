@@ -11,7 +11,7 @@ import com.voltaire.restaurant.model.MenuItem;
 import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.restaurant.repository.MenuItemRepository;
 import com.voltaire.restaurant.repository.RestaurantRepository;
-import com.voltaire.shared.Point;
+import com.voltaire.shared.Geolocation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +60,7 @@ class DeliveryServiceIntegrationInMemoryDbTest {
                 .address("Brace Ribnikar 10")
                 .openingTime(LocalTime.of(10, 10))
                 .closingTime(LocalTime.of(20, 20))
-                .point(new Point(19.8371365, 45.2479144))
+                .geolocation(new Geolocation(19.8371365, 45.2479144))
                 .build();
 
         restaurant = restaurantRepository.save(restaurant);
@@ -206,7 +206,7 @@ class DeliveryServiceIntegrationInMemoryDbTest {
                 .address("Kosovska 15")
                 .openingTime(LocalTime.of(10, 10))
                 .closingTime(LocalTime.of(20, 20))
-                .point(new Point(19.8493474, 45.2595586))
+                .geolocation(new Geolocation(19.8493474, 45.2595586))
                 .build();
 
         restaurant2 = restaurantRepository.save(restaurant2);
@@ -242,7 +242,7 @@ class DeliveryServiceIntegrationInMemoryDbTest {
                 .address("Bulevar oslobodjenja 15")
                 .openingTime(LocalTime.of(10, 10))
                 .closingTime(LocalTime.of(20, 20))
-                .point(new Point(19.8312667, 45.2624046))
+                .geolocation(new Geolocation(19.8312667, 45.2624046))
                 .build();
 
         restaurant3 = restaurantRepository.save(restaurant3);
