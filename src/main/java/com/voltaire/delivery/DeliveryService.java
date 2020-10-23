@@ -34,7 +34,6 @@ public class DeliveryService {
 
     private final Clock clock;
 
-
     public List<OrderForDelivery> getOrdersForDelivery() {
         var orders = findAllOrdersForDelivery();
 
@@ -100,11 +99,9 @@ public class DeliveryService {
 
     public List<OrderForDelivery> getSortedByPickupDistanceOrdersForDelivery(String address) {
         var deliverymanPoint = geocodeService.getPointForAddressString(address);
-
         var orders = findAllOrdersForDelivery();
 
         var ordersForDelivery = mapOrdersToOrdersForDelivery(orders, deliverymanPoint);
-
         return ordersForDelivery.stream().sorted(
                 Comparator.comparing(OrderForDelivery::getRestaurantDistanceInMeters)).collect(Collectors.toList());
     }

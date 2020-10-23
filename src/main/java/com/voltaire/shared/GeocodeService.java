@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 public class GeocodeService {
 
     @Value("${google.maps.api-key}")
-    private String apiKey;
+    private String geocodeApiKey;
 
     @Value("${google.maps.geocode.url}")
     private String geocodeUrl;
@@ -20,7 +20,7 @@ public class GeocodeService {
         var addressFormatted = address.trim().replace(" ", "+");
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(geocodeUrl + addressFormatted + "&key=" + apiKey, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(geocodeUrl + addressFormatted + "&key=" + geocodeApiKey, String.class);
 
         return readPointFromGeocodeResponseEntity(responseEntity);
     }
