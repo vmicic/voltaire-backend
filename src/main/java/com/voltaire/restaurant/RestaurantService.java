@@ -1,8 +1,10 @@
 package com.voltaire.restaurant;
 
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
+import com.voltaire.restaurant.model.CreateRestaurantRequest;
 import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.restaurant.repository.RestaurantRepository;
+import com.voltaire.shared.GeocodeService;
 import com.voltaire.shared.IdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,9 +16,19 @@ import java.util.UUID;
 @Service
 public class RestaurantService {
 
+    private GeocodeService geocodeService;
+
     private final RestaurantRepository restaurantRepository;
 
-    public Restaurant createRestaurant(Restaurant restaurant) {
+    public Restaurant createRestaurant(CreateRestaurantRequest createRestaurantRequest) {
+        var restaurant = Restaurant.builder()
+                .name(createRestaurantRequest.getName())
+                .address(createRestaurantRequest.getAddress())
+                .openingTime(createRestaurantRequest.getOpeningTime())
+                .closingTime(createRestaurantRequest.getClosingTime())
+                .point(geocodeService.getPointForAddressString(createRestaurantRequest.getAddress()))
+                .build();
+
         return restaurantRepository.save(restaurant);
     }
 

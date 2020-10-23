@@ -10,7 +10,6 @@ import com.voltaire.restaurant.repository.MenuItemRepository;
 import com.voltaire.restaurant.repository.RestaurantRepository;
 import com.voltaire.shared.IdResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
@@ -21,9 +20,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Service
 public class OrderService {
-
-    @Value("${voltaire.orders.delivery-timeout}")
-    private Integer confirmedOrderDeliveryTimeout;
 
     private final OrderRepository orderRepository;
     private final RestaurantRepository restaurantRepository;

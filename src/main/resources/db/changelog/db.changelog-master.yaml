@@ -19,3 +19,5 @@ databaseChangeLog:
       file: db/changelog/09-add-api-key-table.xml
   - include:
       file: db/changelog/10-add-column-to-orders.xml
+  - include:
+      file: db/changelog/11-create-table-point.xml

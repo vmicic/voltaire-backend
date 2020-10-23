@@ -1,14 +1,12 @@
 package com.voltaire.restaurant.model;
 
+import com.voltaire.shared.Point;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,4 +33,8 @@ public class Restaurant {
 
     @OneToMany(mappedBy = "restaurant", orphanRemoval = true)
     private List<MenuItem> menuItems = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "point_id")
+    private Point point;
 }

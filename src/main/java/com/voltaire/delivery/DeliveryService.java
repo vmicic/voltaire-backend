@@ -6,7 +6,9 @@ import com.voltaire.order.model.Order;
 import com.voltaire.order.model.OrderForDelivery;
 import com.voltaire.order.model.OrderStatus;
 import com.voltaire.order.repository.OrderRepository;
+import com.voltaire.shared.GeocodeService;
 import com.voltaire.shared.IdResponse;
+import com.voltaire.shared.Point;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,8 +16,10 @@ import org.springframework.stereotype.Service;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,12 +30,13 @@ public class DeliveryService {
 
     private final OrderRepository orderRepository;
 
+    private final GeocodeService geocodeService;
+
     private final Clock clock;
 
 
     public List<OrderForDelivery> getOrdersForDelivery() {
-        var timeCutoff = LocalDateTime.now(clock).minusMinutes(confirmedOrderDeliveryTimeout);
-        var orders = orderRepository.findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
+        var orders = findAllOrdersForDelivery();
 
         List<OrderForDelivery> ordersForDelivery = new ArrayList<>();
         orders.forEach(
@@ -41,13 +46,18 @@ public class DeliveryService {
                             .restaurantName(order.getRestaurant().getName())
                             .restaurantAddress(order.getRestaurant().getAddress())
                             .deliveryAddress(order.getDeliveryAddress())
+                            .minutesForPreparation(order.getMinutesForPreparation())
                             .build();
 
                     ordersForDelivery.add(orderForDelivery);
                 }
         );
-
         return ordersForDelivery;
+    }
+
+    private List<Order> findAllOrdersForDelivery() {
+        var timeCutoff = LocalDateTime.now(clock).minusMinutes(confirmedOrderDeliveryTimeout);
+        return orderRepository.findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
     }
 
     public Order findById(UUID id) {
@@ -87,4 +97,34 @@ public class DeliveryService {
         order.setOrderStatus(OrderStatus.DELIVERED);
         return new IdResponse(orderRepository.save(order).getId());
     }
+
+    public List<OrderForDelivery> getSortedByPickupDistanceOrdersForDelivery(String address) {
+        var deliverymanPoint = geocodeService.getPointForAddressString(address);
+
+        var orders = findAllOrdersForDelivery();
+
+        var ordersForDelivery = mapOrdersToOrdersForDelivery(orders, deliverymanPoint);
+
+        return ordersForDelivery.stream().sorted(
+                Comparator.comparing(OrderForDelivery::getRestaurantDistanceInMeters)).collect(Collectors.toList());
+    }
+
+    private List<OrderForDelivery> mapOrdersToOrdersForDelivery(List<Order> orders, Point deliverymanPoint) {
+        var ordersForDelivery = new ArrayList<OrderForDelivery>();
+        orders.forEach(order -> {
+            var orderForDelivery = OrderForDelivery.builder()
+                    .orderId(order.getId())
+                    .restaurantName(order.getRestaurant().getName())
+                    .restaurantAddress(order.getRestaurant().getAddress())
+                    .deliveryAddress(order.getDeliveryAddress())
+                    .minutesForPreparation(order.getMinutesForPreparation())
+                    .restaurantDistanceInMeters((int) Math.round(geocodeService.distance(order.getRestaurant().getPoint(), deliverymanPoint)))
+                    .build();
+
+            ordersForDelivery.add(orderForDelivery);
+        });
+
+        return ordersForDelivery;
+    }
+
 }

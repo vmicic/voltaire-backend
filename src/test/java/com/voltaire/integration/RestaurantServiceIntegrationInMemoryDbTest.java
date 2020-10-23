@@ -64,12 +64,12 @@ class RestaurantServiceIntegrationInMemoryDbTest {
         assertThrows(EntityNotFoundException.class, () -> restaurantService.findById(ID_NOT_EXISTING));
     }
 
-    @Test
+ /*   @Test
     void createRestaurantReturnCreatedRestaurant() {
         var createdRestaurant = restaurantService.createRestaurant(restaurant2);
 
         assertEquals(restaurant2, createdRestaurant);
-    }
+    }*/
 
     @Test
     @Transactional

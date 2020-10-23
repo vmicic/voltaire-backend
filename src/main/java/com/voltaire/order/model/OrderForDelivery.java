@@ -21,5 +21,7 @@ public class OrderForDelivery {
 
     private String deliveryAddress;
 
-    private Integer minutes;
+    private Integer minutesForPreparation;
+
+    private Integer restaurantDistanceInMeters;
 }

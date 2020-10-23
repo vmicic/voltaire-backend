@@ -15,9 +15,13 @@ public class OrderDeliveryController {
 
     private final DeliveryService deliveryService;
 
-    @GetMapping("/for-delivery")
-    public List<OrderForDelivery> getOrdersForDelivery() {
-        return deliveryService.getOrdersForDelivery();
+    @PostMapping("/for-delivery")
+    public List<OrderForDelivery> getOrdersForDelivery(@RequestBody(required = false) String address) {
+        if (address == null) {
+            return deliveryService.getOrdersForDelivery();
+        } else {
+            return deliveryService.getSortedByPickupDistanceOrdersForDelivery(address);
+        }
     }
 
     @PutMapping("{id}/deliver")
@@ -34,4 +38,5 @@ public class OrderDeliveryController {
     public IdResponse orderDelivered(@PathVariable UUID id) {
         return deliveryService.orderDelivered(id);
     }
+
 }

@@ -1,5 +1,6 @@
 package com.voltaire.restaurant;
 
+import com.voltaire.restaurant.model.CreateRestaurantRequest;
 import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.shared.IdResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,8 @@ public class RestaurantController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Restaurant createRestaurant(@RequestBody Restaurant restaurant) {
-        return restaurantService.createRestaurant(restaurant);
+    public Restaurant createRestaurant(@RequestBody CreateRestaurantRequest createRestaurantRequest) {
+        return restaurantService.createRestaurant(createRestaurantRequest);
     }
 
     @GetMapping
