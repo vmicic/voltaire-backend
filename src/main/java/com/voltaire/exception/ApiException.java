@@ -3,7 +3,6 @@ package com.voltaire.exception;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
 public class ApiException {
 
     private LocalDateTime timestamp;
-    private HttpStatus status;
+    private int status;
     private String error;
     private String message;
     private String path;

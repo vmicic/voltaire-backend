@@ -1,6 +1,8 @@
 package com.voltaire.shared;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.voltaire.exception.RestTemplateResponseErrorHandler;
+import com.voltaire.exception.customexceptions.BadRequestException;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +22,27 @@ public class GeocodeService {
         var addressFormatted = address.trim().replace(" ", "+");
 
         RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setErrorHandler(new RestTemplateResponseErrorHandler());
+
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(geocodeUrl + addressFormatted + "&key=" + geocodeApiKey, String.class);
+        checkGeocodeResponseStatus(responseEntity);
 
         return readGeolocationFromGeocodeResponseEntity(responseEntity);
+    }
+
+    @SneakyThrows
+    private void checkGeocodeResponseStatus(ResponseEntity<String> responseEntity) {
+        ObjectMapper mapper = new ObjectMapper();
+        var responseJson = mapper.readTree(responseEntity.getBody());
+        String geocodeStatus = responseJson.get("status").asText();
+
+        if (geocodeStatus.equals("ZERO_RESULTS")) {
+            throw new BadRequestException("Address is invalid");
+        }
+
+        if (!geocodeStatus.equals("OK")) {
+            throw new BadRequestException("Couldn't retrieve location for requested address.");
+        }
     }
 
     @SneakyThrows
