@@ -1,7 +1,6 @@
 package com.voltaire.shared;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.voltaire.exception.RestTemplateResponseErrorHandler;
 import com.voltaire.exception.customexceptions.BadRequestException;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,8 +21,6 @@ public class GeocodeService {
         var addressFormatted = address.trim().replace(" ", "+");
 
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setErrorHandler(new RestTemplateResponseErrorHandler());
-
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(geocodeUrl + addressFormatted + "&key=" + geocodeApiKey, String.class);
         checkGeocodeResponseStatus(responseEntity);
 
