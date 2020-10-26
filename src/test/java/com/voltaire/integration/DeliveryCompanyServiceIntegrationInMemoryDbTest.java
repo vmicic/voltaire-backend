@@ -1,6 +1,9 @@
 package com.voltaire.integration;
 
 import com.voltaire.delivery.DeliveryCompanyService;
+import com.voltaire.delivery.model.CreateDeliveryCompanyRequest;
+import com.voltaire.delivery.model.DeliveryCompany;
+import com.voltaire.delivery.repository.DeliveryCompanyRepository;
 import com.voltaire.exception.customexceptions.BadRequestException;
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.order.model.Order;
@@ -42,6 +45,9 @@ class DeliveryCompanyServiceIntegrationInMemoryDbTest {
     private RestaurantRepository restaurantRepository;
 
     @Autowired
+    private DeliveryCompanyRepository deliveryCompanyRepository;
+
+    @Autowired
     private MenuItemRepository menuItemRepository;
 
     @Autowired
@@ -52,6 +58,9 @@ class DeliveryCompanyServiceIntegrationInMemoryDbTest {
 
     private Order order;
     private UUID orderId;
+
+    private DeliveryCompany deliveryCompany;
+    private UUID deliveryCompanyId;
 
     @BeforeEach
     public void setUp() {
@@ -90,6 +99,24 @@ class DeliveryCompanyServiceIntegrationInMemoryDbTest {
 
         this.order = orderRepository.save(order);
         this.orderId = this.order.getId();
+
+        this.deliveryCompany = DeliveryCompany.builder()
+                .name("Potrcko")
+                .apiKey(UUID.randomUUID())
+                .build();
+
+        this.deliveryCompany = deliveryCompanyRepository.save(deliveryCompany);
+        this.deliveryCompanyId = deliveryCompany.getId();
+    }
+
+    @Test
+    void createDeliveryCompanyTest() {
+        var createDeliveryCompanyRequest = new CreateDeliveryCompanyRequest("Potrcko");
+
+        var deliveryCompany = deliveryCompanyService.createDeliveryCompany(createDeliveryCompanyRequest);
+
+        assertEquals(createDeliveryCompanyRequest.getName(), deliveryCompany.getName());
+        assertNotNull(deliveryCompany.getApiKey());
     }
 
     @Test
@@ -282,6 +309,45 @@ class DeliveryCompanyServiceIntegrationInMemoryDbTest {
         assertEquals(3, ordersForDeliver.size());
         assertTrue(ordersForDeliver.get(0).getRestaurantDistanceInMeters() < ordersForDeliver.get(1).getRestaurantDistanceInMeters());
         assertTrue(ordersForDeliver.get(1).getRestaurantDistanceInMeters() < ordersForDeliver.get(2).getRestaurantDistanceInMeters());
+    }
+
+    @Test
+    void getApiKeyTest() {
+        var apiKey = deliveryCompanyService.getApiKey(deliveryCompanyId);
+
+        assertEquals(deliveryCompany.getApiKey(), apiKey);
+    }
+
+    @Test
+    void getApiKeyThrowNotFoundExceptionTest() {
+        assertThrows(EntityNotFoundException.class, () -> deliveryCompanyService.getApiKey(ID_NOT_EXISTING));
+    }
+
+    @Test
+    void generateNewApiKeyTest() {
+        var oldApiKey = deliveryCompany.getApiKey();
+        var newApiKey = deliveryCompanyService.generateNewApiKey(deliveryCompanyId);
+
+        assertNotEquals(newApiKey, oldApiKey);
+    }
+
+    @Test
+    void generateApiKeyThrowNotFoundException() {
+        assertThrows(EntityNotFoundException.class, () -> deliveryCompanyService.generateNewApiKey(ID_NOT_EXISTING));
+    }
+
+    @Test
+    void invalidApiKeyTrueTest() {
+        var invalidApiKey = deliveryCompanyService.invalidApiKey(UUID.randomUUID());
+
+        assertTrue(invalidApiKey);
+    }
+
+    @Test
+    void invalidApiKeyFalseTest() {
+        var invalidApiKey = deliveryCompanyService.invalidApiKey(deliveryCompany.getApiKey());
+
+        assertFalse(invalidApiKey);
     }
 
 }

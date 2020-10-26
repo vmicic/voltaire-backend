@@ -150,7 +150,7 @@ public class DeliveryCompanyService {
         return findById(deliveryCompanyId).getApiKey();
     }
 
-    public DeliveryCompany findById(UUID id) {
+    private DeliveryCompany findById(UUID id) {
         return deliveryCompanyRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("id", id.toString()));
     }
