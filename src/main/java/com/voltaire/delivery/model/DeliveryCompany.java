@@ -1,6 +1,7 @@
-package com.voltaire.security;
+package com.voltaire.delivery.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,11 +13,15 @@ import java.util.UUID;
 @Entity
 @Data
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
-public class ApiKey {
+public class DeliveryCompany {
 
     @Id
     @GeneratedValue
-    private UUID uuid;
+    private UUID id;
 
+    private String name;
+
+    private UUID apiKey;
 }

@@ -1,6 +1,6 @@
 package com.voltaire.unit;
 
-import com.voltaire.delivery.DeliveryService;
+import com.voltaire.delivery.DeliveryCompanyService;
 import com.voltaire.exception.customexceptions.BadRequestException;
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.order.model.Order;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles(profiles = "unit-test")
-class DeliveryServiceUnitTest {
+class DeliveryCompanyServiceUnitTest {
 
     private Integer confirmedOrderDeliveryTimeout;
 
@@ -50,7 +50,7 @@ class DeliveryServiceUnitTest {
     private Clock fixedClock;
 
     @InjectMocks
-    private DeliveryService deliveryService;
+    private DeliveryCompanyService deliveryCompanyService;
 
     private Order order;
 
@@ -95,14 +95,14 @@ class DeliveryServiceUnitTest {
     @Test
     void getOrdersForDeliveryTest() {
         order.setId(ORDER_ID);
-        ReflectionTestUtils.setField(deliveryService, "confirmedOrderDeliveryTimeout", confirmedOrderDeliveryTimeout);
+        ReflectionTestUtils.setField(deliveryCompanyService, "confirmedOrderDeliveryTimeout", confirmedOrderDeliveryTimeout);
         var timeCutoff = LocalDateTime.now(fixedClock).minusMinutes(confirmedOrderDeliveryTimeout);
 
         doReturn(fixedClock.instant()).when(clock).instant();
         doReturn(fixedClock.getZone()).when(clock).getZone();
         doReturn(List.of(order)).when(orderRepository).findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
 
-        var ordersForDelivery = deliveryService.getOrdersForDelivery();
+        var ordersForDelivery = deliveryCompanyService.getOrdersForDelivery();
 
         assertEquals(1, ordersForDelivery.size());
         verify(orderRepository).findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
@@ -119,7 +119,7 @@ class DeliveryServiceUnitTest {
         doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
         doReturn(orderExpectedToSave).when(orderRepository).save(orderExpectedToSave);
 
-        var idResponse = deliveryService.takeOrderToDeliver(ORDER_ID);
+        var idResponse = deliveryCompanyService.takeOrderToDeliver(ORDER_ID);
 
         assertEquals(ORDER_ID, idResponse.getId());
         verify(orderRepository).save(orderExpectedToSave);
@@ -132,7 +132,7 @@ class DeliveryServiceUnitTest {
 
         doThrow(new EntityNotFoundException("id", ID_NOT_EXISTING.toString())).when(orderRepository).findById(ID_NOT_EXISTING);
 
-        assertThrows(EntityNotFoundException.class, () -> deliveryService.takeOrderToDeliver(ID_NOT_EXISTING));
+        assertThrows(EntityNotFoundException.class, () -> deliveryCompanyService.takeOrderToDeliver(ID_NOT_EXISTING));
         verify(orderRepository).findById(ID_NOT_EXISTING);
     }
 
@@ -142,7 +142,7 @@ class DeliveryServiceUnitTest {
 
         doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
 
-        assertThrows(BadRequestException.class, () -> deliveryService.takeOrderToDeliver(ORDER_ID));
+        assertThrows(BadRequestException.class, () -> deliveryCompanyService.takeOrderToDeliver(ORDER_ID));
         verify(orderRepository).findById(ORDER_ID);
     }
 
@@ -157,7 +157,7 @@ class DeliveryServiceUnitTest {
         doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
         doReturn(orderExpectedToSave).when(orderRepository).save(orderExpectedToSave);
 
-        var idResponse = deliveryService.startDelivery(ORDER_ID);
+        var idResponse = deliveryCompanyService.startDelivery(ORDER_ID);
 
         assertEquals(ORDER_ID, idResponse.getId());
         verify(orderRepository).save(orderExpectedToSave);
@@ -170,7 +170,7 @@ class DeliveryServiceUnitTest {
 
         doThrow(new EntityNotFoundException("id", ID_NOT_EXISTING.toString())).when(orderRepository).findById(ID_NOT_EXISTING);
 
-        assertThrows(EntityNotFoundException.class, () -> deliveryService.startDelivery(ID_NOT_EXISTING));
+        assertThrows(EntityNotFoundException.class, () -> deliveryCompanyService.startDelivery(ID_NOT_EXISTING));
         verify(orderRepository).findById(ID_NOT_EXISTING);
     }
 
@@ -180,7 +180,7 @@ class DeliveryServiceUnitTest {
 
         doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
 
-        assertThrows(BadRequestException.class, () -> deliveryService.startDelivery(ORDER_ID));
+        assertThrows(BadRequestException.class, () -> deliveryCompanyService.startDelivery(ORDER_ID));
         verify(orderRepository).findById(ORDER_ID);
     }
 
@@ -195,7 +195,7 @@ class DeliveryServiceUnitTest {
         doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
         doReturn(orderExpectedToSave).when(orderRepository).save(orderExpectedToSave);
 
-        var idResponse = deliveryService.orderDelivered(ORDER_ID);
+        var idResponse = deliveryCompanyService.orderDelivered(ORDER_ID);
 
         assertEquals(ORDER_ID, idResponse.getId());
         verify(orderRepository).save(orderExpectedToSave);
@@ -208,7 +208,7 @@ class DeliveryServiceUnitTest {
 
         doThrow(new EntityNotFoundException("id", ID_NOT_EXISTING.toString())).when(orderRepository).findById(ID_NOT_EXISTING);
 
-        assertThrows(EntityNotFoundException.class, () -> deliveryService.orderDelivered(ID_NOT_EXISTING));
+        assertThrows(EntityNotFoundException.class, () -> deliveryCompanyService.orderDelivered(ID_NOT_EXISTING));
         verify(orderRepository).findById(ID_NOT_EXISTING);
     }
 
@@ -218,7 +218,7 @@ class DeliveryServiceUnitTest {
 
         doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
 
-        assertThrows(BadRequestException.class, () -> deliveryService.orderDelivered(ORDER_ID));
+        assertThrows(BadRequestException.class, () -> deliveryCompanyService.orderDelivered(ORDER_ID));
         verify(orderRepository).findById(ORDER_ID);
     }
 
@@ -261,7 +261,7 @@ class DeliveryServiceUnitTest {
 
         this.order.setOrderStatus(OrderStatus.CONFIRMED);
 
-        ReflectionTestUtils.setField(deliveryService, "confirmedOrderDeliveryTimeout", confirmedOrderDeliveryTimeout);
+        ReflectionTestUtils.setField(deliveryCompanyService, "confirmedOrderDeliveryTimeout", confirmedOrderDeliveryTimeout);
         var timeCutoff = LocalDateTime.now(fixedClock).minusMinutes(confirmedOrderDeliveryTimeout);
 
         doReturn(fixedClock.instant()).when(clock).instant();
@@ -271,7 +271,7 @@ class DeliveryServiceUnitTest {
         doReturn(100.0).when(geocodeService).distance(order2.getRestaurant().getGeolocation(), deliverymanPoint);
         doReturn(List.of(order, order2)).when(orderRepository).findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
 
-        var ordersForDeliver = deliveryService.getSortedByPickupDistanceOrdersForDelivery(address);
+        var ordersForDeliver = deliveryCompanyService.getSortedByPickupDistanceOrdersForDelivery(address);
 
         assertEquals(2, ordersForDeliver.size());
         assertTrue(ordersForDeliver.get(0).getRestaurantDistanceInMeters() < ordersForDeliver.get(1).getRestaurantDistanceInMeters());

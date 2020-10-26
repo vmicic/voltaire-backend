@@ -1,6 +1,6 @@
 package com.voltaire.integration;
 
-import com.voltaire.delivery.DeliveryService;
+import com.voltaire.delivery.DeliveryCompanyService;
 import com.voltaire.exception.customexceptions.BadRequestException;
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.order.model.Order;
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles(profiles = "inmemorydb-test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class DeliveryServiceIntegrationInMemoryDbTest {
+class DeliveryCompanyServiceIntegrationInMemoryDbTest {
 
     private final UUID ID_NOT_EXISTING = UUID.fromString("91326b2b-d6ff-4d7d-abf4-49d1117b395d");
 
@@ -48,7 +48,7 @@ class DeliveryServiceIntegrationInMemoryDbTest {
     private Clock clock;
 
     @Autowired
-    private DeliveryService deliveryService;
+    private DeliveryCompanyService deliveryCompanyService;
 
     private Order order;
     private UUID orderId;
@@ -97,7 +97,7 @@ class DeliveryServiceIntegrationInMemoryDbTest {
         order.setOrderStatus(OrderStatus.CONFIRMED);
         orderRepository.save(order);
 
-        var ordersForDelivery = deliveryService.getOrdersForDelivery();
+        var ordersForDelivery = deliveryCompanyService.getOrdersForDelivery();
 
         assertEquals(1, ordersForDelivery.size());
     }
@@ -107,7 +107,7 @@ class DeliveryServiceIntegrationInMemoryDbTest {
         order.setOrderStatus(OrderStatus.DELIVERED);
         orderRepository.save(order);
 
-        var ordersForDelivery = deliveryService.getOrdersForDelivery();
+        var ordersForDelivery = deliveryCompanyService.getOrdersForDelivery();
 
         assertEquals(0, ordersForDelivery.size());
     }
@@ -118,9 +118,9 @@ class DeliveryServiceIntegrationInMemoryDbTest {
         order.setOrderStatus(OrderStatus.CONFIRMED);
         orderRepository.save(order);
 
-        deliveryService.takeOrderToDeliver(order.getId());
+        deliveryCompanyService.takeOrderToDeliver(order.getId());
 
-        var orderDb = deliveryService.findById(order.getId());
+        var orderDb = deliveryCompanyService.findOrderById(order.getId());
 
         assertEquals(OrderStatus.PREPARING, orderDb.getOrderStatus());
 
@@ -130,7 +130,7 @@ class DeliveryServiceIntegrationInMemoryDbTest {
 
     @Test
     void takeOrderToDeliverThrowNotFoundException() {
-        assertThrows(EntityNotFoundException.class, () -> deliveryService.takeOrderToDeliver(ID_NOT_EXISTING));
+        assertThrows(EntityNotFoundException.class, () -> deliveryCompanyService.takeOrderToDeliver(ID_NOT_EXISTING));
     }
 
     @Test
@@ -138,7 +138,7 @@ class DeliveryServiceIntegrationInMemoryDbTest {
         order.setOrderStatus(OrderStatus.DELIVERED);
         orderRepository.save(order);
 
-        assertThrows(BadRequestException.class, () -> deliveryService.takeOrderToDeliver(orderId));
+        assertThrows(BadRequestException.class, () -> deliveryCompanyService.takeOrderToDeliver(orderId));
     }
 
     @Test
@@ -147,9 +147,9 @@ class DeliveryServiceIntegrationInMemoryDbTest {
         order.setOrderStatus(OrderStatus.PREPARING);
         orderRepository.save(order);
 
-        deliveryService.startDelivery(order.getId());
+        deliveryCompanyService.startDelivery(order.getId());
 
-        var orderDb = deliveryService.findById(order.getId());
+        var orderDb = deliveryCompanyService.findOrderById(order.getId());
 
         assertEquals(OrderStatus.DELIVERING, orderDb.getOrderStatus());
 
@@ -159,7 +159,7 @@ class DeliveryServiceIntegrationInMemoryDbTest {
 
     @Test
     void startDeliveryThrowNotFoundException() {
-        assertThrows(EntityNotFoundException.class, () -> deliveryService.startDelivery(ID_NOT_EXISTING));
+        assertThrows(EntityNotFoundException.class, () -> deliveryCompanyService.startDelivery(ID_NOT_EXISTING));
     }
 
     @Test
@@ -167,7 +167,7 @@ class DeliveryServiceIntegrationInMemoryDbTest {
         order.setOrderStatus(OrderStatus.DELIVERED);
         orderRepository.save(order);
 
-        assertThrows(BadRequestException.class, () -> deliveryService.startDelivery(orderId));
+        assertThrows(BadRequestException.class, () -> deliveryCompanyService.startDelivery(orderId));
     }
 
     @Test
@@ -176,9 +176,9 @@ class DeliveryServiceIntegrationInMemoryDbTest {
         order.setOrderStatus(OrderStatus.DELIVERING);
         orderRepository.save(order);
 
-        deliveryService.orderDelivered(order.getId());
+        deliveryCompanyService.orderDelivered(order.getId());
 
-        var orderDb = deliveryService.findById(order.getId());
+        var orderDb = deliveryCompanyService.findOrderById(order.getId());
 
         assertEquals(OrderStatus.DELIVERED, orderDb.getOrderStatus());
 
@@ -188,7 +188,7 @@ class DeliveryServiceIntegrationInMemoryDbTest {
 
     @Test
     void orderDeliveredThrowNotFoundException() {
-        assertThrows(EntityNotFoundException.class, () -> deliveryService.orderDelivered(ID_NOT_EXISTING));
+        assertThrows(EntityNotFoundException.class, () -> deliveryCompanyService.orderDelivered(ID_NOT_EXISTING));
     }
 
     @Test
@@ -196,7 +196,7 @@ class DeliveryServiceIntegrationInMemoryDbTest {
         order.setOrderStatus(OrderStatus.DELIVERED);
         orderRepository.save(order);
 
-        assertThrows(BadRequestException.class, () -> deliveryService.orderDelivered(orderId));
+        assertThrows(BadRequestException.class, () -> deliveryCompanyService.orderDelivered(orderId));
     }
 
     @Test
@@ -277,7 +277,7 @@ class DeliveryServiceIntegrationInMemoryDbTest {
         order = orderRepository.save(order);
 
         var address = "Puskinova 6, Novi Sad";
-        var ordersForDeliver = deliveryService.getSortedByPickupDistanceOrdersForDelivery(address);
+        var ordersForDeliver = deliveryCompanyService.getSortedByPickupDistanceOrdersForDelivery(address);
 
         assertEquals(3, ordersForDeliver.size());
         assertTrue(ordersForDeliver.get(0).getRestaurantDistanceInMeters() < ordersForDeliver.get(1).getRestaurantDistanceInMeters());
