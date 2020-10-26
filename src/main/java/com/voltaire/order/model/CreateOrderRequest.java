@@ -17,4 +17,7 @@ public class CreateOrderRequest {
     private UUID restaurantId;
 
     List<CreateOrderItemRequest> orderItems;
+
+    private String deliveryAddress;
+
 }

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="18" author="vmicic">
+        <createTable tableName="geolocation">
+            <column name="id" type="uuid">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="latitude" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="longitude" type="double">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="19" author="vmicic">
+        <addColumn tableName="restaurant">
+            <column name="geolocation_id" type="uuid"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20" author="vmicic">
+        <addForeignKeyConstraint baseTableName="restaurant" baseColumnNames="geolocation_id"
+                                 constraintName="restaurant_geolocation_fk"
+                                 referencedTableName="geolocation" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="21" author="vmicic">
+        <comment>Insert geolocation data</comment>
+        <insert tableName="geolocation">
+            <column name="id" value="acee71c2-c47b-4218-a264-3fa5c0d30093"/>
+            <column name="longitude" valueNumeric="19.8371365"/>
+            <column name="latitude" valueNumeric="45.2479144"/>
+        </insert>
+        <insert tableName="geolocation">
+            <column name="id" value="fc031e14-c6d9-4086-b900-403362c81f8f"/>
+            <column name="longitude" valueNumeric="19.8340029"/>
+            <column name="latitude" valueNumeric="45.2483411"/>
+        </insert>
+        <insert tableName="geolocation">
+            <column name="id" value="a1299fd8-2c8e-4e0b-b42d-bc617597be9c"/>
+            <column name="longitude" valueNumeric="19.8493474"/>
+            <column name="latitude" valueNumeric="45.2595586"/>
+        </insert>
+        <update tableName="restaurant">
+            <column name="geolocation_id" value="acee71c2-c47b-4218-a264-3fa5c0d30093"/>
+            <where>id = 'dd40e2b9-5a9b-437e-8aa1-96f8f6bec93d'</where>
+        </update>
+        <update tableName="restaurant">
+            <column name="geolocation_id" value="fc031e14-c6d9-4086-b900-403362c81f8f"/>
+            <where>id = '4abd9f66-fd21-4f08-b2b1-19f96621e7fb'</where>
+        </update>
+        <insert tableName="restaurant">
+            <column name="id" value="7b0c3832-d829-4653-b144-53dc7aadcf0b"/>
+            <column name="name" value="Project 72"/>
+            <column name="address" value="Kosovska 15, Novi Sad"/>
+            <column name="opening_time" value="12:00"/>
+            <column name="closing_time" value="23:00"/>
+            <column name="geolocation_id" value="a1299fd8-2c8e-4e0b-b42d-bc617597be9c"/>
+        </insert>
+        <insert tableName="menu_item">
+            <column name="id" value="86149874-b54e-4d5a-9dad-3da6ccc02061"/>
+            <column name="name" value="Srneci cevapi"/>
+            <column name="price" valueNumeric="500.0"/>
+            <column name="description" value="meat, salad"/>
+            <column name="restaurant_id" value="7b0c3832-d829-4653-b144-53dc7aadcf0b"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

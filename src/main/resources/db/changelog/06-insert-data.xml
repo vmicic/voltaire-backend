@@ -18,7 +18,7 @@
         <insert tableName="restaurant">
             <column name="id" value="4abd9f66-fd21-4f08-b2b1-19f96621e7fb"/>
             <column name="name" value="Sef"/>
-            <column name="address" value="Brace Ribnikar 107"/>
+            <column name="address" value="Brace Ribnikar 43"/>
             <column name="opening_time" value="08:00:00"/>
             <column name="closing_time" value="23:00:00"/>
         </insert>

@@ -20,7 +20,12 @@ server:
 voltaire:
   http:
     api-key-header-name: API_KEY
-    api-key: b4161420-52cf-47fe-bf0b-677d79b47bcc
   orders:
     delivery-timeout: 10
+
+google:
+  maps:
+    geocode:
+      url: https://maps.googleapis.com/maps/api/geocode/json?address=
+    api-key: AIzaSyDLSYdlak_8Y_ZOpB1JbW9SWebbo3Scyqg
 

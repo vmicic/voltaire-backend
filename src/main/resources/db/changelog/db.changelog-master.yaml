@@ -15,4 +15,9 @@ databaseChangeLog:
       file: db/changelog/07-update-ordertime-column-type.xml
   - include:
       file: db/changelog/08-add-new-column-to-orders.xml
-
+  - include:
+      file: db/changelog/09-add-api-key-table.xml
+  - include:
+      file: db/changelog/10-add-column-to-orders.xml
+  - include:
+      file: db/changelog/11-create-table-point.xml

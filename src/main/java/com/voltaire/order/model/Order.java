@@ -37,6 +37,8 @@ public class Order {
 
     private Integer minutesForPreparation;
 
+    private String deliveryAddress;
+
     public void addOrderItem(OrderItem orderItem) {
         if (orderItems == null) {
             orderItems = new ArrayList<>();

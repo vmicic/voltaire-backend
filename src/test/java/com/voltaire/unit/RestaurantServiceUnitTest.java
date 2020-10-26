@@ -3,8 +3,11 @@ package com.voltaire.unit;
 
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.restaurant.RestaurantService;
+import com.voltaire.restaurant.model.CreateRestaurantRequest;
 import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.restaurant.repository.RestaurantRepository;
+import com.voltaire.shared.GeocodeService;
+import com.voltaire.shared.Geolocation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,8 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RestaurantServiceUnitTest {
@@ -29,6 +31,9 @@ class RestaurantServiceUnitTest {
     @Mock
     RestaurantRepository restaurantRepository;
 
+    @Mock
+    GeocodeService geocodeService;
+
     @InjectMocks
     RestaurantService restaurantService;
 
@@ -36,23 +41,44 @@ class RestaurantServiceUnitTest {
 
     @BeforeEach
     public void setUp() {
+        var point = new Geolocation(19.8371365, 45.2479144);
+
         this.restaurant = Restaurant.builder()
                 .id(UUID.fromString("f9822d37-7357-4bd7-9ad7-e16b68da2e7c"))
                 .name("My restaurant")
-                .address("Brace Ribnikar 10")
+                .address("Brace Ribnikar 10, Novi Sad")
                 .openingTime(LocalTime.of(10, 10))
                 .closingTime(LocalTime.of(20, 20))
+                .geolocation(point)
                 .build();
     }
 
     @Test
     void createRestaurantTest() {
-        when(restaurantRepository.save(restaurant)).thenReturn(restaurant);
+        var point = new Geolocation(19.8371365, 45.2479144);
 
-        var newRestaurant = restaurantService.createRestaurant(restaurant);
+        var expectedRestaurantToSave = Restaurant.builder()
+                .name("My restaurant")
+                .address("Brace Ribnikar 10, Novi Sad")
+                .openingTime(LocalTime.of(10, 10))
+                .closingTime(LocalTime.of(20, 20))
+                .geolocation(point)
+                .build();
+
+        var createRestaurantRequest = CreateRestaurantRequest.builder()
+                .address("Brace Ribnikar 10, Novi Sad")
+                .name("My restaurant")
+                .openingTime(LocalTime.of(10, 10))
+                .closingTime(LocalTime.of(20, 20))
+                .build();
+
+        doReturn(restaurant).when(restaurantRepository).save(expectedRestaurantToSave);
+        doReturn(point).when(geocodeService).getGeolocationForAddressString(createRestaurantRequest.getAddress());
+
+        var newRestaurant = restaurantService.createRestaurant(createRestaurantRequest);
 
         assertEquals(restaurant, newRestaurant);
-        verify(restaurantRepository).save(restaurant);
+        verify(restaurantRepository).save(expectedRestaurantToSave);
     }
 
     @Test

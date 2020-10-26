@@ -16,7 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 import java.time.*;
@@ -96,8 +95,7 @@ class OrderServiceUnitTest {
                 .build();
 
         var orderItems = new ArrayList<OrderItem>();
-        orderItems.add(orderItem);
-        this.order.setOrderItems(orderItems);
+        this.order.addOrderItem(orderItem);
 
         var createOrderItemRequest = CreateOrderItemRequest.builder()
                 .menuItemId(menuItem.getId())
@@ -250,134 +248,5 @@ class OrderServiceUnitTest {
         verify(orderRepository).findById(ID_NOT_EXISTING);
     }
 
-    @Test
-    void getOrdersForDeliveryTest() {
-        order.setId(ORDER_ID);
-        ReflectionTestUtils.setField(orderService, "confirmedOrderDeliveryTimeout", confirmedOrderDeliveryTimeout);
-        var timeCutoff = LocalDateTime.now(fixedClock).minusMinutes(confirmedOrderDeliveryTimeout);
-
-        doReturn(fixedClock.instant()).when(clock).instant();
-        doReturn(fixedClock.getZone()).when(clock).getZone();
-        doReturn(List.of(order)).when(orderRepository).findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
-
-        var ordersForDelivery = orderService.getOrdersForDelivery();
-
-        assertEquals(1, ordersForDelivery.size());
-        verify(orderRepository).findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
-    }
-
-    @Test
-    void takeOrderToDeliverTest() {
-        order.setId(ORDER_ID);
-        order.setOrderStatus(OrderStatus.CONFIRMED);
-
-        var orderExpectedToSave = order.toBuilder().build();
-        orderExpectedToSave.setOrderStatus(OrderStatus.PREPARING);
-
-        doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
-        doReturn(orderExpectedToSave).when(orderRepository).save(orderExpectedToSave);
-
-        var idResponse = orderService.takeOrderToDeliver(ORDER_ID);
-
-        assertEquals(ORDER_ID, idResponse.getId());
-        verify(orderRepository).save(orderExpectedToSave);
-        verify(orderRepository).findById(ORDER_ID);
-    }
-
-    @Test
-    void takeOrderToDeliverThrowNotFoundException() {
-        order.setId(ORDER_ID);
-
-        doThrow(new EntityNotFoundException("id", ID_NOT_EXISTING.toString())).when(orderRepository).findById(ID_NOT_EXISTING);
-
-        assertThrows(EntityNotFoundException.class, () -> orderService.takeOrderToDeliver(ID_NOT_EXISTING));
-        verify(orderRepository).findById(ID_NOT_EXISTING);
-    }
-
-    @Test
-    void takeOrderToDeliverOrderNotWaitingDeliveryServiceThrowBadRequestException() {
-        order.setId(ORDER_ID);
-
-        doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
-
-        assertThrows(BadRequestException.class, () -> orderService.takeOrderToDeliver(ORDER_ID));
-        verify(orderRepository).findById(ORDER_ID);
-    }
-
-    @Test
-    void startDeliveryTest() {
-        order.setId(ORDER_ID);
-        order.setOrderStatus(OrderStatus.PREPARING);
-
-        var orderExpectedToSave = order.toBuilder().build();
-        orderExpectedToSave.setOrderStatus(OrderStatus.DELIVERING);
-
-        doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
-        doReturn(orderExpectedToSave).when(orderRepository).save(orderExpectedToSave);
-
-        var idResponse = orderService.startDelivery(ORDER_ID);
-
-        assertEquals(ORDER_ID, idResponse.getId());
-        verify(orderRepository).save(orderExpectedToSave);
-        verify(orderRepository).findById(ORDER_ID);
-    }
-
-    @Test
-    void startDeliveryThrowNotFoundException() {
-        order.setId(ORDER_ID);
-
-        doThrow(new EntityNotFoundException("id", ID_NOT_EXISTING.toString())).when(orderRepository).findById(ID_NOT_EXISTING);
-
-        assertThrows(EntityNotFoundException.class, () -> orderService.startDelivery(ID_NOT_EXISTING));
-        verify(orderRepository).findById(ID_NOT_EXISTING);
-    }
-
-    @Test
-    void startDeliveryOrderNotWaitingDeliveryServiceThrowBadRequestException() {
-        order.setId(ORDER_ID);
-
-        doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
-
-        assertThrows(BadRequestException.class, () -> orderService.startDelivery(ORDER_ID));
-        verify(orderRepository).findById(ORDER_ID);
-    }
-
-    @Test
-    void orderDeliveredTest() {
-        order.setId(ORDER_ID);
-        order.setOrderStatus(OrderStatus.DELIVERING);
-
-        var orderExpectedToSave = order.toBuilder().build();
-        orderExpectedToSave.setOrderStatus(OrderStatus.DELIVERED);
-
-        doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
-        doReturn(orderExpectedToSave).when(orderRepository).save(orderExpectedToSave);
-
-        var idResponse = orderService.orderDelivered(ORDER_ID);
-
-        assertEquals(ORDER_ID, idResponse.getId());
-        verify(orderRepository).save(orderExpectedToSave);
-        verify(orderRepository).findById(ORDER_ID);
-    }
-
-    @Test
-    void orderDeliveredThrowNotFoundException() {
-        order.setId(ORDER_ID);
-
-        doThrow(new EntityNotFoundException("id", ID_NOT_EXISTING.toString())).when(orderRepository).findById(ID_NOT_EXISTING);
-
-        assertThrows(EntityNotFoundException.class, () -> orderService.orderDelivered(ID_NOT_EXISTING));
-        verify(orderRepository).findById(ID_NOT_EXISTING);
-    }
-
-    @Test
-    void orderDeliveredOrderNotWaitingDeliveryServiceThrowBadRequestException() {
-        order.setId(ORDER_ID);
-
-        doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
-
-        assertThrows(BadRequestException.class, () -> orderService.orderDelivered(ORDER_ID));
-        verify(orderRepository).findById(ORDER_ID);
-    }
 
 }

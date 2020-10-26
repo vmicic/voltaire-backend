@@ -17,7 +17,11 @@ public class OrderForDelivery {
 
     private String restaurantName;
 
-    private String address;
+    private String restaurantAddress;
 
-    private Integer minutes;
+    private String deliveryAddress;
+
+    private Integer minutesForPreparation;
+
+    private Integer restaurantDistanceInMeters;
 }
