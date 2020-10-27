@@ -1,5 +1,8 @@
 package com.voltaire.delivery;
 
+import com.voltaire.delivery.model.CreateDeliveryCompanyRequest;
+import com.voltaire.delivery.model.DeliveryCompany;
+import com.voltaire.delivery.repository.DeliveryCompanyRepository;
 import com.voltaire.exception.customexceptions.BadRequestException;
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.order.model.Order;
@@ -23,16 +26,27 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class DeliveryService {
+public class DeliveryCompanyService {
 
     @Value("${voltaire.orders.delivery-timeout}")
     private Integer confirmedOrderDeliveryTimeout;
 
     private final OrderRepository orderRepository;
 
+    private final DeliveryCompanyRepository deliveryCompanyRepository;
+
     private final GeocodeService geocodeService;
 
     private final Clock clock;
+
+    public DeliveryCompany createDeliveryCompany(CreateDeliveryCompanyRequest createDeliveryCompanyRequest) {
+        var deliveryCompany = DeliveryCompany.builder()
+                .name(createDeliveryCompanyRequest.getName())
+                .apiKey(UUID.randomUUID())
+                .build();
+
+        return deliveryCompanyRepository.save(deliveryCompany);
+    }
 
     public List<OrderForDelivery> getOrdersForDelivery(String address) {
         if (address == null) {
@@ -67,13 +81,13 @@ public class DeliveryService {
         return orderRepository.findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
     }
 
-    public Order findById(UUID id) {
+    public Order findOrderById(UUID id) {
         return orderRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("id", id.toString()));
     }
 
     public IdResponse takeOrderToDeliver(UUID id) {
-        var order = findById(id);
+        var order = findOrderById(id);
 
         if (order.notWaitingDeliveryService()) {
             throw new BadRequestException("Requested order is not waiting delivery service response.");
@@ -84,7 +98,7 @@ public class DeliveryService {
     }
 
     public IdResponse startDelivery(UUID id) {
-        var order = findById(id);
+        var order = findOrderById(id);
 
         if (order.notWaitingDeliveryStart()) {
             throw new BadRequestException("Requested order is not waiting delivery start.");
@@ -95,7 +109,7 @@ public class DeliveryService {
     }
 
     public IdResponse orderDelivered(UUID id) {
-        var order = findById(id);
+        var order = findOrderById(id);
 
         if (order.notWaitingDeliveryConfirmation()) {
             throw new BadRequestException("Requested order is not waiting delivery confirmation.");
@@ -130,6 +144,25 @@ public class DeliveryService {
         });
 
         return ordersForDelivery;
+    }
+
+    public UUID getApiKey(UUID deliveryCompanyId) {
+        return findById(deliveryCompanyId).getApiKey();
+    }
+
+    private DeliveryCompany findById(UUID id) {
+        return deliveryCompanyRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("id", id.toString()));
+    }
+
+    public UUID generateNewApiKey(UUID deliveryCompanyId) {
+        var deliveryCompany = findById(deliveryCompanyId);
+        deliveryCompany.setApiKey(UUID.randomUUID());
+        return deliveryCompanyRepository.save(deliveryCompany).getApiKey();
+    }
+
+    public boolean invalidApiKey(UUID apiKey) {
+        return !deliveryCompanyRepository.existsByApiKey(apiKey);
     }
 
 }

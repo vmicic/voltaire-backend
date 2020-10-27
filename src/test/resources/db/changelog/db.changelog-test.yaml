@@ -8,4 +8,4 @@ databaseChangeLog:
   - include:
       file: db/changelog/08-add-new-column-to-orders.xml
   - include:
-      file: db/changelog/11-create-table-point.xml
+      file: db/changelog/11-create-table-geolocation.xml

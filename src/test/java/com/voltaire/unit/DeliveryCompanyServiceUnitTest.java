@@ -1,6 +1,8 @@
 package com.voltaire.unit;
 
-import com.voltaire.delivery.DeliveryService;
+import com.voltaire.delivery.DeliveryCompanyService;
+import com.voltaire.delivery.model.DeliveryCompany;
+import com.voltaire.delivery.repository.DeliveryCompanyRepository;
 import com.voltaire.exception.customexceptions.BadRequestException;
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.order.model.Order;
@@ -14,6 +16,7 @@ import com.voltaire.shared.Geolocation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -31,7 +34,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles(profiles = "unit-test")
-class DeliveryServiceUnitTest {
+class DeliveryCompanyServiceUnitTest {
 
     private Integer confirmedOrderDeliveryTimeout;
 
@@ -45,14 +48,19 @@ class DeliveryServiceUnitTest {
     private GeocodeService geocodeService;
 
     @Mock
+    private DeliveryCompanyRepository deliveryCompanyRepository;
+
+    @Mock
     private Clock clock;
 
     private Clock fixedClock;
 
     @InjectMocks
-    private DeliveryService deliveryService;
+    private DeliveryCompanyService deliveryCompanyService;
 
     private Order order;
+
+    private DeliveryCompany deliveryCompany;
 
     @BeforeEach
     public void setUp() {
@@ -90,19 +98,25 @@ class DeliveryServiceUnitTest {
                 .build();
 
         this.order.addOrderItem(orderItem);
+
+        this.deliveryCompany = DeliveryCompany.builder()
+                .id(UUID.randomUUID())
+                .name("Potrcko")
+                .apiKey(UUID.randomUUID())
+                .build();
     }
 
     @Test
     void getOrdersForDeliveryTest() {
         order.setId(ORDER_ID);
-        ReflectionTestUtils.setField(deliveryService, "confirmedOrderDeliveryTimeout", confirmedOrderDeliveryTimeout);
+        ReflectionTestUtils.setField(deliveryCompanyService, "confirmedOrderDeliveryTimeout", confirmedOrderDeliveryTimeout);
         var timeCutoff = LocalDateTime.now(fixedClock).minusMinutes(confirmedOrderDeliveryTimeout);
 
         doReturn(fixedClock.instant()).when(clock).instant();
         doReturn(fixedClock.getZone()).when(clock).getZone();
         doReturn(List.of(order)).when(orderRepository).findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
 
-        var ordersForDelivery = deliveryService.getOrdersForDelivery();
+        var ordersForDelivery = deliveryCompanyService.getOrdersForDelivery();
 
         assertEquals(1, ordersForDelivery.size());
         verify(orderRepository).findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
@@ -119,7 +133,7 @@ class DeliveryServiceUnitTest {
         doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
         doReturn(orderExpectedToSave).when(orderRepository).save(orderExpectedToSave);
 
-        var idResponse = deliveryService.takeOrderToDeliver(ORDER_ID);
+        var idResponse = deliveryCompanyService.takeOrderToDeliver(ORDER_ID);
 
         assertEquals(ORDER_ID, idResponse.getId());
         verify(orderRepository).save(orderExpectedToSave);
@@ -132,7 +146,7 @@ class DeliveryServiceUnitTest {
 
         doThrow(new EntityNotFoundException("id", ID_NOT_EXISTING.toString())).when(orderRepository).findById(ID_NOT_EXISTING);
 
-        assertThrows(EntityNotFoundException.class, () -> deliveryService.takeOrderToDeliver(ID_NOT_EXISTING));
+        assertThrows(EntityNotFoundException.class, () -> deliveryCompanyService.takeOrderToDeliver(ID_NOT_EXISTING));
         verify(orderRepository).findById(ID_NOT_EXISTING);
     }
 
@@ -142,7 +156,7 @@ class DeliveryServiceUnitTest {
 
         doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
 
-        assertThrows(BadRequestException.class, () -> deliveryService.takeOrderToDeliver(ORDER_ID));
+        assertThrows(BadRequestException.class, () -> deliveryCompanyService.takeOrderToDeliver(ORDER_ID));
         verify(orderRepository).findById(ORDER_ID);
     }
 
@@ -157,7 +171,7 @@ class DeliveryServiceUnitTest {
         doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
         doReturn(orderExpectedToSave).when(orderRepository).save(orderExpectedToSave);
 
-        var idResponse = deliveryService.startDelivery(ORDER_ID);
+        var idResponse = deliveryCompanyService.startDelivery(ORDER_ID);
 
         assertEquals(ORDER_ID, idResponse.getId());
         verify(orderRepository).save(orderExpectedToSave);
@@ -170,7 +184,7 @@ class DeliveryServiceUnitTest {
 
         doThrow(new EntityNotFoundException("id", ID_NOT_EXISTING.toString())).when(orderRepository).findById(ID_NOT_EXISTING);
 
-        assertThrows(EntityNotFoundException.class, () -> deliveryService.startDelivery(ID_NOT_EXISTING));
+        assertThrows(EntityNotFoundException.class, () -> deliveryCompanyService.startDelivery(ID_NOT_EXISTING));
         verify(orderRepository).findById(ID_NOT_EXISTING);
     }
 
@@ -180,7 +194,7 @@ class DeliveryServiceUnitTest {
 
         doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
 
-        assertThrows(BadRequestException.class, () -> deliveryService.startDelivery(ORDER_ID));
+        assertThrows(BadRequestException.class, () -> deliveryCompanyService.startDelivery(ORDER_ID));
         verify(orderRepository).findById(ORDER_ID);
     }
 
@@ -195,7 +209,7 @@ class DeliveryServiceUnitTest {
         doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
         doReturn(orderExpectedToSave).when(orderRepository).save(orderExpectedToSave);
 
-        var idResponse = deliveryService.orderDelivered(ORDER_ID);
+        var idResponse = deliveryCompanyService.orderDelivered(ORDER_ID);
 
         assertEquals(ORDER_ID, idResponse.getId());
         verify(orderRepository).save(orderExpectedToSave);
@@ -208,7 +222,7 @@ class DeliveryServiceUnitTest {
 
         doThrow(new EntityNotFoundException("id", ID_NOT_EXISTING.toString())).when(orderRepository).findById(ID_NOT_EXISTING);
 
-        assertThrows(EntityNotFoundException.class, () -> deliveryService.orderDelivered(ID_NOT_EXISTING));
+        assertThrows(EntityNotFoundException.class, () -> deliveryCompanyService.orderDelivered(ID_NOT_EXISTING));
         verify(orderRepository).findById(ID_NOT_EXISTING);
     }
 
@@ -218,7 +232,7 @@ class DeliveryServiceUnitTest {
 
         doReturn(Optional.of(order)).when(orderRepository).findById(ORDER_ID);
 
-        assertThrows(BadRequestException.class, () -> deliveryService.orderDelivered(ORDER_ID));
+        assertThrows(BadRequestException.class, () -> deliveryCompanyService.orderDelivered(ORDER_ID));
         verify(orderRepository).findById(ORDER_ID);
     }
 
@@ -261,7 +275,7 @@ class DeliveryServiceUnitTest {
 
         this.order.setOrderStatus(OrderStatus.CONFIRMED);
 
-        ReflectionTestUtils.setField(deliveryService, "confirmedOrderDeliveryTimeout", confirmedOrderDeliveryTimeout);
+        ReflectionTestUtils.setField(deliveryCompanyService, "confirmedOrderDeliveryTimeout", confirmedOrderDeliveryTimeout);
         var timeCutoff = LocalDateTime.now(fixedClock).minusMinutes(confirmedOrderDeliveryTimeout);
 
         doReturn(fixedClock.instant()).when(clock).instant();
@@ -271,11 +285,48 @@ class DeliveryServiceUnitTest {
         doReturn(100.0).when(geocodeService).distance(order2.getRestaurant().getGeolocation(), deliverymanPoint);
         doReturn(List.of(order, order2)).when(orderRepository).findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
 
-        var ordersForDeliver = deliveryService.getSortedByPickupDistanceOrdersForDelivery(address);
+        var ordersForDeliver = deliveryCompanyService.getSortedByPickupDistanceOrdersForDelivery(address);
 
         assertEquals(2, ordersForDeliver.size());
         assertTrue(ordersForDeliver.get(0).getRestaurantDistanceInMeters() < ordersForDeliver.get(1).getRestaurantDistanceInMeters());
         verify(geocodeService).getGeolocationForAddressString(address);
         verify(orderRepository).findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
     }
+
+    @Test
+    void getApiKeyTest() {
+        doReturn(Optional.of(deliveryCompany)).when(deliveryCompanyRepository).findById(deliveryCompany.getId());
+
+        var apiKey = deliveryCompanyService.getApiKey(deliveryCompany.getId());
+
+        assertEquals(deliveryCompany.getApiKey(), apiKey);
+        verify(deliveryCompanyRepository).findById(deliveryCompany.getId());
+    }
+
+    @Test
+    void generateNewApiKeyTest() {
+        var oldApiKey = deliveryCompany.getApiKey();
+
+        doReturn(Optional.of(deliveryCompany)).when(deliveryCompanyRepository).findById(deliveryCompany.getId());
+        when(deliveryCompanyRepository.save(any(DeliveryCompany.class))).then(AdditionalAnswers.returnsFirstArg());
+
+        var newApiKey = deliveryCompanyService.generateNewApiKey(deliveryCompany.getId());
+
+        assertNotEquals(newApiKey, oldApiKey);
+    }
+
+    @Test
+    void invalidApiKeyFalseTest() {
+        doReturn(true).when(deliveryCompanyRepository).existsByApiKey(deliveryCompany.getApiKey());
+
+        assertFalse(deliveryCompanyService.invalidApiKey(deliveryCompany.getApiKey()));
+    }
+
+    @Test
+    void invalidApiKeyTrueTest() {
+        doReturn(false).when(deliveryCompanyRepository).existsByApiKey(deliveryCompany.getApiKey());
+
+        assertTrue(deliveryCompanyService.invalidApiKey(deliveryCompany.getApiKey()));
+    }
+
 }
