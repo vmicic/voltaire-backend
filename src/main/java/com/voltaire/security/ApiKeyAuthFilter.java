@@ -1,5 +1,7 @@
 package com.voltaire.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
@@ -17,6 +19,7 @@ public class ApiKeyAuthFilter extends AbstractPreAuthenticatedProcessingFilter {
         this.apiKeyHeaderName = headerName;
     }
 
+    @SneakyThrows
     @Override
     protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
         var headerValue = request.getHeader("X-Apigateway-Api-Userinfo");
@@ -25,6 +28,12 @@ public class ApiKeyAuthFilter extends AbstractPreAuthenticatedProcessingFilter {
             byte[] decodedBytes = Base64.getDecoder().decode(headerValue);
             String decodedString = new String(decodedBytes);
             log.info("Decoded string: " + decodedString);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            var json = objectMapper.readTree(decodedString);
+            var emailNode = json.get("email");
+            var emailString = String.valueOf(emailNode);
+            log.info("This is email from json: " + emailString);
         }
         return request.getHeader(apiKeyHeaderName);
     }
