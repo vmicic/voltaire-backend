@@ -67,7 +67,7 @@ public class SecretManagerService {
         this.secretManagerServiceClient.createSecret(request);
     }
 
-    public boolean invalidApiKey(String uuid) {
+    public boolean invalidApiKey(String apiKey) {
         ProjectName projectName = ProjectName.of(gcpProjectIdProvider.getProjectId());
         ListSecretsPagedResponse secretsPagedResponse = secretManagerServiceClient.listSecrets(projectName);
 
@@ -78,7 +78,7 @@ public class SecretManagerService {
             AccessSecretVersionResponse response = secretManagerServiceClient.accessSecretVersion(secretVersionName);
             String payload = response.getPayload().getData().toStringUtf8();
 
-            return payload.equals(uuid);
+            return payload.equals(apiKey);
         };
 
         return StreamSupport.stream(secretsPagedResponse.iterateAll().spliterator(), false).noneMatch(apiKeyExistsInSecret);

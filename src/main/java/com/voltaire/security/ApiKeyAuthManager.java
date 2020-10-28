@@ -12,9 +12,9 @@ public class ApiKeyAuthManager implements AuthenticationManager {
 
     @Override
     public Authentication authenticate(Authentication authentication) {
-        String apiKeyString = (String) authentication.getPrincipal();
+        String apiKey = (String) authentication.getPrincipal();
 
-        if (secretManagerService.invalidApiKey(apiKeyString)) {
+        if (secretManagerService.invalidApiKey(apiKey)) {
             throw new BadCredentialsException("The API key was not found or not the expected value.");
         }
 
