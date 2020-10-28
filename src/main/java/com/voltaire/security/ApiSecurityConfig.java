@@ -1,6 +1,5 @@
 package com.voltaire.security;
 
-import com.voltaire.delivery.DeliveryCompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +16,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${voltaire.http.api-key-header-name}")
     private String apiKeyHeaderName;
 
-    private final DeliveryCompanyService deliveryCompanyService;
+    private final SecretManagerService secretManagerService;
 
     private static final String[] DELIVERY_SERVICE_URLS = {
             "/v1/orders/for-delivery",
@@ -29,7 +28,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         ApiKeyAuthFilter filter = new ApiKeyAuthFilter(apiKeyHeaderName);
-        filter.setAuthenticationManager(new ApiKeyAuthManager(deliveryCompanyService));
+        filter.setAuthenticationManager(new ApiKeyAuthManager(secretManagerService));
 
         httpSecurity
                 .headers().frameOptions().disable()

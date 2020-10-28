@@ -12,6 +12,12 @@ spring:
   h2:
     console:
       enabled: true
+  cloud:
+    gcp:
+      secretmanager:
+        credentials:
+          location: classpath:voltaire-290318-41cfa3660acd.json
+      project-id: voltaire-290318
 
 server:
   error:

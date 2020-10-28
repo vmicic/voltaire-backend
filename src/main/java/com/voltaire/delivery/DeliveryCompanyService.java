@@ -9,6 +9,7 @@ import com.voltaire.order.model.Order;
 import com.voltaire.order.model.OrderForDelivery;
 import com.voltaire.order.model.OrderStatus;
 import com.voltaire.order.repository.OrderRepository;
+import com.voltaire.security.SecretManagerService;
 import com.voltaire.shared.GeocodeService;
 import com.voltaire.shared.Geolocation;
 import com.voltaire.shared.IdResponse;
@@ -37,13 +38,18 @@ public class DeliveryCompanyService {
 
     private final GeocodeService geocodeService;
 
+    private final SecretManagerService secretManagerService;
+
     private final Clock clock;
 
     public DeliveryCompany createDeliveryCompany(CreateDeliveryCompanyRequest createDeliveryCompanyRequest) {
         var deliveryCompany = DeliveryCompany.builder()
                 .name(createDeliveryCompanyRequest.getName())
-                .apiKey(UUID.randomUUID())
                 .build();
+
+        var secretId = deliveryCompany.getName().replace(" ", "-");
+
+        secretManagerService.createSecret(secretId, UUID.randomUUID().toString());
 
         return deliveryCompanyRepository.save(deliveryCompany);
     }
@@ -145,24 +151,4 @@ public class DeliveryCompanyService {
 
         return ordersForDelivery;
     }
-
-    public UUID getApiKey(UUID deliveryCompanyId) {
-        return findById(deliveryCompanyId).getApiKey();
-    }
-
-    private DeliveryCompany findById(UUID id) {
-        return deliveryCompanyRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("id", id.toString()));
-    }
-
-    public UUID generateNewApiKey(UUID deliveryCompanyId) {
-        var deliveryCompany = findById(deliveryCompanyId);
-        deliveryCompany.setApiKey(UUID.randomUUID());
-        return deliveryCompanyRepository.save(deliveryCompany).getApiKey();
-    }
-
-    public boolean invalidApiKey(UUID apiKey) {
-        return !deliveryCompanyRepository.existsByApiKey(apiKey);
-    }
-
 }

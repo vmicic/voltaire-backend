@@ -8,7 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface DeliveryCompanyRepository extends JpaRepository<DeliveryCompany, UUID> {
-
-    boolean existsByApiKey(UUID apiKey);
 }
 

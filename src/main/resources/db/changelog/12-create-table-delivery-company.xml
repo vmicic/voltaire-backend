@@ -14,9 +14,6 @@
             <column name="name" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="api_key" type="uuid" >
-                <constraints nullable="false" unique="true"/>
-            </column>
         </createTable>
     </changeSet>
 
