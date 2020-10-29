@@ -30,7 +30,7 @@ public class DeliveryCompanyController {
         return deliveryCompanyService.getOrdersForDelivery(address);
     }
 
-    @PutMapping("orders/{id}/delivery-request")
+    @PutMapping("orders/delivery-request/{id}")
     public IdResponse takeOrderToDeliver(@PathVariable UUID id) {
         return deliveryCompanyService.takeOrderToDeliver(id);
     }
