@@ -19,7 +19,6 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
     private final SecretManagerService secretManagerService;
 
     private static final String[] DELIVERY_SERVICE_URLS = {
-            "/v1/orders/for-delivery",
             "/v1/orders/**/deliver",
             "/v1/orders/**/start-delivery",
             "/v1/orders/**/delivered"
