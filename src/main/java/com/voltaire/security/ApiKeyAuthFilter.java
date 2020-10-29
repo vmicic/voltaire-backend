@@ -8,6 +8,7 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
+import java.util.Enumeration;
 
 public class ApiKeyAuthFilter extends AbstractPreAuthenticatedProcessingFilter {
 
@@ -22,6 +23,14 @@ public class ApiKeyAuthFilter extends AbstractPreAuthenticatedProcessingFilter {
     @SneakyThrows
     @Override
     protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
+        Enumeration<String> headerNames = request.getHeaderNames();
+
+        if (headerNames != null) {
+            while (headerNames.hasMoreElements()) {
+                var headerName = headerNames.nextElement();
+                System.out.println(headerName + ": " + request.getHeader(headerName));
+            }
+        }
         log.info("Api key header value: " + request.getHeader(apiKeyHeaderName));
         return request.getHeader(apiKeyHeaderName);
     }
