@@ -22,6 +22,4 @@ public class DeliveryCompany {
     private UUID id;
 
     private String name;
-
-    private UUID apiKey;
 }

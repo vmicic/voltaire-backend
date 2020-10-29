@@ -16,7 +16,6 @@ import com.voltaire.shared.Geolocation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -102,7 +101,6 @@ class DeliveryCompanyServiceUnitTest {
         this.deliveryCompany = DeliveryCompany.builder()
                 .id(UUID.randomUUID())
                 .name("Potrcko")
-                .apiKey(UUID.randomUUID())
                 .build();
     }
 
@@ -292,41 +290,4 @@ class DeliveryCompanyServiceUnitTest {
         verify(geocodeService).getGeolocationForAddressString(address);
         verify(orderRepository).findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
     }
-
-    @Test
-    void getApiKeyTest() {
-        doReturn(Optional.of(deliveryCompany)).when(deliveryCompanyRepository).findById(deliveryCompany.getId());
-
-        var apiKey = deliveryCompanyService.getApiKey(deliveryCompany.getId());
-
-        assertEquals(deliveryCompany.getApiKey(), apiKey);
-        verify(deliveryCompanyRepository).findById(deliveryCompany.getId());
-    }
-
-    @Test
-    void generateNewApiKeyTest() {
-        var oldApiKey = deliveryCompany.getApiKey();
-
-        doReturn(Optional.of(deliveryCompany)).when(deliveryCompanyRepository).findById(deliveryCompany.getId());
-        when(deliveryCompanyRepository.save(any(DeliveryCompany.class))).then(AdditionalAnswers.returnsFirstArg());
-
-        var newApiKey = deliveryCompanyService.generateNewApiKey(deliveryCompany.getId());
-
-        assertNotEquals(newApiKey, oldApiKey);
-    }
-
-    @Test
-    void invalidApiKeyFalseTest() {
-        doReturn(true).when(deliveryCompanyRepository).existsByApiKey(deliveryCompany.getApiKey());
-
-        assertFalse(deliveryCompanyService.invalidApiKey(deliveryCompany.getApiKey()));
-    }
-
-    @Test
-    void invalidApiKeyTrueTest() {
-        doReturn(false).when(deliveryCompanyRepository).existsByApiKey(deliveryCompany.getApiKey());
-
-        assertTrue(deliveryCompanyService.invalidApiKey(deliveryCompany.getApiKey()));
-    }
-
 }

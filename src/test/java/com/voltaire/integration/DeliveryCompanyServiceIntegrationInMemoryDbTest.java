@@ -102,7 +102,6 @@ class DeliveryCompanyServiceIntegrationInMemoryDbTest {
 
         this.deliveryCompany = DeliveryCompany.builder()
                 .name("Potrcko")
-                .apiKey(UUID.randomUUID())
                 .build();
 
         this.deliveryCompany = deliveryCompanyRepository.save(deliveryCompany);
@@ -116,7 +115,6 @@ class DeliveryCompanyServiceIntegrationInMemoryDbTest {
         var deliveryCompany = deliveryCompanyService.createDeliveryCompany(createDeliveryCompanyRequest);
 
         assertEquals(createDeliveryCompanyRequest.getName(), deliveryCompany.getName());
-        assertNotNull(deliveryCompany.getApiKey());
     }
 
     @Test
@@ -309,45 +307,6 @@ class DeliveryCompanyServiceIntegrationInMemoryDbTest {
         assertEquals(3, ordersForDeliver.size());
         assertTrue(ordersForDeliver.get(0).getRestaurantDistanceInMeters() < ordersForDeliver.get(1).getRestaurantDistanceInMeters());
         assertTrue(ordersForDeliver.get(1).getRestaurantDistanceInMeters() < ordersForDeliver.get(2).getRestaurantDistanceInMeters());
-    }
-
-    @Test
-    void getApiKeyTest() {
-        var apiKey = deliveryCompanyService.getApiKey(deliveryCompanyId);
-
-        assertEquals(deliveryCompany.getApiKey(), apiKey);
-    }
-
-    @Test
-    void getApiKeyThrowNotFoundExceptionTest() {
-        assertThrows(EntityNotFoundException.class, () -> deliveryCompanyService.getApiKey(ID_NOT_EXISTING));
-    }
-
-    @Test
-    void generateNewApiKeyTest() {
-        var oldApiKey = deliveryCompany.getApiKey();
-        var newApiKey = deliveryCompanyService.generateNewApiKey(deliveryCompanyId);
-
-        assertNotEquals(newApiKey, oldApiKey);
-    }
-
-    @Test
-    void generateApiKeyThrowNotFoundException() {
-        assertThrows(EntityNotFoundException.class, () -> deliveryCompanyService.generateNewApiKey(ID_NOT_EXISTING));
-    }
-
-    @Test
-    void invalidApiKeyTrueTest() {
-        var invalidApiKey = deliveryCompanyService.invalidApiKey(UUID.randomUUID());
-
-        assertTrue(invalidApiKey);
-    }
-
-    @Test
-    void invalidApiKeyFalseTest() {
-        var invalidApiKey = deliveryCompanyService.invalidApiKey(deliveryCompany.getApiKey());
-
-        assertFalse(invalidApiKey);
     }
 
 }
