@@ -22,19 +22,7 @@ public class ApiKeyAuthFilter extends AbstractPreAuthenticatedProcessingFilter {
     @SneakyThrows
     @Override
     protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
-        var headerValue = request.getHeader("X-Apigateway-Api-Userinfo");
-        log.info("This is header value: " + headerValue);
-        if (headerValue != null) {
-            byte[] decodedBytes = Base64.getDecoder().decode(headerValue);
-            String decodedString = new String(decodedBytes);
-            log.info("Decoded string: " + decodedString);
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            var json = objectMapper.readTree(decodedString);
-            var emailNode = json.get("email");
-            var emailString = String.valueOf(emailNode);
-            log.info("This is email from json: " + emailString);
-        }
+        log.info("Api key header value: " + request.getHeader(apiKeyHeaderName));
         return request.getHeader(apiKeyHeaderName);
     }
 
