@@ -26,6 +26,7 @@ public class DeliveryCompanyController {
 
     @GetMapping("/orders/for-delivery")
     public List<OrderForDelivery> getOrdersForDelivery(@RequestParam(required = false) String address) {
+        System.out.println("get orders for delivery");
         return deliveryCompanyService.getOrdersForDelivery(address);
     }
 
