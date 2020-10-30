@@ -19,6 +19,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
     private final SecretManagerService secretManagerService;
 
     private static final String[] DELIVERY_SERVICE_URLS = {
+            "v1/orders/pera"
     };
 
     @Override
