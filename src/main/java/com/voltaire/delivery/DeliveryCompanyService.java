@@ -9,7 +9,6 @@ import com.voltaire.order.model.Order;
 import com.voltaire.order.model.OrderForDelivery;
 import com.voltaire.order.model.OrderStatus;
 import com.voltaire.order.repository.OrderRepository;
-import com.voltaire.security.SecretManagerService;
 import com.voltaire.shared.GeocodeService;
 import com.voltaire.shared.Geolocation;
 import com.voltaire.shared.IdResponse;
@@ -38,18 +37,12 @@ public class DeliveryCompanyService {
 
     private final GeocodeService geocodeService;
 
-    private final SecretManagerService secretManagerService;
-
     private final Clock clock;
 
     public DeliveryCompany createDeliveryCompany(CreateDeliveryCompanyRequest createDeliveryCompanyRequest) {
         var deliveryCompany = DeliveryCompany.builder()
                 .name(createDeliveryCompanyRequest.getName())
                 .build();
-
-        var secretId = deliveryCompany.getName().replace(" ", "-");
-
-        secretManagerService.createSecret(secretId, UUID.randomUUID().toString());
 
         return deliveryCompanyRepository.save(deliveryCompany);
     }
