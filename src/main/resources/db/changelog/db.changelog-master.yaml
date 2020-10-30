@@ -23,3 +23,5 @@ databaseChangeLog:
       file: db/changelog/11-create-table-geolocation.xml
   - include:
       file: db/changelog/12-create-table-delivery-company.xml
+  - include:
+      file: db/changelog/13-create-table-user.xml

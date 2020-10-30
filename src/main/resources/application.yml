@@ -25,6 +25,7 @@ server:
 
 voltaire:
   http:
+    user-info-header-name: X-Apigateway-Api-Userinfo
     api-key-header-name: API_KEY
   orders:
     delivery-timeout: 10
