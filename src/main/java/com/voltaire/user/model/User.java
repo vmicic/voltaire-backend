@@ -1,6 +1,5 @@
 package com.voltaire.user.model;
 
-import com.voltaire.user.model.Role;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

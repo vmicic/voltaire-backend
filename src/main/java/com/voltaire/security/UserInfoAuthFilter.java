@@ -1,8 +1,6 @@
 package com.voltaire.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.voltaire.exception.customexceptions.BadRequestException;
-import com.voltaire.user.UserService;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +26,7 @@ public class UserInfoAuthFilter extends AbstractPreAuthenticatedProcessingFilter
     protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
         var userInfoHeader = request.getHeader(userInfoHeaderName);
 
-        if(userInfoHeader == null) {
+        if (userInfoHeader == null) {
             log.info("Header from gateway is null");
             return null;
         }
