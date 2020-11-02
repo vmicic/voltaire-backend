@@ -1,12 +1,10 @@
-package com.voltaire.user;
+package com.voltaire.user.model;
 
+import com.voltaire.user.model.Role;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,5 +18,8 @@ public class User {
     private UUID id;
 
     private String email;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Role> authorities;
 
 }

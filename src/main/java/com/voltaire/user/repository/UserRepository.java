@@ -1,5 +1,6 @@
-package com.voltaire.user;
+package com.voltaire.user.repository;
 
+import com.voltaire.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

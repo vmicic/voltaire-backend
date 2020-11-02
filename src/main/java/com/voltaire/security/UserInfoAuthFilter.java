@@ -26,7 +26,6 @@ public class UserInfoAuthFilter extends AbstractPreAuthenticatedProcessingFilter
     @SneakyThrows
     @Override
     protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
-        log.info("Executing filter: " + request.getRequestURI());
         var userInfoHeader = request.getHeader(userInfoHeaderName);
 
         if(userInfoHeader == null) {

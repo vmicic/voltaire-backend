@@ -2,6 +2,7 @@ package com.voltaire.security;
 
 import com.voltaire.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,8 +23,6 @@ public class UserInfoAuthManager implements AuthenticationManager {
         var userEmail = authentication.getName();
         var user = userService.findByEmail(userEmail);
 
-        var preAuthenticatedAuthenticationToken = new PreAuthenticatedAuthenticationToken(user, userEmail);
-        preAuthenticatedAuthenticationToken.setAuthenticated(true);
-        return preAuthenticatedAuthenticationToken;
+        return new PreAuthenticatedAuthenticationToken(user, userEmail, user.getAuthorities());
     }
 }
