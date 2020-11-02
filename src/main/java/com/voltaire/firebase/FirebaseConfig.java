@@ -1,27 +1,34 @@
 package com.voltaire.firebase;
 
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.cloud.FirestoreClient;
+import lombok.SneakyThrows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 
 @Configuration
 public class FirebaseConfig {
 
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+    @SneakyThrows
     @PostConstruct
-    public void init() throws IOException {
+    public void test() {
+        if (!FirebaseApp.getApps().isEmpty()) {
+            log.info("FirebaseApp is already initialized");
+            return;
+        }
+
         GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(credentials)
                 .build();
 
         FirebaseApp.initializeApp(options);
-
-        Firestore db = FirestoreClient.getFirestore();
     }
+
 }
