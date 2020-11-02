@@ -10,8 +10,6 @@ public class UserController {
 
     @GetMapping("v1/echo")
     public String echo() {
-
-
         return "echo";
     }
 }
