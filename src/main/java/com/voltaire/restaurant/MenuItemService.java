@@ -1,8 +1,8 @@
 package com.voltaire.restaurant;
 
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
+import com.voltaire.restaurant.model.CreateMenuItemRequest;
 import com.voltaire.restaurant.model.MenuItem;
-import com.voltaire.restaurant.model.MenuItemDto;
 import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.restaurant.repository.MenuItemRepository;
 import com.voltaire.restaurant.repository.RestaurantRepository;
@@ -17,42 +17,36 @@ import java.util.UUID;
 @Service
 public class MenuItemService {
 
-    private final MenuItemRepository menuItemRepository;
-    private final RestaurantRepository restaurantRepository;
 
-    public MenuItem createMenuItem(MenuItemDto menuItemDto) {
+    private final MenuItemRepository menuItemRepository;
+
+    public void createMenuItem(CreateMenuItemRequest createMenuItemRequest) {
         var menuItem = MenuItem.builder()
-                .name(menuItemDto.getName())
-                .price(menuItemDto.getPrice())
-                .description(menuItemDto.getDescription())
-                .restaurant(findRestaurantById(menuItemDto.getRestaurantId()))
+                .id(UUID.randomUUID().toString())
+                .name(createMenuItemRequest.getName())
+                .price(createMenuItemRequest.getPrice())
+                .description(createMenuItemRequest.getDescription())
                 .build();
 
-        return menuItemRepository.save(menuItem);
+        menuItemRepository.save(createMenuItemRequest.getRestaurantId(), menuItem);
     }
 
-    private Restaurant findRestaurantById(UUID id) {
-        return restaurantRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("id", id.toString()));
-    }
-
-
-    public boolean notExists(UUID id) {
+    public boolean notExists(String id) {
         return !menuItemRepository.existsById(id);
     }
 
-    public IdResponse updateMenuItem(UUID id, MenuItem menuItem) {
+    public IdResponse updateMenuItem(String id, MenuItem menuItem) {
         if (notExists(id)) {
-            throw new EntityNotFoundException("id", id.toString());
+            throw new EntityNotFoundException("id", id);
         }
 
         menuItem.setId(id);
-        return new IdResponse(menuItemRepository.save(menuItem).getId());
+        return new IdResponse(id);
     }
 
-    public IdResponse deleteMenuItem(UUID id) {
+    public IdResponse deleteMenuItem(String id) {
         if (notExists(id)) {
-            throw new EntityNotFoundException("id", id.toString());
+            throw new EntityNotFoundException("id", id);
         }
 
         menuItemRepository.deleteById(id);
@@ -63,9 +57,9 @@ public class MenuItemService {
         return menuItemRepository.findAll();
     }
 
-    public MenuItem findById(UUID id) {
-        return menuItemRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("id", id.toString()));
+    public MenuItem findById(String id) {
+        return menuItemRepository.findById(id);
     }
+
 
 }

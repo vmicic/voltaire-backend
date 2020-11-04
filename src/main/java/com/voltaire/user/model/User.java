@@ -1,24 +1,25 @@
 package com.voltaire.user.model;
 
+import com.google.cloud.firestore.annotation.DocumentId;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-@Entity
 @NoArgsConstructor
 @Data
 public class User {
 
-    @Id
-    @GeneratedValue
-    private UUID id;
+    @DocumentId
+    private String id;
 
     private String email;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<Role> authorities;
+    private List<Role> authorities = new ArrayList<>();
+
+    public void addRole(Role role) {
+        authorities.add(role);
+    }
 
 }

@@ -1,16 +1,16 @@
-package com.voltaire.user.repository;
+package com.voltaire.user;
 
+import com.google.cloud.Role;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Firestore;
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
-import com.voltaire.user.model.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class RoleRepository {
+public class RoleService {
 
     private final Firestore firestore;
 
@@ -19,16 +19,15 @@ public class RoleRepository {
     }
 
     @SneakyThrows
-    public Role findByRole(String name) {
-        var query = getDocumentCollection().whereEqualTo("authority", name);
+    public Role findByName(String name) {
+        var query = getDocumentCollection().whereEqualTo("name", name);
         var querySnapshot = query.get();
-        var documents = querySnapshot.get().getDocuments();
 
-        if (documents.isEmpty()) {
-            throw new EntityNotFoundException("authority", name);
+        if (querySnapshot.get().getDocuments().isEmpty()) {
+            throw new EntityNotFoundException("name", name);
         }
 
-        return documents.get(0).toObject(Role.class);
+        return querySnapshot.get().getDocuments().get(0).toObject(Role.class);
     }
 
 }

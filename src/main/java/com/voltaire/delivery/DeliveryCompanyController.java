@@ -18,7 +18,7 @@ import java.util.UUID;
 public class DeliveryCompanyController {
 
     private final DeliveryCompanyService deliveryCompanyService;
-
+/*
     @PreAuthorize("hasRole('ROLE_DELIVERY_COMPANY')")
     @PostMapping("/delivery-companies")
     @ResponseStatus(HttpStatus.CREATED)
@@ -48,6 +48,6 @@ public class DeliveryCompanyController {
     @PutMapping("orders/{id}/delivered")
     public IdResponse orderDelivered(@PathVariable UUID id) {
         return deliveryCompanyService.orderDelivered(id);
-    }
+    }*/
 
 }

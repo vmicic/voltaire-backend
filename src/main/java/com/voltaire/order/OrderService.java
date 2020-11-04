@@ -3,11 +3,8 @@ package com.voltaire.order;
 import com.voltaire.exception.customexceptions.BadRequestException;
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.order.model.*;
-import com.voltaire.order.repository.OrderRepository;
 import com.voltaire.restaurant.model.MenuItem;
 import com.voltaire.restaurant.model.Restaurant;
-import com.voltaire.restaurant.repository.MenuItemRepository;
-import com.voltaire.restaurant.repository.RestaurantRepository;
 import com.voltaire.shared.IdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Service
 public class OrderService {
+/*
 
     private final OrderRepository orderRepository;
     private final RestaurantRepository restaurantRepository;
@@ -91,6 +89,7 @@ public class OrderService {
     public List<Order> findAll() {
         return orderRepository.findAll();
     }
+*/
 
 
 }

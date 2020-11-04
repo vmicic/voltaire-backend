@@ -18,7 +18,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
-
+/*
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -49,6 +49,6 @@ public class OrderController {
     @PutMapping("/{id}/reject")
     public IdResponse rejectOrder(@PathVariable UUID id) {
         return orderService.rejectOrder(id);
-    }
+    }*/
 
 }

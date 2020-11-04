@@ -1,13 +1,11 @@
 package com.voltaire.restaurant;
 
+import com.voltaire.restaurant.model.CreateMenuItemRequest;
 import com.voltaire.restaurant.model.MenuItem;
-import com.voltaire.restaurant.model.MenuItemDto;
 import com.voltaire.shared.IdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -18,22 +16,22 @@ public class MenuItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public MenuItem createMenuItem(@RequestBody MenuItemDto menuItemDto) {
-        return menuItemService.createMenuItem(menuItemDto);
+    public void createMenuItem(@RequestBody CreateMenuItemRequest createMenuItemRequest) {
+        menuItemService.createMenuItem(createMenuItemRequest);
     }
 
     @GetMapping("/{id}")
-    public MenuItem getMenuItemById(@PathVariable UUID id) {
+    public MenuItem getMenuItemById(@PathVariable String id) {
         return menuItemService.findById(id);
     }
 
     @PutMapping("/{id}")
-    public IdResponse updateMenuItem(@PathVariable UUID id, @RequestBody MenuItem menuItem) {
+    public IdResponse updateMenuItem(@PathVariable String id, @RequestBody MenuItem menuItem) {
         return menuItemService.updateMenuItem(id, menuItem);
     }
 
     @DeleteMapping("/{id}")
-    public IdResponse deleteMenuItem(@PathVariable UUID id) {
+    public IdResponse deleteMenuItem(@PathVariable String id) {
         return menuItemService.deleteMenuItem(id);
     }
 }

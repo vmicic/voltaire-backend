@@ -39,7 +39,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers(HttpMethod.GET, "/v1/echo");
+        web.ignoring().antMatchers("/v1/echo", "/v1/users/**");
     }
 }
 

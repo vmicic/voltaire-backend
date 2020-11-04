@@ -2,13 +2,11 @@ package com.voltaire.delivery;
 
 import com.voltaire.delivery.model.CreateDeliveryCompanyRequest;
 import com.voltaire.delivery.model.DeliveryCompany;
-import com.voltaire.delivery.repository.DeliveryCompanyRepository;
 import com.voltaire.exception.customexceptions.BadRequestException;
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.order.model.Order;
 import com.voltaire.order.model.OrderForDelivery;
 import com.voltaire.order.model.OrderStatus;
-import com.voltaire.order.repository.OrderRepository;
 import com.voltaire.shared.GeocodeService;
 import com.voltaire.shared.Geolocation;
 import com.voltaire.shared.IdResponse;
@@ -27,7 +25,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class DeliveryCompanyService {
-
+/*
     @Value("${voltaire.orders.delivery-timeout}")
     private Integer confirmedOrderDeliveryTimeout;
 
@@ -143,5 +141,5 @@ public class DeliveryCompanyService {
         });
 
         return ordersForDelivery;
-    }
+    }*/
 }

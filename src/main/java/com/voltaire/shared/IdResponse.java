@@ -9,5 +9,5 @@ import java.util.UUID;
 @AllArgsConstructor
 public class IdResponse {
 
-    private UUID id;
+    private String id;
 }
