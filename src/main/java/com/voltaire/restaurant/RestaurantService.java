@@ -35,7 +35,7 @@ public class RestaurantService {
     }
 
     public boolean notExists(String id) {
-        return !restaurantRepository.existsById(id);
+        return restaurantRepository.notExists(id);
     }
 
     public IdResponse updateRestaurant(String id, Restaurant restaurant) {
@@ -57,7 +57,7 @@ public class RestaurantService {
     }
 
     public ReadRestaurantWithMenuItemsRequest findById(String id) {
-        return restaurantRepository.findById(id);
+        return restaurantRepository.findByIdWithMenuItems(id);
     }
 
 

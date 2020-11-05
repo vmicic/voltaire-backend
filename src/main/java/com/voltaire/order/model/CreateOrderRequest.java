@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -14,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class CreateOrderRequest {
 
-    private UUID restaurantId;
+    private String restaurantId;
 
     List<CreateOrderItemRequest> orderItems;
 

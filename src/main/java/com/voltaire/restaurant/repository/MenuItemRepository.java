@@ -8,56 +8,43 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class MenuItemRepository {
 
+    private static final String COLLECTION_NAME = "menu-items";
+
     private final Firestore firestore;
 
     private CollectionReference getDocumentCollectionWithRestaurant(String restaurantId) {
-        return firestore.collection("restaurants").document(restaurantId).collection("menu-items");
-    }
-
-    private CollectionReference getDocumentCollection() {
-        return firestore.collection("menu-items");
+        return firestore.collection("restaurants").document(restaurantId).collection(COLLECTION_NAME);
     }
 
 
     @SneakyThrows
-    public void save(String restaurantId, MenuItem menuItem) {
-        getDocumentCollectionWithRestaurant(restaurantId).document(menuItem.getId()).set(menuItem);
+    public void save(MenuItem menuItem) {
+        getDocumentCollectionWithRestaurant(menuItem.getRestaurantId()).document(menuItem.getId()).set(menuItem);
     }
 
     @SneakyThrows
     public MenuItem findById(String id) {
-        var documentSnapshot = getDocumentCollection().document(id).get().get();
-        if (!documentSnapshot.exists()) {
+        var documentSnapshots = firestore.collectionGroup(COLLECTION_NAME).whereEqualTo("idField", id).get().get().getDocuments();
+        if(documentSnapshots.isEmpty()) {
             throw new EntityNotFoundException("id", id);
         }
 
-        return documentSnapshot.toObject(MenuItem.class);
+        return documentSnapshots.get(0).toObject(MenuItem.class);
     }
 
     @SneakyThrows
-    public List<MenuItem> findAll() {
-        var menuItems = new ArrayList<MenuItem>();
-        getDocumentCollection().get().get().getDocuments().forEach(queryDocumentSnapshot -> {
-            var menuItem= queryDocumentSnapshot.toObject(MenuItem.class);
-            menuItems.add(menuItem);
-        });
-        return menuItems;
+    public boolean notExistsById(String id) {
+        var documentSnapshots = firestore.collectionGroup(COLLECTION_NAME).whereEqualTo("idField", id).get().get().getDocuments();
+        return documentSnapshots.isEmpty();
     }
 
     @SneakyThrows
-    public boolean existsById(String id) {
-        return getDocumentCollection().document(id).get().get().exists();
-    }
-
     public void deleteById(String id) {
-        getDocumentCollection().document(id).delete();
+        firestore.collectionGroup(COLLECTION_NAME).whereEqualTo("id", id).get().get().getDocuments().get(0).getReference().delete();
     }
 
 }

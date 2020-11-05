@@ -17,6 +17,10 @@ public class MenuItem {
     @DocumentId
     private String id;
 
+    private String idField;
+
+    private String restaurantId;
+
     private String name;
 
     private BigDecimal price;

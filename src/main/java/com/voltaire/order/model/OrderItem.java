@@ -1,10 +1,10 @@
 package com.voltaire.order.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.voltaire.restaurant.model.MenuItem;
-import lombok.*;
-
-import java.util.UUID;
+import com.google.cloud.firestore.annotation.DocumentId;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -12,19 +12,15 @@ import java.util.UUID;
 @Builder
 public class OrderItem {
 
-    private UUID id;
+    @DocumentId
+    private String id;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private MenuItem menuItem;
-
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @JsonIgnore
-    private Order order;
+    private String menuItemId;
 
     private Integer quantity;
 
     private String additionalInfo;
+
+    private String orderId;
 
 }

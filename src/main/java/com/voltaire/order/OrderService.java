@@ -3,64 +3,72 @@ package com.voltaire.order;
 import com.voltaire.exception.customexceptions.BadRequestException;
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.order.model.*;
+import com.voltaire.order.repository.OrderItemRepository;
+import com.voltaire.order.repository.OrderRepository;
 import com.voltaire.restaurant.model.MenuItem;
-import com.voltaire.restaurant.model.Restaurant;
+import com.voltaire.restaurant.repository.MenuItemRepository;
+import com.voltaire.restaurant.repository.RestaurantRepository;
 import com.voltaire.shared.IdResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
 public class OrderService {
-/*
+
 
     private final OrderRepository orderRepository;
     private final RestaurantRepository restaurantRepository;
     private final MenuItemRepository menuItemRepository;
     private final Clock clock;
 
-    public Order createOrder(CreateOrderRequest createOrderRequest) {
+    public void createOrder(CreateOrderRequest createOrderRequest) {
+        if(restaurantRepository.notExists(createOrderRequest.getRestaurantId())) {
+            throw new EntityNotFoundException("id", createOrderRequest.getRestaurantId());
+        }
+
         var order = Order.builder()
-                .orderTime(LocalDateTime.now(clock))
+                .id(UUID.randomUUID().toString())
+                .orderTime(LocalDateTime.now(clock).toString())
                 .orderStatus(OrderStatus.CREATED)
-                .restaurant(findRestaurantById(createOrderRequest.getRestaurantId()))
+                .restaurantId(createOrderRequest.getRestaurantId())
                 .deliveryAddress(createOrderRequest.getDeliveryAddress())
                 .build();
 
-        createOrderItems(createOrderRequest.getOrderItems(), order);
-
-        return orderRepository.save(order);
+        var orderItems = createOrderItems(order.getId(), createOrderRequest.getOrderItems());
+        orderRepository.save(order, orderItems);
     }
 
-    private Restaurant findRestaurantById(UUID id) {
-        return restaurantRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("id", id.toString()));
-    }
+    private List<OrderItem> createOrderItems(String orderId, List<CreateOrderItemRequest> createOrderItemRequests) {
+        var orderItems = new ArrayList<OrderItem>();
 
-    private void createOrderItems(List<CreateOrderItemRequest> createOrderItemRequests, Order order) {
         createOrderItemRequests.forEach(createOrderItemRequest -> {
+            if(menuItemRepository.notExistsById(createOrderItemRequest.getMenuItemId())) {
+                throw new EntityNotFoundException("id", createOrderItemRequest.getMenuItemId());
+            }
+
             var orderItem = OrderItem.builder()
-                    .menuItem(findMenuItemById(createOrderItemRequest.getMenuItemId()))
-                    .order(order)
+                    .id(UUID.randomUUID().toString())
+                    .menuItemId(createOrderItemRequest.getMenuItemId())
                     .quantity(createOrderItemRequest.getQuantity())
                     .additionalInfo(createOrderItemRequest.getAdditionalInfo())
+                    .orderId(orderId)
                     .build();
 
-            order.addOrderItem(orderItem);
+            orderItems.add(orderItem);
         });
+
+        return orderItems;
     }
 
-    private MenuItem findMenuItemById(UUID id) {
-        return menuItemRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("id", id.toString()));
-    }
 
-    public IdResponse confirmOrder(UUID id, Integer minutesForPreparation) {
+    public IdResponse confirmOrder(String id, Integer minutesForPreparation) {
         Order order = findById(id);
         if (order.notWaitingForResponse()) {
             throw new BadRequestException("Requested order is not waiting response.");
@@ -68,28 +76,23 @@ public class OrderService {
 
         order.setMinutesForPreparation(minutesForPreparation);
         order.setOrderStatus(OrderStatus.CONFIRMED);
-        return new IdResponse(orderRepository.save(order).getId());
+        orderRepository.save(order);
+        return new IdResponse(id);
     }
 
-    public IdResponse rejectOrder(UUID id) {
+    public IdResponse rejectOrder(String id) {
         Order order = findById(id);
         if (order.notWaitingForResponse()) {
             throw new BadRequestException("Requested order is not waiting response.");
         }
 
         order.setOrderStatus(OrderStatus.REJECTED);
-        return new IdResponse(orderRepository.save(order).getId());
+        orderRepository.save(order);
+        return new IdResponse(id);
     }
 
-    public Order findById(UUID id) {
-        return orderRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("id", id.toString()));
+    public Order findById(String id) {
+        return orderRepository.findById(id);
     }
-
-    public List<Order> findAll() {
-        return orderRepository.findAll();
-    }
-*/
-
 
 }

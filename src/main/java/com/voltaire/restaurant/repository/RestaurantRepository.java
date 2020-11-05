@@ -22,28 +22,41 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class RestaurantRepository {
 
+    private static final String COLLECTION_NAME = "restaurants";
+
     private final Firestore firestore;
 
     private CollectionReference getDocumentCollection() {
-        return firestore.collection("restaurants");
+        return firestore.collection(COLLECTION_NAME);
     }
 
     @SneakyThrows
     public void save(Restaurant restaurant) {
-        getDocumentCollection().document(restaurant.getId()).set(restaurant);
+         getDocumentCollection().document(restaurant.getId()).set(restaurant);
     }
 
     @SneakyThrows
-    public boolean existsById(String id) {
-        return getDocumentCollection().document(id).get().get().exists();
+    public boolean notExists(String id) {
+        return !getDocumentCollection().document(id).get().get().exists();
     }
 
     public void deleteById(String id) {
         getDocumentCollection().document(id).delete();
     }
 
+
     @SneakyThrows
-    public ReadRestaurantWithMenuItemsRequest findById(String id) {
+    public Restaurant findById(String id) {
+        var documentSnapshot = getDocumentCollection().document(id).get().get();
+        if (!documentSnapshot.exists()) {
+            throw new EntityNotFoundException("id", id);
+        }
+
+        return documentSnapshot.toObject(Restaurant.class);
+    }
+
+    @SneakyThrows
+    public ReadRestaurantWithMenuItemsRequest findByIdWithMenuItems(String id) {
         var documentSnapshot = getDocumentCollection().document(id).get().get();
         if (!documentSnapshot.exists()) {
             throw new EntityNotFoundException("id", id);
