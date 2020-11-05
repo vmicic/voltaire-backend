@@ -3,9 +3,7 @@ package com.voltaire.order;
 import com.voltaire.exception.customexceptions.BadRequestException;
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.order.model.*;
-import com.voltaire.order.repository.OrderItemRepository;
 import com.voltaire.order.repository.OrderRepository;
-import com.voltaire.restaurant.model.MenuItem;
 import com.voltaire.restaurant.repository.MenuItemRepository;
 import com.voltaire.restaurant.repository.RestaurantRepository;
 import com.voltaire.shared.IdResponse;
@@ -15,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,7 +34,7 @@ public class OrderService {
 
         var order = Order.builder()
                 .id(UUID.randomUUID().toString())
-                .orderTime(LocalDateTime.now(clock).toString())
+                .orderTime(new Date())
                 .orderStatus(OrderStatus.CREATED)
                 .restaurantId(createOrderRequest.getRestaurantId())
                 .deliveryAddress(createOrderRequest.getDeliveryAddress())

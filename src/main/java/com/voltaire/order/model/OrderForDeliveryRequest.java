@@ -11,9 +11,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class OrderForDelivery {
+public class OrderForDeliveryRequest {
 
-    private UUID orderId;
+    private String orderId;
 
     private String restaurantName;
 

@@ -21,8 +21,6 @@ public class UserInfoAuthManager implements AuthenticationManager {
         var userEmail = authentication.getName();
         var user = userService.findByEmail(userEmail);
 
-        log.info("found user with: " + userEmail);
-
         return new PreAuthenticatedAuthenticationToken(user, userEmail, user.getAuthorities());
     }
 }

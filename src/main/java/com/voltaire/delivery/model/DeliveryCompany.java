@@ -1,5 +1,6 @@
 package com.voltaire.delivery.model;
 
+import com.google.cloud.firestore.annotation.DocumentId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,9 +14,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class DeliveryCompany {
 
-
-
-    private UUID id;
+    @DocumentId
+    private String id;
 
     private String name;
 }
