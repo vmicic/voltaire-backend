@@ -1,6 +1,7 @@
 package com.voltaire.restaurant;
 
 import com.voltaire.restaurant.model.CreateRestaurantRequest;
+import com.voltaire.restaurant.model.ReadRestaurantWithMenuItemsRequest;
 import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.shared.IdResponse;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,8 +21,8 @@ public class RestaurantController {
     @PreAuthorize("hasRole('ROLE_RESTAURANT_OWNER')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Restaurant createRestaurant(@RequestBody CreateRestaurantRequest createRestaurantRequest) {
-        return restaurantService.createRestaurant(createRestaurantRequest);
+    public void createRestaurant(@RequestBody CreateRestaurantRequest createRestaurantRequest) {
+        restaurantService.createRestaurant(createRestaurantRequest);
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -31,21 +31,21 @@ public class RestaurantController {
         return restaurantService.findAll();
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_RESTAURANT_OWNER')")
     @GetMapping(value = "/{id}")
-    public Restaurant getRestaurantById(@PathVariable UUID id) {
+    public ReadRestaurantWithMenuItemsRequest getRestaurantById(@PathVariable String id) {
         return restaurantService.findById(id);
     }
 
     @PreAuthorize("hasRole('ROLE_RESTAURANT_OWNER')")
     @PutMapping(value = "/{id}")
-    public IdResponse updateRestaurant(@PathVariable UUID id, @RequestBody Restaurant restaurant) {
+    public IdResponse updateRestaurant(@PathVariable String id, @RequestBody Restaurant restaurant) {
         return restaurantService.updateRestaurant(id, restaurant);
     }
 
     @PreAuthorize("hasRole('ROLE_RESTAURANT_OWNER')")
     @DeleteMapping(value = "/{id}")
-    public IdResponse deleteRestaurant(@PathVariable UUID id) {
+    public IdResponse deleteRestaurant(@PathVariable String id) {
         return restaurantService.deleteRestaurant(id);
     }
 

@@ -1,39 +1,26 @@
 package com.voltaire.order.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.voltaire.restaurant.model.MenuItem;
-import lombok.*;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import java.util.UUID;
+import com.google.cloud.firestore.annotation.DocumentId;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
 public class OrderItem {
 
-    @Id
-    @GeneratedValue
-    private UUID id;
+    @DocumentId
+    private String id;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @ManyToOne
-    private MenuItem menuItem;
-
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @JsonIgnore
-    @ManyToOne
-    private Order order;
+    private String menuItemId;
 
     private Integer quantity;
 
     private String additionalInfo;
+
+    private String orderId;
 
 }

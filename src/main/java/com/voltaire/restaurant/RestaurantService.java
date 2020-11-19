@@ -2,6 +2,7 @@ package com.voltaire.restaurant;
 
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.restaurant.model.CreateRestaurantRequest;
+import com.voltaire.restaurant.model.ReadRestaurantWithMenuItemsRequest;
 import com.voltaire.restaurant.model.Restaurant;
 import com.voltaire.restaurant.repository.RestaurantRepository;
 import com.voltaire.shared.GeocodeService;
@@ -16,41 +17,35 @@ import java.util.UUID;
 @Service
 public class RestaurantService {
 
+    private final RestaurantRepository restaurantRepository;
     private final GeocodeService geocodeService;
 
-    private final RestaurantRepository restaurantRepository;
-
-    public Restaurant createRestaurant(CreateRestaurantRequest createRestaurantRequest) {
+    public void createRestaurant(CreateRestaurantRequest createRestaurantRequest) {
         var restaurant = Restaurant.builder()
+                .id(UUID.randomUUID().toString())
                 .name(createRestaurantRequest.getName())
                 .address(createRestaurantRequest.getAddress())
-                .openingTime(createRestaurantRequest.getOpeningTime())
-                .closingTime(createRestaurantRequest.getClosingTime())
+                .openingTime(createRestaurantRequest.getOpeningTime().toString())
+                .closingTime(createRestaurantRequest.getClosingTime().toString())
                 .geolocation(geocodeService.getGeolocationForAddressString(createRestaurantRequest.getAddress()))
                 .build();
 
-        return restaurantRepository.save(restaurant);
+        restaurantRepository.save(restaurant);
     }
 
-    public boolean notExists(UUID id) {
-        return !restaurantRepository.existsById(id);
+    public boolean notExists(String id) {
+        return restaurantRepository.notExists(id);
     }
 
-    public IdResponse updateRestaurant(UUID id, Restaurant restaurant) {
+    public IdResponse updateRestaurant(String id, Restaurant restaurant) {
+        restaurantRepository.updateRestaurant(id, restaurant);
 
-        Restaurant oldRestaurant = findById(id);
-
-        oldRestaurant.setName(restaurant.getName());
-        oldRestaurant.setAddress(restaurant.getAddress());
-        oldRestaurant.setClosingTime(restaurant.getClosingTime());
-        oldRestaurant.setOpeningTime(restaurant.getOpeningTime());
-
-        return new IdResponse(restaurantRepository.save(oldRestaurant).getId());
+        return new IdResponse(id);
     }
 
-    public IdResponse deleteRestaurant(UUID id) {
+    public IdResponse deleteRestaurant(String id) {
         if (notExists(id)) {
-            throw new EntityNotFoundException("id", id.toString());
+            throw new EntityNotFoundException("id", id);
         }
         restaurantRepository.deleteById(id);
         return new IdResponse(id);
@@ -60,9 +55,9 @@ public class RestaurantService {
         return restaurantRepository.findAll();
     }
 
-    public Restaurant findById(UUID id) {
-        return restaurantRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("id", id.toString()));
+    public ReadRestaurantWithMenuItemsRequest findById(String id) {
+        return restaurantRepository.findByIdWithMenuItems(id);
     }
+
 
 }

@@ -8,9 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.UUID;
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/orders")
@@ -19,35 +16,30 @@ public class OrderController {
     private final OrderService orderService;
 
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    //@PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Order createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
-        return orderService.createOrder(createOrderRequest);
-    }
-
-    @GetMapping
-    public List<Order> getAllOrders() {
-        return orderService.findAll();
+    public void createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
+        orderService.createOrder(createOrderRequest);
     }
 
 
-    @PreAuthorize("hasRole('ROLE_USER')")
+    //@PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/{id}")
-    public Order getOrderById(@PathVariable UUID id) {
+    public Order getOrderById(@PathVariable String id) {
         return orderService.findById(id);
     }
 
 
     @PreAuthorize("hasRole('ROLE_RESTAURANT_OWNER')")
     @PutMapping("/{id}/confirm")
-    public IdResponse confirmOrder(@PathVariable UUID id, @RequestBody Integer minutesForPreparation) {
+    public IdResponse confirmOrder(@PathVariable String id, @RequestBody Integer minutesForPreparation) {
         return orderService.confirmOrder(id, minutesForPreparation);
     }
 
     @PreAuthorize("hasRole('ROLE_RESTAURANT_OWNER')")
     @PutMapping("/{id}/reject")
-    public IdResponse rejectOrder(@PathVariable UUID id) {
+    public IdResponse rejectOrder(@PathVariable String id) {
         return orderService.rejectOrder(id);
     }
 

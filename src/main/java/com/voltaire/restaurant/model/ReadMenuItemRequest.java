@@ -4,18 +4,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor
-public class MenuItemDto {
+public class ReadMenuItemRequest {
 
     private String name;
 
     private BigDecimal price;
 
     private String description;
-
-    private UUID restaurantId;
 
 }

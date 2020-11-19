@@ -5,15 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 @Data
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class OrderForDelivery {
+public class OrderForDeliveryRequest {
 
-    private UUID orderId;
+    private String orderId;
 
     private String restaurantName;
 

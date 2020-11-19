@@ -1,15 +1,24 @@
 package com.voltaire.user;
 
+import com.voltaire.user.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 public class UserController {
 
-    @GetMapping("v1/echo")
-    public String echo() {
-        return "echo";
+    private final UserService userService;
+
+    @PostMapping("v1/users")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createUser(@RequestBody String email) {
+        userService.createUser(email);
+    }
+
+    @GetMapping("v1/users/{id}")
+    public User getUserById(@PathVariable String id) {
+        return userService.findById(id);
     }
 }

@@ -1,12 +1,27 @@
 package com.voltaire.delivery.repository;
 
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.Firestore;
 import com.voltaire.delivery.model.DeliveryCompany;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+@Service
+@RequiredArgsConstructor
+public class DeliveryCompanyRepository {
 
-@Repository
-public interface DeliveryCompanyRepository extends JpaRepository<DeliveryCompany, UUID> {
+    private static final String DELIVERY_COMPANY_COLLECTION_NAME = "delivery-companies";
+
+    private final Firestore firestore;
+
+    private CollectionReference getCollectionReference() {
+        return firestore.collection(DELIVERY_COMPANY_COLLECTION_NAME);
+    }
+
+    @SneakyThrows
+    public void save(DeliveryCompany deliveryCompany) {
+        getCollectionReference().document(deliveryCompany.getId()).set(deliveryCompany);
+    }
+
 }
-

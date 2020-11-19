@@ -4,11 +4,11 @@ import com.voltaire.delivery.model.CreateDeliveryCompanyRequest;
 import com.voltaire.delivery.model.DeliveryCompany;
 import com.voltaire.delivery.repository.DeliveryCompanyRepository;
 import com.voltaire.exception.customexceptions.BadRequestException;
-import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.order.model.Order;
-import com.voltaire.order.model.OrderForDelivery;
+import com.voltaire.order.model.OrderForDeliveryRequest;
 import com.voltaire.order.model.OrderStatus;
 import com.voltaire.order.repository.OrderRepository;
+import com.voltaire.restaurant.repository.RestaurantRepository;
 import com.voltaire.shared.GeocodeService;
 import com.voltaire.shared.Geolocation;
 import com.voltaire.shared.IdResponse;
@@ -17,11 +17,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,9 +28,11 @@ import java.util.stream.Collectors;
 public class DeliveryCompanyService {
 
     @Value("${voltaire.orders.delivery-timeout}")
-    private Integer confirmedOrderDeliveryTimeout;
+    private Integer confirmedOrderDeliveryTimeoutMinutes;
 
     private final OrderRepository orderRepository;
+
+    private final RestaurantRepository restaurantRepository;
 
     private final DeliveryCompanyRepository deliveryCompanyRepository;
 
@@ -39,15 +40,15 @@ public class DeliveryCompanyService {
 
     private final Clock clock;
 
-    public DeliveryCompany createDeliveryCompany(CreateDeliveryCompanyRequest createDeliveryCompanyRequest) {
+    public void createDeliveryCompany(CreateDeliveryCompanyRequest createDeliveryCompanyRequest) {
         var deliveryCompany = DeliveryCompany.builder()
                 .name(createDeliveryCompanyRequest.getName())
                 .build();
 
-        return deliveryCompanyRepository.save(deliveryCompany);
+        deliveryCompanyRepository.save(deliveryCompany);
     }
 
-    public List<OrderForDelivery> getOrdersForDelivery(String address) {
+    public List<OrderForDeliveryRequest> getOrdersForDelivery(String address) {
         if (address == null) {
             return getOrdersForDelivery();
         } else {
@@ -55,16 +56,17 @@ public class DeliveryCompanyService {
         }
     }
 
-    public List<OrderForDelivery> getOrdersForDelivery() {
+    public List<OrderForDeliveryRequest> getOrdersForDelivery() {
         var orders = findAllOrdersForDelivery();
-        var ordersForDelivery = new ArrayList<OrderForDelivery>();
+        var ordersForDelivery = new ArrayList<OrderForDeliveryRequest>();
 
         orders.forEach(
                 order -> {
-                    var orderForDelivery = OrderForDelivery.builder()
+                    var restaurant = restaurantRepository.findById(order.getRestaurantId());
+                    var orderForDelivery = OrderForDeliveryRequest.builder()
                             .orderId(order.getId())
-                            .restaurantName(order.getRestaurant().getName())
-                            .restaurantAddress(order.getRestaurant().getAddress())
+                            .restaurantName(restaurant.getName())
+                            .restaurantAddress(restaurant.getAddress())
                             .deliveryAddress(order.getDeliveryAddress())
                             .minutesForPreparation(order.getMinutesForPreparation())
                             .build();
@@ -76,16 +78,15 @@ public class DeliveryCompanyService {
     }
 
     private List<Order> findAllOrdersForDelivery() {
-        var timeCutoff = LocalDateTime.now(clock).minusMinutes(confirmedOrderDeliveryTimeout);
-        return orderRepository.findAllByOrderTimeAfterAndOrderStatusEquals(timeCutoff, OrderStatus.CONFIRMED);
+        var timeCutoff = new Date(System.currentTimeMillis() - 60 * confirmedOrderDeliveryTimeoutMinutes * 1000);
+        return orderRepository.findAllOrdersForDelivery(timeCutoff);
     }
 
-    public Order findOrderById(UUID id) {
-        return orderRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("id", id.toString()));
+    public Order findOrderById(String id) {
+        return orderRepository.findById(id);
     }
 
-    public IdResponse takeOrderToDeliver(UUID id) {
+    public IdResponse takeOrderToDeliver(String id) {
         var order = findOrderById(id);
 
         if (order.notWaitingDeliveryService()) {
@@ -93,10 +94,10 @@ public class DeliveryCompanyService {
         }
 
         order.setOrderStatus(OrderStatus.PREPARING);
-        return new IdResponse(orderRepository.save(order).getId());
+        return new IdResponse(id);
     }
 
-    public IdResponse startDelivery(UUID id) {
+    public IdResponse startDelivery(String id) {
         var order = findOrderById(id);
 
         if (order.notWaitingDeliveryStart()) {
@@ -104,10 +105,10 @@ public class DeliveryCompanyService {
         }
 
         order.setOrderStatus(OrderStatus.DELIVERING);
-        return new IdResponse(orderRepository.save(order).getId());
+        return new IdResponse(id);
     }
 
-    public IdResponse orderDelivered(UUID id) {
+    public IdResponse orderDelivered(String id) {
         var order = findOrderById(id);
 
         if (order.notWaitingDeliveryConfirmation()) {
@@ -115,28 +116,29 @@ public class DeliveryCompanyService {
         }
 
         order.setOrderStatus(OrderStatus.DELIVERED);
-        return new IdResponse(orderRepository.save(order).getId());
+        return new IdResponse(id);
     }
 
-    public List<OrderForDelivery> getSortedByPickupDistanceOrdersForDelivery(String address) {
+    public List<OrderForDeliveryRequest> getSortedByPickupDistanceOrdersForDelivery(String address) {
         var deliverymanPoint = geocodeService.getGeolocationForAddressString(address);
         var orders = findAllOrdersForDelivery();
 
         var ordersForDelivery = mapOrdersToOrdersForDelivery(orders, deliverymanPoint);
         return ordersForDelivery.stream().sorted(
-                Comparator.comparing(OrderForDelivery::getRestaurantDistanceInMeters)).collect(Collectors.toList());
+                Comparator.comparing(OrderForDeliveryRequest::getRestaurantDistanceInMeters)).collect(Collectors.toList());
     }
 
-    private List<OrderForDelivery> mapOrdersToOrdersForDelivery(List<Order> orders, Geolocation deliverymanGeolocation) {
-        var ordersForDelivery = new ArrayList<OrderForDelivery>();
+    private List<OrderForDeliveryRequest> mapOrdersToOrdersForDelivery(List<Order> orders, Geolocation deliverymanGeolocation) {
+        var ordersForDelivery = new ArrayList<OrderForDeliveryRequest>();
         orders.forEach(order -> {
-            var orderForDelivery = OrderForDelivery.builder()
+            var restaurant = restaurantRepository.findById(order.getRestaurantId());
+            var orderForDelivery = OrderForDeliveryRequest.builder()
                     .orderId(order.getId())
-                    .restaurantName(order.getRestaurant().getName())
-                    .restaurantAddress(order.getRestaurant().getAddress())
+                    .restaurantName(restaurant.getName())
+                    .restaurantAddress(restaurant.getAddress())
                     .deliveryAddress(order.getDeliveryAddress())
                     .minutesForPreparation(order.getMinutesForPreparation())
-                    .restaurantDistanceInMeters((int) Math.round(geocodeService.distance(order.getRestaurant().getGeolocation(), deliverymanGeolocation)))
+                    .restaurantDistanceInMeters((int) Math.round(geocodeService.distance(restaurant.getGeolocation(), deliverymanGeolocation)))
                     .build();
 
             ordersForDelivery.add(orderForDelivery);
