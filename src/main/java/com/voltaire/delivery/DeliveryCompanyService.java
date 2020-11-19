@@ -4,6 +4,7 @@ import com.voltaire.delivery.model.CreateDeliveryCompanyRequest;
 import com.voltaire.delivery.model.DeliveryCompany;
 import com.voltaire.delivery.repository.DeliveryCompanyRepository;
 import com.voltaire.exception.customexceptions.BadRequestException;
+import com.voltaire.order.OrderService;
 import com.voltaire.order.model.Order;
 import com.voltaire.order.model.OrderForDeliveryRequest;
 import com.voltaire.order.model.OrderStatus;
@@ -16,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.Clock;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -38,7 +38,7 @@ public class DeliveryCompanyService {
 
     private final GeocodeService geocodeService;
 
-    private final Clock clock;
+    private final OrderService orderService;
 
     public void createDeliveryCompany(CreateDeliveryCompanyRequest createDeliveryCompanyRequest) {
         var deliveryCompany = DeliveryCompany.builder()
@@ -93,7 +93,7 @@ public class DeliveryCompanyService {
             throw new BadRequestException("Requested order is not waiting delivery service response.");
         }
 
-        order.setOrderStatus(OrderStatus.PREPARING);
+        orderRepository.updateOrderStatus(id, OrderStatus.PREPARING);
         return new IdResponse(id);
     }
 
@@ -104,7 +104,7 @@ public class DeliveryCompanyService {
             throw new BadRequestException("Requested order is not waiting delivery start.");
         }
 
-        order.setOrderStatus(OrderStatus.DELIVERING);
+        orderRepository.updateOrderStatus(id, OrderStatus.DELIVERING);
         return new IdResponse(id);
     }
 
@@ -115,7 +115,7 @@ public class DeliveryCompanyService {
             throw new BadRequestException("Requested order is not waiting delivery confirmation.");
         }
 
-        order.setOrderStatus(OrderStatus.DELIVERED);
+        orderRepository.updateOrderStatus(id, OrderStatus.DELIVERED);
         return new IdResponse(id);
     }
 

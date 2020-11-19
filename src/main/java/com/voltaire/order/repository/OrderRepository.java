@@ -80,4 +80,9 @@ public class OrderRepository {
         return orders;
     }
 
+    @SneakyThrows
+    public void updateOrderStatus(String orderId, OrderStatus orderStatus) {
+        getOrderDocumentReference(orderId).update("orderStatus", orderStatus).get();
+    }
+
 }
