@@ -1,6 +1,5 @@
 package com.voltaire.user;
 
-import com.google.cloud.firestore.Firestore;
 import com.voltaire.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

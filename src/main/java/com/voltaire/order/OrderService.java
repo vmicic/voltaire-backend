@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +27,7 @@ public class OrderService {
     private final Clock clock;
 
     public void createOrder(CreateOrderRequest createOrderRequest) {
-        if(restaurantRepository.notExists(createOrderRequest.getRestaurantId())) {
+        if (restaurantRepository.notExists(createOrderRequest.getRestaurantId())) {
             throw new EntityNotFoundException("id", createOrderRequest.getRestaurantId());
         }
 
@@ -48,7 +47,7 @@ public class OrderService {
         var orderItems = new ArrayList<OrderItem>();
 
         createOrderItemRequests.forEach(createOrderItemRequest -> {
-            if(menuItemRepository.notExistsById(createOrderItemRequest.getMenuItemId())) {
+            if (menuItemRepository.notExistsById(createOrderItemRequest.getMenuItemId())) {
                 throw new EntityNotFoundException("id", createOrderItemRequest.getMenuItemId());
             }
 

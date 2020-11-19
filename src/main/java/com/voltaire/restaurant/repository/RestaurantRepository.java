@@ -1,6 +1,7 @@
 package com.voltaire.restaurant.repository;
 
 import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.SetOptions;
 import com.voltaire.exception.customexceptions.BadRequestException;
@@ -22,32 +23,36 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class RestaurantRepository {
 
-    private static final String COLLECTION_NAME = "restaurants";
+    public static final String RESTAURANT_COLLECTION_NAME = "restaurants";
 
     private final Firestore firestore;
 
-    private CollectionReference getDocumentCollection() {
-        return firestore.collection(COLLECTION_NAME);
+    private CollectionReference getCollectionReference() {
+        return firestore.collection(RESTAURANT_COLLECTION_NAME);
+    }
+
+    private DocumentReference getRestaurantDocumentReference(String restaurantId) {
+        return getCollectionReference().document(restaurantId);
     }
 
     @SneakyThrows
     public void save(Restaurant restaurant) {
-         getDocumentCollection().document(restaurant.getId()).set(restaurant);
+        getCollectionReference().document(restaurant.getId()).set(restaurant);
     }
 
     @SneakyThrows
     public boolean notExists(String id) {
-        return !getDocumentCollection().document(id).get().get().exists();
+        return !getRestaurantDocumentReference(id).get().get().exists();
     }
 
     public void deleteById(String id) {
-        getDocumentCollection().document(id).delete();
+        getRestaurantDocumentReference(id).delete();
     }
 
 
     @SneakyThrows
     public Restaurant findById(String id) {
-        var documentSnapshot = getDocumentCollection().document(id).get().get();
+        var documentSnapshot = getRestaurantDocumentReference(id).get().get();
         if (!documentSnapshot.exists()) {
             throw new EntityNotFoundException("id", id);
         }
@@ -57,18 +62,18 @@ public class RestaurantRepository {
 
     @SneakyThrows
     public ReadRestaurantWithMenuItemsRequest findByIdWithMenuItems(String id) {
-        var documentSnapshot = getDocumentCollection().document(id).get().get();
+        var documentSnapshot = getRestaurantDocumentReference(id).get().get();
         if (!documentSnapshot.exists()) {
             throw new EntityNotFoundException("id", id);
         }
 
         var restaurant = documentSnapshot.toObject(Restaurant.class);
 
-        if(restaurant == null) {
+        if (restaurant == null) {
             throw new BadRequestException("Request could not be executed");
         }
 
-        var documents = getDocumentCollection().document(id).collection("menu-items").get().get().getDocuments();
+        var documents = getRestaurantDocumentReference(id).collection(MenuItemRepository.MENU_ITEM_COLLECTION_NAME).get().get().getDocuments();
         var menuItemsDto = new ArrayList<ReadMenuItemRequest>();
         documents.forEach(document -> {
             var menuItem = document.toObject(MenuItem.class);
@@ -92,11 +97,11 @@ public class RestaurantRepository {
     @SneakyThrows
     public List<Restaurant> findAll() {
         var restaurants = new ArrayList<Restaurant>();
-        getDocumentCollection().get().get().getDocuments().forEach(queryDocumentSnapshot -> {
-            var restaurant= queryDocumentSnapshot.toObject(Restaurant.class);
+        getCollectionReference().get().get().getDocuments().forEach(queryDocumentSnapshot -> {
+            var restaurant = queryDocumentSnapshot.toObject(Restaurant.class);
             restaurants.add(restaurant);
         });
-        return  restaurants;
+        return restaurants;
     }
 
     public void updateRestaurant(String id, Restaurant restaurant) {
@@ -106,8 +111,7 @@ public class RestaurantRepository {
         update.put("closingTime", restaurant.getClosingTime());
         update.put("openingTime", restaurant.getOpeningTime());
 
-        getDocumentCollection()
-                .document(id)
+        getRestaurantDocumentReference(id)
                 .set(update, SetOptions.merge());
     }
 }

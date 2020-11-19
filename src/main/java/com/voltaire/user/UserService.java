@@ -15,7 +15,6 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
-
     private final RoleRepository roleRepository;
 
     @SneakyThrows
@@ -36,5 +35,4 @@ public class UserService {
     public User findById(String id) {
         return userRepository.findById(id);
     }
-
 }

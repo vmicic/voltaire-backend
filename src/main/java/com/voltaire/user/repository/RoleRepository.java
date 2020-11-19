@@ -12,15 +12,17 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RoleRepository {
 
+    private static final String ROLE_COLLECTION_NAME = "roles";
+
     private final Firestore firestore;
 
-    private CollectionReference getDocumentCollection() {
-        return firestore.collection("roles");
+    private CollectionReference getCollectionReference() {
+        return firestore.collection(ROLE_COLLECTION_NAME);
     }
 
     @SneakyThrows
     public Role findByRole(String name) {
-        var query = getDocumentCollection().whereEqualTo("authority", name);
+        var query = getCollectionReference().whereEqualTo("authority", name);
         var querySnapshot = query.get();
         var documents = querySnapshot.get().getDocuments();
 

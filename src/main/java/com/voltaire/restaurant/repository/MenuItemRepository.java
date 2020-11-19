@@ -1,6 +1,7 @@
 package com.voltaire.restaurant.repository;
 
 import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.restaurant.model.MenuItem;
@@ -12,24 +13,28 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MenuItemRepository {
 
-    private static final String COLLECTION_NAME = "menu-items";
+    public static final String MENU_ITEM_COLLECTION_NAME = "menu-items";
+    private static final String ID_FIELD_NAME = "idField";
 
     private final Firestore firestore;
 
-    private CollectionReference getDocumentCollectionWithRestaurant(String restaurantId) {
-        return firestore.collection("restaurants").document(restaurantId).collection(COLLECTION_NAME);
+    private CollectionReference getMenuItemsCollectionReference(String restaurantId) {
+        return firestore.collection(RestaurantRepository.RESTAURANT_COLLECTION_NAME).document(restaurantId).collection(MENU_ITEM_COLLECTION_NAME);
     }
 
+    private DocumentReference getMenuItemDocumentReference(String restaurantId, String menuItemId) {
+        return getMenuItemsCollectionReference(restaurantId).document(menuItemId);
+    }
 
     @SneakyThrows
     public void save(MenuItem menuItem) {
-        getDocumentCollectionWithRestaurant(menuItem.getRestaurantId()).document(menuItem.getId()).set(menuItem);
+        getMenuItemDocumentReference(menuItem.getRestaurantId(), menuItem.getId()).set(menuItem);
     }
 
     @SneakyThrows
     public MenuItem findById(String id) {
-        var documentSnapshots = firestore.collectionGroup(COLLECTION_NAME).whereEqualTo("idField", id).get().get().getDocuments();
-        if(documentSnapshots.isEmpty()) {
+        var documentSnapshots = firestore.collectionGroup(MENU_ITEM_COLLECTION_NAME).whereEqualTo(ID_FIELD_NAME, id).get().get().getDocuments();
+        if (documentSnapshots.isEmpty()) {
             throw new EntityNotFoundException("id", id);
         }
 
@@ -38,13 +43,13 @@ public class MenuItemRepository {
 
     @SneakyThrows
     public boolean notExistsById(String id) {
-        var documentSnapshots = firestore.collectionGroup(COLLECTION_NAME).whereEqualTo("idField", id).get().get().getDocuments();
+        var documentSnapshots = firestore.collectionGroup(MENU_ITEM_COLLECTION_NAME).whereEqualTo(ID_FIELD_NAME, id).get().get().getDocuments();
         return documentSnapshots.isEmpty();
     }
 
     @SneakyThrows
     public void deleteById(String id) {
-        firestore.collectionGroup(COLLECTION_NAME).whereEqualTo("id", id).get().get().getDocuments().get(0).getReference().delete();
+        firestore.collectionGroup(MENU_ITEM_COLLECTION_NAME).whereEqualTo(ID_FIELD_NAME, id).get().get().getDocuments().get(0).getReference().delete();
     }
 
 }

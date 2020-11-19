@@ -1,6 +1,7 @@
 package com.voltaire.user.repository;
 
 import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.user.model.User;
@@ -12,15 +13,21 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserRepository {
 
+    private static final String USER_COLLECTION_NAME = "users";
+
     private final Firestore firestore;
 
-    private CollectionReference getDocumentCollection() {
-        return firestore.collection("users");
+    private CollectionReference getCollectionReference() {
+        return firestore.collection(USER_COLLECTION_NAME);
+    }
+
+    private DocumentReference getUserDocumentReference(String userId) {
+        return getCollectionReference().document(userId);
     }
 
     @SneakyThrows
     public User findByEmail(String email) {
-        var query = getDocumentCollection().whereEqualTo("email", email);
+        var query = getCollectionReference().whereEqualTo("email", email);
         var querySnapshot = query.get();
         var documents = querySnapshot.get().getDocuments();
 
@@ -33,7 +40,7 @@ public class UserRepository {
 
     @SneakyThrows
     public User findById(String id) {
-        var documentSnapshot = getDocumentCollection().document(id).get().get();
+        var documentSnapshot = getUserDocumentReference(id).get().get();
         if (!documentSnapshot.exists()) {
             throw new EntityNotFoundException("id", id);
         }
@@ -44,7 +51,7 @@ public class UserRepository {
 
     @SneakyThrows
     public void save(User user) {
-        getDocumentCollection().document(user.getId()).set(user);
+        getUserDocumentReference(user.getId()).set(user);
     }
 
 }

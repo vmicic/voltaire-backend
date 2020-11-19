@@ -20,7 +20,7 @@ public class MenuItemService {
     private final RestaurantRepository restaurantRepository;
 
     public void createMenuItem(CreateMenuItemRequest createMenuItemRequest) {
-        if(restaurantRepository.notExists(createMenuItemRequest.getRestaurantId())) {
+        if (restaurantRepository.notExists(createMenuItemRequest.getRestaurantId())) {
             throw new EntityNotFoundException("id", createMenuItemRequest.getRestaurantId());
         }
 

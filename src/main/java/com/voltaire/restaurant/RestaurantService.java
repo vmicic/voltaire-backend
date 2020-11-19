@@ -17,9 +17,8 @@ import java.util.UUID;
 @Service
 public class RestaurantService {
 
-    private final GeocodeService geocodeService;
-
     private final RestaurantRepository restaurantRepository;
+    private final GeocodeService geocodeService;
 
     public void createRestaurant(CreateRestaurantRequest createRestaurantRequest) {
         var restaurant = Restaurant.builder()

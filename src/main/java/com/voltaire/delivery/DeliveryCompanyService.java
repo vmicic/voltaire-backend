@@ -4,7 +4,6 @@ import com.voltaire.delivery.model.CreateDeliveryCompanyRequest;
 import com.voltaire.delivery.model.DeliveryCompany;
 import com.voltaire.delivery.repository.DeliveryCompanyRepository;
 import com.voltaire.exception.customexceptions.BadRequestException;
-import com.voltaire.exception.customexceptions.EntityNotFoundException;
 import com.voltaire.order.model.Order;
 import com.voltaire.order.model.OrderForDeliveryRequest;
 import com.voltaire.order.model.OrderStatus;
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
