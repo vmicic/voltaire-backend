@@ -16,20 +16,18 @@ public class OrderController {
     private final OrderService orderService;
 
 
-    //@PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
         orderService.createOrder(createOrderRequest);
     }
 
-
-    //@PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/{id}")
     public Order getOrderById(@PathVariable String id) {
         return orderService.findById(id);
     }
-
 
     @PreAuthorize("hasRole('ROLE_RESTAURANT_OWNER')")
     @PutMapping("/{id}/confirm")

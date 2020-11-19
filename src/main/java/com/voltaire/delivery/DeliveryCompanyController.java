@@ -23,8 +23,8 @@ public class DeliveryCompanyController {
     }
 
     @GetMapping("/orders/for-delivery")
-    public List<OrderForDeliveryRequest> getOrdersForDelivery(@RequestParam(required = false) String address) {
-        return deliveryCompanyService.getOrdersForDelivery(address);
+    public List<OrderForDeliveryRequest> getOrdersForDelivery(@RequestParam(required = false) String deliverymanAddress) {
+        return deliveryCompanyService.getOrdersForDelivery(deliverymanAddress);
     }
 
     @PutMapping("orders/{id}/delivery-request")

@@ -119,8 +119,8 @@ public class DeliveryCompanyService {
         return new IdResponse(id);
     }
 
-    public List<OrderForDeliveryRequest> getSortedByPickupDistanceOrdersForDelivery(String address) {
-        var deliverymanPoint = geocodeService.getGeolocationForAddressString(address);
+    public List<OrderForDeliveryRequest> getSortedByPickupDistanceOrdersForDelivery(String deliverymanAddress) {
+        var deliverymanPoint = geocodeService.getGeolocationForAddressString(deliverymanAddress);
         var orders = findAllOrdersForDelivery();
 
         var ordersForDelivery = mapOrdersToOrdersForDelivery(orders, deliverymanPoint);
