@@ -21,6 +21,13 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserInfoAuthManager userInfoAuthManager;
 
+    private static final String[] AUTH_WHITELIST = {
+            "/v1/users/**",
+            "/v1/orders/for-delivery",
+            "/v1/orders/**/delivery-request",
+            "/v1/orders/**/start-delivery",
+            "/v1/orders/**/delivered"
+    };
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -38,7 +45,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/v1/echo", "/v1/users/**");
+        web.ignoring().antMatchers(AUTH_WHITELIST);
     }
 }
 
