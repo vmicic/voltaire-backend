@@ -9,6 +9,8 @@ import java.util.List;
 @NoArgsConstructor
 public class ReadRestaurantWithMenuItemsRequest {
 
+    private String restaurantId;
+
     private String name;
 
     private String address;
