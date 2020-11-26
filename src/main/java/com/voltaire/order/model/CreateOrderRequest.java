@@ -17,6 +17,4 @@ public class CreateOrderRequest {
 
     List<CreateOrderItemRequest> orderItems;
 
-    private String deliveryAddress;
-
 }

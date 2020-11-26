@@ -34,7 +34,6 @@ public class OrderService {
                 .orderTime(new Date())
                 .orderStatus(OrderStatus.CREATED)
                 .restaurantId(createOrderRequest.getRestaurantId())
-                .deliveryAddress(createOrderRequest.getDeliveryAddress())
                 .build();
 
         var orderItems = createOrderItems(order.getId(), createOrderRequest.getOrderItems());
