@@ -78,7 +78,7 @@ public class RestaurantRepository {
         documents.forEach(document -> {
             var menuItem = document.toObject(MenuItem.class);
             var menuItemDto = new ReadMenuItemRequest();
-            menuItemDto.setMenuItemId(menuItem.getId());
+            menuItemDto.setId(menuItem.getId());
             menuItemDto.setName(menuItem.getName());
             menuItemDto.setDescription(menuItem.getDescription());
             menuItemDto.setPrice(menuItem.getPrice());
@@ -86,7 +86,7 @@ public class RestaurantRepository {
         });
 
         var restaurantDto = new ReadRestaurantWithMenuItemsRequest();
-        restaurantDto.setRestaurantId(restaurant.getId());
+        restaurantDto.setId(restaurant.getId());
         restaurantDto.setName(restaurant.getName());
         restaurantDto.setAddress(restaurant.getAddress());
         restaurantDto.setOpeningTime(restaurant.getOpeningTime());

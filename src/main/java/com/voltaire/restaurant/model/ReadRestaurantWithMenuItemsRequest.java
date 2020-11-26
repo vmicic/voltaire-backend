@@ -9,7 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ReadRestaurantWithMenuItemsRequest {
 
-    private String restaurantId;
+    private String id;
 
     private String name;
 
