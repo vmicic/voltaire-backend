@@ -20,11 +20,9 @@ import java.util.UUID;
 @Service
 public class OrderService {
 
-
     private final OrderRepository orderRepository;
     private final RestaurantRepository restaurantRepository;
     private final MenuItemRepository menuItemRepository;
-    private final Clock clock;
 
     public void createOrder(CreateOrderRequest createOrderRequest) {
         if (restaurantRepository.notExists(createOrderRequest.getRestaurantId())) {

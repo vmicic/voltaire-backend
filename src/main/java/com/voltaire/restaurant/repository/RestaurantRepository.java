@@ -107,6 +107,7 @@ public class RestaurantRepository {
     public void updateRestaurant(String id, Restaurant restaurant) {
         Map<String, Object> update = new HashMap<>();
         update.put("name", restaurant.getName());
+        update.put("description", restaurant.getDescription());
         update.put("address", restaurant.getAddress());
         update.put("closingTime", restaurant.getClosingTime());
         update.put("openingTime", restaurant.getOpeningTime());

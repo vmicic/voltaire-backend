@@ -20,6 +20,8 @@ public class Restaurant {
 
     private String address;
 
+    private String description;
+
     private String openingTime;
 
     private String closingTime;
