@@ -117,4 +117,16 @@ public class RestaurantRepository {
         getRestaurantDocumentReference(id)
                 .set(update, SetOptions.merge());
     }
+
+    @SneakyThrows
+    public Restaurant findByName(String restaurantName) {
+        var collectionReference = getCollectionReference();
+        var queryDocumentSnapshots = collectionReference.whereEqualTo("name", restaurantName).get().get().getDocuments();
+        if(queryDocumentSnapshots.isEmpty()) {
+            throw new EntityNotFoundException("name", restaurantName);
+        }
+
+        return queryDocumentSnapshots.get(0).toObject(Restaurant.class);
+    }
+
 }

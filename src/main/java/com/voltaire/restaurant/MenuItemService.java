@@ -20,19 +20,18 @@ public class MenuItemService {
     private final RestaurantRepository restaurantRepository;
 
     public void createMenuItem(CreateMenuItemRequest createMenuItemRequest) {
-        if (restaurantRepository.notExists(createMenuItemRequest.getRestaurantId())) {
-            throw new EntityNotFoundException("id", createMenuItemRequest.getRestaurantId());
-        }
+        var restaurant = restaurantRepository.findByName(createMenuItemRequest.getRestaurantName());
 
+        var menuItemId = UUID.randomUUID().toString();
         var menuItem = MenuItem.builder()
-                .id(UUID.randomUUID().toString())
+                .id(menuItemId)
+                .idField(menuItemId)
                 .name(createMenuItemRequest.getName())
                 .price(createMenuItemRequest.getPrice())
                 .description(createMenuItemRequest.getDescription())
-                .restaurantId(createMenuItemRequest.getRestaurantId())
                 .build();
 
-        menuItemRepository.save(menuItem);
+        menuItemRepository.save(restaurant.getId(), menuItem);
     }
 
     public boolean notExists(String id) {

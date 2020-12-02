@@ -15,6 +15,6 @@ public class CreateMenuItemRequest {
 
     private String description;
 
-    private String restaurantId;
+    private String restaurantName;
 
 }

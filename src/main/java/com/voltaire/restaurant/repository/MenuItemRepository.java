@@ -27,24 +27,24 @@ public class MenuItemRepository {
     }
 
     @SneakyThrows
-    public void save(MenuItem menuItem) {
-        getMenuItemDocumentReference(menuItem.getRestaurantId(), menuItem.getId()).set(menuItem);
+    public void save(String restaurantId, MenuItem menuItem) {
+        getMenuItemDocumentReference(restaurantId, menuItem.getId()).set(menuItem);
     }
 
     @SneakyThrows
     public MenuItem findById(String id) {
-        var documentSnapshots = firestore.collectionGroup(MENU_ITEM_COLLECTION_NAME).whereEqualTo(ID_FIELD_NAME, id).get().get().getDocuments();
-        if (documentSnapshots.isEmpty()) {
+        var queryDocumentSnapshots = firestore.collectionGroup(MENU_ITEM_COLLECTION_NAME).whereEqualTo(ID_FIELD_NAME, id).get().get().getDocuments();
+        if (queryDocumentSnapshots.isEmpty()) {
             throw new EntityNotFoundException("id", id);
         }
 
-        return documentSnapshots.get(0).toObject(MenuItem.class);
+        return queryDocumentSnapshots.get(0).toObject(MenuItem.class);
     }
 
     @SneakyThrows
     public boolean notExistsById(String id) {
-        var documentSnapshots = firestore.collectionGroup(MENU_ITEM_COLLECTION_NAME).whereEqualTo(ID_FIELD_NAME, id).get().get().getDocuments();
-        return documentSnapshots.isEmpty();
+        var queryDocumentSnapshots = firestore.collectionGroup(MENU_ITEM_COLLECTION_NAME).whereEqualTo(ID_FIELD_NAME, id).get().get().getDocuments();
+        return queryDocumentSnapshots.isEmpty();
     }
 
     @SneakyThrows
