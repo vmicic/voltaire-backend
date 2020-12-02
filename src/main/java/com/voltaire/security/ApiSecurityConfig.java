@@ -26,7 +26,8 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
             "/v1/orders/for-delivery",
             "/v1/orders/**/delivery-request",
             "/v1/orders/**/start-delivery",
-            "/v1/orders/**/delivered"
+            "/v1/orders/**/delivered",
+            "/v1/menu-items"
     };
 
     @Override
