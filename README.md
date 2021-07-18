@@ -1,3 +1,7 @@
+## Description
+
+Backend for food delivery application.
+
 ## Dependencies
 
 You must install the following dependencies so you can build the project.
